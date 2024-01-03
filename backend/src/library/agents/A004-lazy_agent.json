@@ -1,0 +1,7 @@
+{
+    "id": "random agent",
+    "behavior": {
+        "type": "lazy"
+    },
+    "properties": {}
+}

@@ -1,0 +1,70 @@
+{
+    "id": "decision tree agent",
+    "behavior": {
+        "type": "decision_tree",
+        "data": {
+            "branches": {
+                "obs1 > 0.7 and obs2": "action1",
+                "obs1 == 'True' or not obs2": "action3",
+                "obs4 and obs12": {
+                    "type": "random",
+                    "data": {
+                        "agentActSpace": [
+                            "action1",
+                            "action4",
+                            "action7"
+                        ]
+                    }
+                },
+                "obs7 and obs18": {
+                    "type": "qlearning-marl",
+                    "data": {
+                        "agentActSpace": [
+                            "action1",
+                            "action4",
+                            "action7"
+                        ],
+                        "agentObsSpace": [
+                            "obs1",
+                            "obs4",
+                            "obs7"
+                        ],
+                        "qtable": {
+                            "00010110": [
+                                0.001,
+                                0.412,
+                                0.49,
+                                0.412,
+                                0.412,
+                                0.78,
+                                0.004
+                            ],
+                            "00011110": [
+                                0.412,
+                                0.012,
+                                0.812,
+                                0.412,
+                                0.012,
+                                0.412,
+                                0.424
+                            ],
+                            "00010000": [
+                                0.412,
+                                0.412,
+                                0.412,
+                                0.4,
+                                0.412,
+                                0.7,
+                                0.412
+                            ]
+                        },
+                        "alpha" : 0.1,
+                        "gamma" : 0.6,
+                        "epsilon" : 0.2
+                    }
+                }
+            }
+        }
+    },
+    "properties": {}
+}

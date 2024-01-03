@@ -1,0 +1,26 @@
+{
+    "id": "email_srv_ubuntu_20_04",
+    "services": [
+        {
+            "id": "postfix",
+            "owner": "mail",
+            "version": "3.5.0",
+            "local": false,
+            "service_access_level": "LIMITED"
+        },
+        {
+            "id": "bash",
+            "owner": "bash",
+            "version": "5.0.0",
+            "local": true,
+            "service_access_level": "LIMITED"
+        }
+    ],
+    "installed_operating_system": "Ubuntu 20.04",
+    "installed_softwares": ["MSOffice/2021"],
+    "logs": {},
+    "other_properties": {},
+    "reimagable": true,
+    "sla_weight": 0.7,
+    "value": 15
+}

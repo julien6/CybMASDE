@@ -1,0 +1,16 @@
+.example-card {
+    max-width: 400px;
+    margin: 10px;
+    display: inline-block;
+}
+
+.example-ripple-container {
+    cursor: pointer;
+
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+
+    -webkit-user-drag: none;
+    -webkit-tap-highlight-color: transparent;
+}

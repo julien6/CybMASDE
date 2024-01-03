@@ -1,0 +1,35 @@
+<h1 mat-dialog-title>Library</h1>
+<div mat-dialog-content>
+
+    <mat-tab-group>
+
+        <mat-tab *ngFor="let elements of libraryConfigs | keyvalue">
+            <ng-template mat-tab-label>{{elements.key}}</ng-template>
+
+            <!-- Element -->
+            <mat-card class="example-card example-ripple-container mat-elevation-z4" matRipple
+                [matRippleCentered]="centered" [matRippleDisabled]="disabled" [matRippleUnbounded]="unbounded"
+                (click)="openLibraryElementDialog($any(elements.key), $any(element.key), $any(element.value).md_file)"
+                *ngFor="let element of $any(elements.value) | keyvalue">
+                <mat-card-header>
+                    <mat-card-title-group>
+                        <mat-card-title>{{$any(element.value).title}}</mat-card-title>
+                        <mat-card-subtitle>{{element.key}}</mat-card-subtitle>
+                        <img mat-card-md-image
+                            src="/assets/library/{{$any(elements.key) | lowercase}}/{{$any(element.key)}}/{{$any(element.value).thumbnail_file}}"
+                            alt="{{$any(elements.key)}} thumnail illustration">
+                    </mat-card-title-group>
+                </mat-card-header>
+                <mat-card-content>
+                    <p></p>
+                    <p>
+                        {{$any(element.value).short_description}}
+                    </p>
+                </mat-card-content>
+            </mat-card>
+
+        </mat-tab>
+
+    </mat-tab-group>
+
+</div>

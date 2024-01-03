@@ -1,0 +1,11 @@
+pytest
+pyyaml
+numpy==1.23.5
+gym==0.23.1
+prettytable
+docutils
+pettingzoo
+networkx
+matplotlib
+paramiko
+pygame

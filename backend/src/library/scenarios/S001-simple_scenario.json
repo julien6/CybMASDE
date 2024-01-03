@@ -1,0 +1,89 @@
+{
+    "id": "S001",
+    "name": "scenario",
+    "data": {
+        "subnets": [
+            {
+                "id": "EXT",
+                "cidr": "192.168.1.0/24",
+                "nodes": [
+                    {
+                        "node_reference": "N001-Att1",
+                        "agents_reference": [
+                            "A001-dt_attacker1"
+                        ]
+                    },
+                    {
+                        "node_reference": "N001-Att2",
+                        "agents_reference": [
+                            "A001-dt_attacker2"
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "DMZ",
+                "subnetCIDR": "192.168.1.0/24",
+                "nodes": [
+                    {
+                        "id": "N001-VPN"
+                    },
+                    {
+                        "id": "N001-WS"
+                    },
+                    {
+                        "id": "N001-FTP"
+                    },
+                    {
+                        "id": "N001-ES"
+                    }
+                ]
+            },
+            {
+                "name": "MAR",
+                "subnetCIDR": "192.168.1.0/24",
+                "nodes": [
+                    {
+                        "id": "N001-E3"
+                    },
+                    {
+                        "id": "N001-TAB"
+                    },
+                    {
+                        "id": "N001-PS"
+                    }
+                ]
+            },
+            {
+                "name": "SRV",
+                "subnetCIDR": "192.168.1.0/24",
+                "nodes": [
+                    {
+                        "id": "N001-API"
+                    },
+                    {
+                        "id": "N001-DB"
+                    },
+                    {
+                        "id": "N001-DC"
+                    }
+                ]
+            },
+            {
+                "name": "ACC",
+                "subnetCIDR": "192.168.1.0/24",
+                "nodes": [
+                    {
+                        "id": "N001-E1"
+                    },
+                    {
+                        "id": "N001-E2"
+                    },
+                    {
+                        "id": "N001-CTO"
+                    }
+                ]
+            }
+        ]
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "id": "random agent",
+    "behavior": {
+        "type": "random",
+        "data": {
+            "actions": [
+                "action1",
+                "action4",
+                "action7"
+            ]
+        }
+    },
+    "properties": {}
+}

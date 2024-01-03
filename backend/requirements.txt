@@ -1,0 +1,17 @@
+gymnasium
+mpld3
+Flask==2.2.3
+Flask-Cors==3.0.10
+Werkzeug==2.2.2
+pytest
+pyyaml
+numpy==1.23.5
+gym==0.23.1
+prettytable
+docutils
+pettingzoo
+networkx
+matplotlib
+paramiko
+pygame
+tensorflow

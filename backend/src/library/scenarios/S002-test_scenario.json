@@ -1,0 +1,26 @@
+{
+    "id": "S001",
+    "name": "scenario",
+    "data": {
+        "subnets": [
+            {
+                "id": "EXT",
+                "cidr": "192.168.1.0/24",
+                "nodes": [
+                    {
+                        "node_reference": "N001-Att1",
+                        "agents_reference": [
+                            "A001-dt_attacker1"
+                        ]
+                    },
+                    {
+                        "node_reference": "N001-Att2",
+                        "agents_reference": [
+                            "A001-dt_attacker2"
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}

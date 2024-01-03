@@ -1,0 +1,13 @@
+{
+    "id": "decision tree agent",
+    "behavior": {
+        "type": "decision_tree",
+        "data": {
+            "branches": {
+                "obs1 > 0.7 and obs2": "action1",
+                "obs1 == 'True' or not obs2": "action3"
+            }
+        }
+    },
+    "properties": {}
+}

@@ -1,0 +1,148 @@
+<h1 mat-dialog-title>Running configuration</h1>
+<div mat-dialog-content>
+    <mat-stepper [linear]="true" #stepper>
+        <mat-step [stepControl]="firstFormGroup">
+            <form [formGroup]="firstFormGroup">
+
+                <ng-template matStepLabel>Configuring for running</ng-template>
+                <mat-form-field>
+                    <mat-label>Running mode</mat-label>
+                    <mat-select formControlName="select_mode" (ngModelChange)="onSelectingMode($event)">
+                        <mat-option value="full_simulation">
+                            Full simulation
+                        </mat-option>
+                        <mat-option value="full_emulation">
+                            Full emulation
+                        </mat-option>
+                        <mat-option value="simulation_emulation_coupling">
+                            Simulation/Emulation coupling
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-divider></mat-divider>
+
+                <br>
+
+                <form *ngIf="this.selectedMode=='full_simulation'" [formGroup]="fullSimulationFormGroup">
+
+                    <h2 mat-dialog-title>Simulation configuration</h2>
+
+                    <mat-form-field>
+                        <mat-label>Simulation engine</mat-label>
+                        <mat-select formControlName="select_simulation_engine"
+                            (ngModelChange)="onSelectingSimulationEngine($event)">
+                            <mat-option value="CybORG">
+                                CybORG simulation engine
+                            </mat-option>
+                            <mat-option value="MCAS">
+                                MCAS simulation engine
+                            </mat-option>
+                            <mat-option value="CYST">
+                                CYST simulation engine
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <br>
+
+                    <mat-form-field>
+                        <mat-label>Number of iteration per episode</mat-label>
+                        <input matInput type="number" formControlName="select_number_of_iteration_per_episode"
+                            (ngModelChange)="onSelectingNumIterPerEp($event)" placeholder="ex: 50">
+                    </mat-form-field>
+
+                    <br>
+
+                    <mat-form-field>
+                        <mat-label>Number of episode</mat-label>
+                        <input matInput type="number" formControlName="select_number_of_episode"
+                            (ngModelChange)="onSelectingNumEp($event)" placeholder="ex: 1000">
+                    </mat-form-field>
+
+                    <br>
+
+                    <mat-form-field>
+                        <mat-label>Pause duration (in seconds) after each iteration/episode</mat-label>
+                        <input matInput type="number" formControlName="select_pause_duration"
+                            (ngModelChange)="onSelectingPauseDuration($event)" placeholder="ex: 10">
+                    </mat-form-field>
+
+                </form>
+
+                <form *ngIf="this.selectedMode=='full_emulation'" [formGroup]="fullEmulationFormGroup">
+
+                    <h2 mat-dialog-title>Emulation configuration</h2>
+
+                    <mat-form-field>
+                        <mat-label>Emulation engine</mat-label>
+                        <mat-select formControlName="select_emulation_engine"
+                            (ngModelChange)="onSelectingEmulationEngine($event)">
+                            <mat-option value="CybORG">
+                                CybORG emulation engine
+                            </mat-option>
+                            <mat-option value="MCAS">
+                                MCAS emulation engine
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <br>
+
+                    <button mat-stroked-button (click)="openDialogWithRef(deployment_plan_editor)">
+                        Deployment plan
+                        <mat-icon>open_in_new</mat-icon>
+                    </button>
+                    <ng-template #deployment_plan_editor>
+                        <h1 mat-dialog-title>Editing deployment plan</h1>
+                        <app-editor [(text)]="yamlInputData" mode="yaml"></app-editor>
+                        <br>
+                        <button mat-button (click)="saveDeploymentPlan()">Save</button>
+                    </ng-template>
+
+                </form>
+
+                <br>
+                <mat-divider></mat-divider>
+                <br>
+
+                <!-- how and where to save the resulting environment (especially agents' behaviours)
+                - store in library (ex: agents' behaviours learnt in simulation could be stored in library to be used
+                in a emulation scenario) -->
+                <button mat-stroked-button (click)="openDialogWithRef(saving_plan_editor)">
+                    Plan for saving resulting scenario, agents...
+                    <mat-icon>open_in_new</mat-icon>
+                </button>
+                <ng-template #saving_plan_editor>
+                    <h1 mat-dialog-title>Editing saving plan</h1>
+                    <app-editor [(text)]="jsonInputData" mode="json"></app-editor>
+                    <br>
+                    <button mat-button (click)="saveSavingPlan()">Save</button>
+                </ng-template>
+
+                <br><br>
+                <div>
+                    <button mat-button matStepperNext (click)="onLaunchSettingUpSimulation()">Next</button>
+                </div>
+            </form>
+        </mat-step>
+
+        <mat-step [stepControl]="secondFormGroup" label="Setting up scenario">
+            <!-- 2 - setting up the simulation / emulation with real-time logs and progress bar
+            - show errors, warning... and successful scenario configuration setup... -->
+            <p>Logs, errors after sending commands to backend for setting up scenario</p>
+            
+            <app-editor [(text)]="logsData" [terminalDisplay]="true" mode="text"></app-editor>
+
+            <mat-progress-bar mode="determinate" value="{{this.simSettingUpProgressValue}}"></mat-progress-bar>
+
+            <br><br>
+            <div>
+                <button mat-button matStepperPrevious (click)="this.logsData = '';this.simSettingUpDone = false;this.simSettingUpProgressValue = 0">Back</button>
+                <button *ngIf="this.simSettingUpDone" mat-button matStepperNext (click)="this.dialog.closeAll()">Done</button>
+            </div>
+        </mat-step>
+
+    </mat-stepper>
+
+</div>

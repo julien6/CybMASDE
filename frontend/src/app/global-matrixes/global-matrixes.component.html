@@ -1,0 +1,49 @@
+<!-- <markdown mermaid [mermaidOptions]="options" [data]="data">
+</markdown> -->
+
+<!-- Use regular/material table to represent matrixes: constraints matrix and metrics matrix -->
+<!-- Metric name | Metric short description | Lower bound constraint & Criticity | Upper bound constraint & Criticity
+    | Metric value | Constraint respect value
+-->
+
+<table mat-table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)"
+       class="mat-elevation-z8">
+
+  <ng-container matColumnDef="metric">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by metric">
+      Metric
+    </th>
+    <td mat-cell *matCellDef="let element"> {{element.metric}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="description">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by description">
+      Description
+    </th>
+    <td mat-cell *matCellDef="let element"> {{element.description}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="value">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by value">
+      Value
+    </th>
+    <td mat-cell *matCellDef="let element"> {{element.value}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="constraint_respect">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by constraint respect">
+      Constraint Respect
+    </th>
+    <td mat-cell *matCellDef="let element"> {{element.constraint_respect}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="constraint">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by constraint">
+      Constraint
+    </th>
+    <td mat-cell *matCellDef="let element"> {{element.constraint}} </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
