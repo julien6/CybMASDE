@@ -1,11 +1,11 @@
 
-### **WARNING : this projet is a work in progress, onging changes are likely to break some of the functionalities**
+### **WARNING : This projet is a work in progress, onging changes are likely to break some of the functionalities**
 
   
 
-# Cyberdefense Multi-Agent System Development Environment
+# Cyber Multi-Agent System Development Environment
 
-**Cyberdefense Multi-Agent System Development Environment (CybMASDE)** is intended to implement the Dec-POMDP model of an environment made up from node network on which attack and defender agents are interacting each other and modifying the same environment.
+**Cyber Multi-Agent System Development Environment (CybMASDE)** is intended to implement a Dec-POMDP model of any environment where agents have to collaborate to reach a global goal under extra constraints. CybMASDE is mostly intended to model a Cyberdefense scenario dealing with a network on which attack and defender agents are interacting each other.
 
   
 
