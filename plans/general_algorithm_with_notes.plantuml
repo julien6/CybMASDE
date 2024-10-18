@@ -1,0 +1,17 @@
+@startuml general_algorithm
+start
+:real target environment];
+note right
+where:
+- agents can be deployed, upded, removed,
+- actions and observations are defined,
+- traces can be collected
+end note
+if (observation function exists) then (no)
+:collect environment's traces;
+:imitation learning;
+else (yes)
+endif
+:observation function]
+stop
+@enduml
