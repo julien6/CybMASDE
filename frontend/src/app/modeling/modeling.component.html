@@ -1,0 +1,171 @@
+<mat-card appearance="outlined">
+  <mat-stepper [linear]="false" #stepper>
+
+
+    <mat-step label="Environment input">
+      <mat-form-field>
+        <mat-label>Environment input</mat-label>
+        <mat-select [(ngModel)]="selectedEnvironmentInput">
+          <mat-option *ngFor="let option of environmentOptions" [value]="option.value">
+            {{ option.viewValue }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div *ngIf="selectedEnvironmentInput=='environmentApi'">
+        <mat-form-field>
+          <mat-label>Environment control API</mat-label>
+          <input matInput [(ngModel)]="environmentApi" />
+        </mat-form-field>
+        <mat-icon matTooltip="A compliant environment API to control explorer agents." aria-hidden="false"
+          aria-label="Help icon" fontIcon="help"></mat-icon>
+      </div>
+
+      <div *ngIf="selectedEnvironmentInput=='environmentTraces'">
+        <mat-card appearance="outlined">
+          <mat-card-content>Environment traces</mat-card-content>
+        </mat-card>
+        <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+        <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
+        <p *ngIf="selectedFileName">Selected file : {{ selectedFileName }}</p>
+        <mat-icon matTooltip="A set of compliant environment traces" aria-hidden="false" aria-label="Help icon"
+          fontIcon="help"></mat-icon>
+        <mat-card appearance="outlined">
+          <mat-card-content>Environment traces overview</mat-card-content>
+        </mat-card>
+        <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="environmentTraces"></ngx-monaco-editor>
+      </div>
+
+      <div *ngIf="selectedEnvironmentInput=='environmentModel'">
+        <mat-card appearance="outlined">
+          <mat-card-content>Environment model</mat-card-content>
+        </mat-card>
+        <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+        <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
+        <p *ngIf="selectedFileName">Selected file : {{ selectedFileName }}</p>
+        <mat-icon matTooltip="A compliant environment model for observation transition." aria-hidden="false"
+          aria-label="Help icon" fontIcon="help"></mat-icon>
+        <mat-card appearance="outlined">
+          <mat-card-content>Environment model overview</mat-card-content>
+        </mat-card>
+        <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="environmentModel"></ngx-monaco-editor>
+      </div>
+
+    </mat-step>
+
+
+
+    <mat-step label="Goal input">
+      <mat-form-field>
+        <mat-label>Goal input</mat-label>
+        <mat-select [(ngModel)]="selectedGoalInput">
+          <mat-option *ngFor="let option of goalOptions" [value]="option.value">
+            {{ option.viewValue }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div *ngIf="selectedGoalInput=='goalText'">
+        <mat-card appearance="outlined">
+          <mat-card-content>Goal text</mat-card-content>
+        </mat-card>
+        <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+        <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
+        <p *ngIf="selectedFileName">Selected file : {{ selectedFileName }}</p>
+        <mat-icon matTooltip="A textual description of the goal (alpha)." aria-hidden="false" aria-label="Help icon"
+          fontIcon="help"></mat-icon>
+        <mat-card appearance="outlined">
+          <mat-card-content>Goal text overview</mat-card-content>
+        </mat-card>
+        <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="goalText"></ngx-monaco-editor>
+
+      </div>
+
+      <div *ngIf="selectedGoalInput=='goalStates'">
+        <mat-card appearance="outlined">
+          <mat-card-content>Goal text</mat-card-content>
+        </mat-card>
+        <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+        <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
+        <p *ngIf="selectedFileName">Selected file : {{ selectedFileName }}</p>
+        <mat-icon matTooltip="A compliant set of the goal states." aria-hidden="false" aria-label="Help icon"
+          fontIcon="help"></mat-icon>
+        <mat-card appearance="outlined">
+          <mat-card-content>Goal states overview</mat-card-content>
+        </mat-card>
+        <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="goalStates"></ngx-monaco-editor>        
+      </div>
+
+      <div *ngIf="selectedGoalInput=='goalModel'">
+        <mat-card appearance="outlined">
+          <mat-card-content>Goal model</mat-card-content>
+        </mat-card>
+        <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+        <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
+        <p *ngIf="selectedFileName">Selected file : {{ selectedFileName }}</p>
+        <mat-icon matTooltip="A compliant goal model." aria-hidden="false" aria-label="Help icon"
+          fontIcon="help"></mat-icon>
+        <mat-card appearance="outlined">
+          <mat-card-content>Goal model overview</mat-card-content>
+        </mat-card>
+        <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="goalModel"></ngx-monaco-editor>       
+      </div>
+
+    </mat-step>
+
+    <mat-step label="Constraint input">
+      <mat-form-field>
+        <mat-label>Constraint input</mat-label>
+        <mat-select [(ngModel)]="selectedConstraintInput">
+          <mat-option *ngFor="let option of constraintOptions" [value]="option.value">
+            {{ option.viewValue }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div *ngIf="selectedConstraintInput=='constraintText'">
+        <mat-card appearance="outlined">
+          <mat-card-content>Constraint text</mat-card-content>
+        </mat-card>
+        <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+        <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
+        <p *ngIf="selectedFileName">Selected file : {{ selectedFileName }}</p>
+        <mat-icon matTooltip="A textual description of the constraint (alpha)." aria-hidden="false"
+          aria-label="Help icon" fontIcon="help"></mat-icon>
+        <mat-card appearance="outlined">
+          <mat-card-content>Constraint text overview</mat-card-content>
+        </mat-card>
+        <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="constraintText"></ngx-monaco-editor>     
+      </div>
+
+      <div *ngIf="selectedConstraintInput=='constraintModel'">
+        <mat-card appearance="outlined">
+          <mat-card-content>Constraint model</mat-card-content>
+        </mat-card>
+        <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+        <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
+        <mat-icon matTooltip="A compliant constraint model." aria-hidden="false" aria-label="Help icon"
+          fontIcon="help"></mat-icon>
+        <mat-card appearance="outlined">
+          <mat-card-content>Constraint model overview</mat-card-content>
+        </mat-card>
+        <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="constraintModel"></ngx-monaco-editor>    
+
+      </div>
+
+    </mat-step>
+
+    <mat-step label="Run">
+      Running modeling...
+    </mat-step>
+
+    <mat-step label="Output">
+      <mat-card appearance="outlined">
+        <mat-card-content>Constraint text overview</mat-card-content>
+      </mat-card>
+      <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="envSimModel"></ngx-monaco-editor>           
+    </mat-step>
+
+  </mat-stepper>
+
+</mat-card>

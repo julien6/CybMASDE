@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+node_modules/
+
+_frontend/
+
 # C extensions
 *.so
 
