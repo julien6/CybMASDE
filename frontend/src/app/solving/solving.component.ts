@@ -1,6 +1,5 @@
 import { FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChangeDetectionStrategy, Component, OnInit, inject, computed, signal } from '@angular/core';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 
 export interface Algorithm {
   name: string;
