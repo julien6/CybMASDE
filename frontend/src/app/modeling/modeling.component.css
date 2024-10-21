@@ -9,3 +9,7 @@
     height: 100%;
     resize: none;
 }
+
+.clickable-chip {
+    text-decoration: underline;
+}

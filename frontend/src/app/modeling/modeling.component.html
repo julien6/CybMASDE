@@ -2,12 +2,49 @@
   <mat-stepper [linear]="false" #stepper>
 
 
-    <mat-step label="Environment input">
+    <mat-step label="Observation Transition Function Input">
+
+      <mat-accordion class="example-headers-align" multi>
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title> Assisting the building of an observation transition function </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <ul>
+            <li>If users already have a custom <mat-chip>Observation Transition Function Model</mat-chip>, it can be
+              taken as an input.</li>
+            <li>Else, it generates a environment observation transition function based on traces (compliant with
+              <mat-chip color="accent" matTooltip="A set of compliant environment traces"
+                (click)="openLink('https://www.google.com')" class="clickable-chip">CybMASDE traces format</mat-chip>)
+              of agents interacting with the real/emulated environments.
+              <ul>
+                <li>If users already have a representative set of <mat-chip>Environment Traces</mat-chip>, then it can
+                  be taken as an input.</li>
+                <li>Else, agents can be deployed on the environment to generates traces for a sufficient period.
+                  <ul>
+                    <li>If users can adapt their emulated/real environment to the <mat-chip color="accent"
+                        matTooltip="A proposed API for monitoring the deployment, updating, removal of agents and interacting externally with them"
+                        (click)="openLink('https://www.google.com')" class="clickable-chip">CybMASDE Monitoring
+                        API</mat-chip>, then the root <mat-chip>Environment API URL</mat-chip> can be taken as an input.
+                    </li>
+                    <li>Else, compliant <mat-chip color="accent"
+                        matTooltip="Agents designed to explore their environment and collect traces when deployed in an environment"
+                        (click)="openLink('https://www.google.com')" class="clickable-chip">Exploratory
+                        Agents</mat-chip> can be designed and deployed manually to collect traces to be retrieved afterward.</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+
+        </mat-expansion-panel>
+      </mat-accordion>
+
       <mat-form-field>
         <mat-label>Environment input</mat-label>
         <mat-select [(ngModel)]="selectedEnvironmentInput">
-          <mat-option *ngFor="let option of environmentOptions" [value]="option.value">
-            {{ option.viewValue }}
+          <mat-option *ngFor="let option of modelingInput['environmentInput'] | keyvalue" [value]="option.key">
+            {{ $any(option.value)['fullName'] }}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -15,7 +52,7 @@
       <div *ngIf="selectedEnvironmentInput=='environmentApi'">
         <mat-form-field>
           <mat-label>Environment control API</mat-label>
-          <input matInput [(ngModel)]="environmentApi" />
+          <input matInput [(ngModel)]="modelingInput['environmentInput']['environmentApi']['content']" />
         </mat-form-field>
         <mat-icon matTooltip="A compliant environment API to control explorer agents." aria-hidden="false"
           aria-label="Help icon" fontIcon="help"></mat-icon>
@@ -25,145 +62,154 @@
         <mat-card appearance="outlined">
           <mat-card-content>Environment traces</mat-card-content>
         </mat-card>
-        <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+        <input type="file" #fileInput (change)="onFileSelected($event, 'environmentInput', 'environmentTraces')"
+          style="display: none;">
         <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
-        <p *ngIf="selectedFileName">Selected file : {{ selectedFileName }}</p>
         <mat-icon matTooltip="A set of compliant environment traces" aria-hidden="false" aria-label="Help icon"
           fontIcon="help"></mat-icon>
         <mat-card appearance="outlined">
           <mat-card-content>Environment traces overview</mat-card-content>
         </mat-card>
-        <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="environmentTraces"></ngx-monaco-editor>
+        <ngx-monaco-editor [options]="editorOptions"
+          [(ngModel)]="modelingInput['environmentInput']['environmentTraces']['content']"></ngx-monaco-editor>
       </div>
 
       <div *ngIf="selectedEnvironmentInput=='environmentModel'">
         <mat-card appearance="outlined">
           <mat-card-content>Environment model</mat-card-content>
         </mat-card>
-        <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+        <input type="file" #fileInput (change)="onFileSelected($event, 'environmentInput', 'environmentModel')"
+          style="display: none;">
         <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
-        <p *ngIf="selectedFileName">Selected file : {{ selectedFileName }}</p>
-        <mat-icon matTooltip="A compliant environment model for observation transition." aria-hidden="false"
-          aria-label="Help icon" fontIcon="help"></mat-icon>
+        <mat-icon matTooltip="A compliant environment model" aria-hidden="false" aria-label="Help icon"
+          fontIcon="help"></mat-icon>
         <mat-card appearance="outlined">
           <mat-card-content>Environment model overview</mat-card-content>
         </mat-card>
-        <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="environmentModel"></ngx-monaco-editor>
+        <ngx-monaco-editor [options]="editorOptions"
+          [(ngModel)]="modelingInput['environmentInput']['environmentModel']['content']"></ngx-monaco-editor>
       </div>
 
     </mat-step>
 
 
 
-    <mat-step label="Goal input">
+    <mat-step label="Reward Function Input">
+      Assisting the building of an observation reward function from several
       <mat-form-field>
         <mat-label>Goal input</mat-label>
         <mat-select [(ngModel)]="selectedGoalInput">
-          <mat-option *ngFor="let option of goalOptions" [value]="option.value">
-            {{ option.viewValue }}
+          <mat-option *ngFor="let option of modelingInput['goalInput'] | keyvalue" [value]="option.key">
+            {{ $any(option.value)['fullName'] }}
           </mat-option>
         </mat-select>
       </mat-form-field>
 
       <div *ngIf="selectedGoalInput=='goalText'">
         <mat-card appearance="outlined">
-          <mat-card-content>Goal text</mat-card-content>
+          <mat-card-content>{{modelingInput['goalInput']['goalText']['fullName']}}</mat-card-content>
         </mat-card>
-        <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+        <input type="file" #fileInput (change)="onFileSelected($event, 'goalInput', 'goalText')" style="display: none;">
         <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
-        <p *ngIf="selectedFileName">Selected file : {{ selectedFileName }}</p>
         <mat-icon matTooltip="A textual description of the goal (alpha)." aria-hidden="false" aria-label="Help icon"
           fontIcon="help"></mat-icon>
         <mat-card appearance="outlined">
-          <mat-card-content>Goal text overview</mat-card-content>
+          <mat-card-content>{{modelingInput['goalInput']['goalText']['fullName']}} overview</mat-card-content>
         </mat-card>
-        <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="goalText"></ngx-monaco-editor>
+        <ngx-monaco-editor [options]="editorOptions"
+          [(ngModel)]="modelingInput['goalInput']['goalText']['content']"></ngx-monaco-editor>
 
       </div>
 
       <div *ngIf="selectedGoalInput=='goalStates'">
         <mat-card appearance="outlined">
-          <mat-card-content>Goal text</mat-card-content>
+          <mat-card-content>{{modelingInput['goalInput']['goalStates']['fullName']}}</mat-card-content>
         </mat-card>
-        <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+        <input type="file" #fileInput (change)="onFileSelected($event, 'goalInput', 'goalStates')"
+          style="display: none;">
         <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
-        <p *ngIf="selectedFileName">Selected file : {{ selectedFileName }}</p>
         <mat-icon matTooltip="A compliant set of the goal states." aria-hidden="false" aria-label="Help icon"
           fontIcon="help"></mat-icon>
         <mat-card appearance="outlined">
-          <mat-card-content>Goal states overview</mat-card-content>
+          <mat-card-content>{{modelingInput['goalInput']['goalStates']['fullName']}} overview</mat-card-content>
         </mat-card>
-        <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="goalStates"></ngx-monaco-editor>        
+        <ngx-monaco-editor [options]="editorOptions"
+          [(ngModel)]="modelingInput['goalInput']['goalStates']['content']"></ngx-monaco-editor>
       </div>
 
       <div *ngIf="selectedGoalInput=='goalModel'">
         <mat-card appearance="outlined">
-          <mat-card-content>Goal model</mat-card-content>
+          <mat-card-content>{{modelingInput['goalInput']['goalModel']['fullName']}}</mat-card-content>
         </mat-card>
-        <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+        <input type="file" #fileInput (change)="onFileSelected($event, 'goalInput', 'goalModel')"
+          style="display: none;">
         <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
-        <p *ngIf="selectedFileName">Selected file : {{ selectedFileName }}</p>
         <mat-icon matTooltip="A compliant goal model." aria-hidden="false" aria-label="Help icon"
           fontIcon="help"></mat-icon>
         <mat-card appearance="outlined">
-          <mat-card-content>Goal model overview</mat-card-content>
+          <mat-card-content>{{modelingInput['goalInput']['goalModel']['fullName']}} overview</mat-card-content>
         </mat-card>
-        <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="goalModel"></ngx-monaco-editor>       
+        <ngx-monaco-editor [options]="editorOptions"
+          [(ngModel)]="modelingInput['goalInput']['goalModel']['content']"></ngx-monaco-editor>
       </div>
 
     </mat-step>
 
-    <mat-step label="Constraint input">
+    <mat-step label="Constraints Model Input">
       <mat-form-field>
         <mat-label>Constraint input</mat-label>
         <mat-select [(ngModel)]="selectedConstraintInput">
-          <mat-option *ngFor="let option of constraintOptions" [value]="option.value">
-            {{ option.viewValue }}
+          <mat-option *ngFor="let option of modelingInput['constraintInput'] | keyvalue" [value]="option.key">
+            {{ $any(option.value)['fullName'] }}
           </mat-option>
         </mat-select>
       </mat-form-field>
 
       <div *ngIf="selectedConstraintInput=='constraintText'">
         <mat-card appearance="outlined">
-          <mat-card-content>Constraint text</mat-card-content>
+          <mat-card-content>{{modelingInput['constraintInput']['constraintText']['fullName']}}</mat-card-content>
         </mat-card>
-        <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+        <input type="file" #fileInput (change)="onFileSelected($event, 'constraintInput', 'constraintText')"
+          style="display: none;">
         <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
-        <p *ngIf="selectedFileName">Selected file : {{ selectedFileName }}</p>
         <mat-icon matTooltip="A textual description of the constraint (alpha)." aria-hidden="false"
           aria-label="Help icon" fontIcon="help"></mat-icon>
         <mat-card appearance="outlined">
-          <mat-card-content>Constraint text overview</mat-card-content>
+          <mat-card-content>{{modelingInput['constraintInput']['constraintText']['fullName']}}
+            overview</mat-card-content>
         </mat-card>
-        <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="constraintText"></ngx-monaco-editor>     
+        <ngx-monaco-editor [options]="editorOptions"
+          [(ngModel)]="modelingInput['constraintInput']['constraintText']['content']"></ngx-monaco-editor>
       </div>
 
       <div *ngIf="selectedConstraintInput=='constraintModel'">
         <mat-card appearance="outlined">
-          <mat-card-content>Constraint model</mat-card-content>
+          <mat-card-content>{{modelingInput['constraintInput']['constraintModel']['fullName']}}</mat-card-content>
         </mat-card>
-        <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+        <input type="file" #fileInput (change)="onFileSelected($event, 'constraintInput', 'constraintModel')"
+          style="display: none;">
         <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
         <mat-icon matTooltip="A compliant constraint model." aria-hidden="false" aria-label="Help icon"
           fontIcon="help"></mat-icon>
         <mat-card appearance="outlined">
-          <mat-card-content>Constraint model overview</mat-card-content>
+          <mat-card-content>{{modelingInput['constraintInput']['constraintModel']['fullName']}}
+            overview</mat-card-content>
         </mat-card>
-        <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="constraintModel"></ngx-monaco-editor>    
-
+        <ngx-monaco-editor [options]="editorOptions"
+          [(ngModel)]="modelingInput['constraintInput']['constraintModel']['content']"></ngx-monaco-editor>
       </div>
 
     </mat-step>
 
-    <mat-step label="Run">
-      Running modeling...
+    <mat-step label="Assembling">
+      Assembling the observation transition function, the reward function, and the constraints model into a MM-Problem.
     </mat-step>
 
-    <mat-step label="Output">
+    <mat-step label="Problem Model Output">
       <mat-card appearance="outlined">
         <mat-card-content>Constraint text overview</mat-card-content>
       </mat-card>
-      <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="envSimModel"></ngx-monaco-editor>           
+      <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="outputEnvironmentModel"></ngx-monaco-editor>
     </mat-step>
 
   </mat-stepper>

@@ -1,5 +1,6 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-modeling',
@@ -10,62 +11,47 @@ export class ModelingComponent implements OnInit {
 
   private _formBuilder = inject(FormBuilder);
 
-  editorOptions = {theme: 'vs-dark', language: 'python'};
+  editorOptions = { theme: 'vs-dark', language: 'python' };
 
-  selectedFileName: string | null = null;
-  envSimModel = "";
+  selectedEnvironmentInput = "environmentTraces"
+  selectedGoalInput = "goalModel"
+  selectedConstraintInput = "constraintModel"
 
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      this.selectedFileName = file.name;
-      // Vous pouvez également ajouter votre logique de téléchargement ici.
+  modelingInput: any = {
+    "environmentInput": {
+      'environmentApi': { 'fullName': 'Environment API URL', 'content': '' },
+      'environmentTraces': { 'fullName': 'Environment Traces', 'content': '' },
+      'environmentModel': { 'fullName': 'Observation Transition Function Model', 'content': '' }
+    },
+    "goalInput": {
+      'goalText': { 'fullName': 'Goal Text (alpha)', 'content': '' },
+      'goalModel': { 'fullName': 'Reward Function Model', 'content': '' },
+      'goalStates': { 'fullName': 'Goal States', 'content': '' }      
+    },
+    "constraintInput": {
+      'constraintText': { 'fullName': 'Constraint Text (alpha)', 'content': '' },
+      'constraintModel': { 'fullName': 'Constraint Model', 'content': '' },
     }
   }
 
-  selectedEnvironmentInput: string = "";
-  selectedGoalInput = "";
-  selectedConstraintInput = "";
-  
-  environmentOptions = [
-    { value: 'environmentApi', viewValue: 'Environment API' },
-    { value: 'environmentTraces', viewValue: 'Environment Traces' },
-    { value: 'environmentModel', viewValue: 'Environment Model' }
-  ];
+  outputEnvironmentModel = ""
 
-  goalOptions = [
-    { value: 'goalText', viewValue: 'Goal Text' },
-    { value: 'goalModel', viewValue: 'Goal Model' },
-    { value: 'goalStates', viewValue: 'Goal States' }
-  ];
+  onFileSelected(event: Event, inputCategory: string, inputType: string): void {
+    const input = event.target as HTMLInputElement;
 
-  constraintOptions = [
-    { value: 'constraintText', viewValue: 'Constraint Text' },
-    { value: 'constraintModel', viewValue: 'Constraint Model' },
-  ];
-
-  environmentApi = null;
-  environmentTraces = '{\n    "trace": {}\n}';
-  environmentModel = null;
-
-  goalText = null;
-  goalStates = null;
-  goalModel = null;
-
-  constraintText = null;
-  constraintModel = null;
-
-
-  // Vous pouvez également créer une méthode pour agir sur la sélection
-  onSelectionChange() {
-    console.log(this.selectedEnvironmentInput);  // Affiche la valeur sélectionnée dans la console
+    if (input.files && input.files.length > 0) {
+      const file: File = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+          this.modelingInput[inputCategory][inputType]['content'] = reader.result as string;
+      };
+      reader.readAsText(file);
+    }
   }
 
-  modelingFormGroup = this._formBuilder.group({
-    modelingCtrl: ['', Validators.required],
-  });
-
+  openLink(url: string) {
+    window.open(url, '_blank');
+  }
 
   constructor() { }
 

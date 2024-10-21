@@ -40,7 +40,7 @@ import { MatTreeModule } from '@angular/material/tree';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
-
+import {MatChipsModule} from '@angular/material/chips';
 
 @NgModule({
   declarations: [
@@ -59,6 +59,7 @@ import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
     MatTooltipModule,
     MatTreeModule,
     MatSortModule,
+    MatChipsModule,
     MatSelectModule,
     NgFor,
     MatTableModule,
