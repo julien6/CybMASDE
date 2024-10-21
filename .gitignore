@@ -6,6 +6,7 @@ __pycache__/
 node_modules/
 
 _frontend/
+_backend/
 
 # C extensions
 *.so
