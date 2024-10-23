@@ -15,3 +15,14 @@ button[mat-button] {
     color: white;
     /* Change la couleur du texte des boutons */
 }
+
+.menubar {
+
+    /* Survol des boutons */
+    button:hover {
+        background-color: #757de8;
+        /* Couleur de fond lors du survol */
+        color: #fff;
+        /* Couleur du texte lors du survol */
+    }
+}

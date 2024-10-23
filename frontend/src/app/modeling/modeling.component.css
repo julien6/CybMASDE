@@ -23,6 +23,15 @@ mat-form-field {
     margin-right: 10px;
 }
 
+.apiForm{
+    mat-icon {
+        position: relative;
+        top: 18px;
+        /*Change this to adjust the icon*/
+        padding-left: 10px;
+        margin-right: 10px;
+    }
+}
 
 mat-accordion mat-expansion-panel {
     mat-expansion-panel-header {
