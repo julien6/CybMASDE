@@ -1,7 +1,0 @@
-{
-    "title": "DQN Agent",
-    "short_description": "A simple agent that samples action randomly from a decision tree",
-    "md_file": "description.md",
-    "thumbnail_file": "thumbnail.png",
-    "data_file": ""
-}

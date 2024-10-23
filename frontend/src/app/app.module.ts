@@ -41,6 +41,8 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import {MatChipsModule} from '@angular/material/chips';
+import { MenuBarComponent } from './menu-bar/menu-bar.component';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
@@ -48,8 +50,10 @@ import {MatChipsModule} from '@angular/material/chips';
     PhasesComponent,
     ModelingComponent,
     SolvingComponent,
+    HomeComponent,
     AnalyzingComponent,
-    TransferingComponent
+    TransferingComponent,
+    MenuBarComponent
   ],
   imports: [
     BrowserModule,

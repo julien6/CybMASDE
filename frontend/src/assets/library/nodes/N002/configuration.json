@@ -1,7 +1,0 @@
-{
-    "title": "Kali Linux",
-    "short_description": "Kali Linux is a Debian-derived Linux distribution designed for digital forensics and penetration testing",
-    "md_file": "description.md",
-    "thumbnail_file": "thumbnail.png",
-    "data_file": ""
-}

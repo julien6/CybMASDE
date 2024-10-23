@@ -1,7 +1,0 @@
-{
-    "title": "An Adhoc drone swarm scenario",
-    "short_description": "A scenario with random red agent activation in a drone swarm",
-    "md_file": "description.md",
-    "thumbnail_file": "thumbnail.png",
-    "data_file": ""
-}

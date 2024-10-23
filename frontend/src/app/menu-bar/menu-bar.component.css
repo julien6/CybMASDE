@@ -1,0 +1,17 @@
+mat-toolbar {
+    /* Change la couleur de la barre d'outils */
+    background: #3f51b5;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    min-height: 48px;
+    display: flex;
+    justify-content: flex-start;
+    color: white
+}
+
+button[mat-button] {
+    color: white;
+    /* Change la couleur du texte des boutons */
+}

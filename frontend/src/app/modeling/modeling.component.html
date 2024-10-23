@@ -30,7 +30,8 @@
                     <li>Else, compliant <mat-chip color="accent"
                         matTooltip="Agents designed to explore their environment and collect traces when deployed in an environment"
                         (click)="openLink('https://www.google.com')" class="clickable-chip">Exploratory
-                        Agents</mat-chip> can be designed and deployed manually to collect traces to be retrieved afterward.</li>
+                        Agents</mat-chip> can be designed and deployed manually to collect traces to be retrieved
+                      afterward.</li>
                   </ul>
                 </li>
               </ul>
@@ -59,32 +60,48 @@
       </div>
 
       <div *ngIf="selectedEnvironmentInput=='environmentTraces'">
-        <mat-card appearance="outlined">
-          <mat-card-content>Environment traces</mat-card-content>
-        </mat-card>
-        <input type="file" #fileInput (change)="onFileSelected($event, 'environmentInput', 'environmentTraces')"
-          style="display: none;">
-        <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
-        <mat-icon matTooltip="A set of compliant environment traces" aria-hidden="false" aria-label="Help icon"
-          fontIcon="help"></mat-icon>
-        <mat-card appearance="outlined">
-          <mat-card-content>Environment traces overview</mat-card-content>
-        </mat-card>
-        <ngx-monaco-editor [options]="editorOptions"
-          [(ngModel)]="modelingInput['environmentInput']['environmentTraces']['content']"></ngx-monaco-editor>
+
+        <mat-accordion multi>
+          <mat-expansion-panel [expanded]="true">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                {{modelingInput['environmentInput']['environmentTraces']['fullName']}}
+                <mat-icon matTooltip="A set of compliant environment traces" aria-hidden="false" aria-label="Help icon"
+                  fontIcon="help"></mat-icon>
+              </mat-panel-title>
+
+              <div>
+                <input type="file" #fileInput (change)="onFileSelected($event, 'environmentInput', 'environmentTraces')"
+                  style="display: none;">
+                <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
+              </div>
+
+            </mat-expansion-panel-header>
+
+            <ngx-monaco-editor [options]="editorOptions"
+              [(ngModel)]="modelingInput['environmentInput']['environmentTraces']['content']"></ngx-monaco-editor>
+
+          </mat-expansion-panel>
+        </mat-accordion>
+
+        <button mat-raised-button class="proceed-button" color="primary" (click)="uploadFile('environmentInput', 'environmentTraces')"
+          [disabled]="!selectedFile || modelingInput['environmentInput']['environmentTraces']['content']==''">Proceeed to Observation Transition Function Reconstruction</button>
       </div>
 
       <div *ngIf="selectedEnvironmentInput=='environmentModel'">
         <mat-card appearance="outlined">
-          <mat-card-content>Environment model</mat-card-content>
+          <mat-card-content>{{modelingInput['environmentInput']['environmentModel']['fullName']}} ok
+            <input type="file" #fileInput (change)="onFileSelected($event, 'environmentInput', 'environmentModel')"
+              style="display: none;">
+            <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
+            <mat-icon matTooltip="A compliant environment model" aria-hidden="false" aria-label="Help icon"
+              fontIcon="help"></mat-icon>
+          </mat-card-content>
         </mat-card>
-        <input type="file" #fileInput (change)="onFileSelected($event, 'environmentInput', 'environmentModel')"
-          style="display: none;">
-        <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
-        <mat-icon matTooltip="A compliant environment model" aria-hidden="false" aria-label="Help icon"
-          fontIcon="help"></mat-icon>
+
         <mat-card appearance="outlined">
-          <mat-card-content>Environment model overview</mat-card-content>
+          <mat-card-content>{{modelingInput['environmentInput']['environmentModel']['fullName']}}
+            Overview</mat-card-content>
         </mat-card>
         <ngx-monaco-editor [options]="editorOptions"
           [(ngModel)]="modelingInput['environmentInput']['environmentModel']['content']"></ngx-monaco-editor>
