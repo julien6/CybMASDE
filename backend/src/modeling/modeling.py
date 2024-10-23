@@ -62,7 +62,7 @@ observations = torch.stack(observations)
 # Hyperparamètres
 input_size = 1  # Une action par entrée (car codée par un entier)
 hidden_size = 64
-output_size = observations[0].shape[0]  # 3x3 grid aplatie
+output_size = 9  # 3x3 grid aplatie
 batch_size = 2
 n_epochs = 3000
 lr = 0.001
