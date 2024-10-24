@@ -1,5 +1,5 @@
-<mat-card appearance="outlined">
-  <mat-stepper [linear]="false" #stepper>
+<!-- <mat-card class="modelingCard" appearance="outlined"> -->
+  <mat-stepper class="modelingCard" [linear]="false" #stepper>
 
 
     <mat-step label="Observation Transition Function Input">
@@ -65,7 +65,7 @@
         </div>
       </div>
 
-      <div *ngIf="selectedEnvironmentInput=='environmentTraces'">
+      <div class="inputFileAndOverview" *ngIf="selectedEnvironmentInput=='environmentTraces'">
 
         <mat-accordion multi>
           <mat-expansion-panel [expanded]="true">
@@ -396,4 +396,4 @@
 
   </mat-stepper>
 
-</mat-card>
+<!-- </mat-card> -->
