@@ -92,7 +92,7 @@
 
         <button mat-raised-button class="proceed-button" color="primary"
           (click)="uploadFile('environmentInput', 'environmentTraces')"
-          [disabled]="!selectedFile || modelingInput['environmentInput']['environmentTraces']['content']==''">Proceeed
+          [disabled]="modelingInput['environmentInput']['environmentTraces']['content']==''">Proceeed
           to Observation Transition Function Reconstruction</button>
       </div>
 
@@ -123,7 +123,7 @@
 
         <button mat-raised-button class="proceed-button" color="primary"
           (click)="uploadFile('environmentInput', 'environmentModel')"
-          [disabled]="!selectedFile || modelingInput['environmentInput']['environmentModel']['content']==''">Proceeed to
+          [disabled]="modelingInput['environmentInput']['environmentModel']['content']==''">Proceeed to
           Observation Transition Function Reconstruction</button>
       </div>
 
@@ -205,7 +205,7 @@
         </mat-accordion>
 
         <button mat-raised-button class="proceed-button" color="primary" (click)="uploadFile('goalInput', 'goalText')"
-          [disabled]="!selectedFile || modelingInput['goalInput']['goalText']['content']==''">Proceeed to Goal
+          [disabled]="modelingInput['goalInput']['goalText']['content']==''">Proceeed to Goal
           Reconstruction</button>
       </div>
 
@@ -234,7 +234,7 @@
         </mat-accordion>
 
         <button mat-raised-button class="proceed-button" color="primary" (click)="uploadFile('goalInput', 'goalStates')"
-          [disabled]="!selectedFile || modelingInput['goalInput']['goalStates']['content']==''">Proceeed to Goal
+          [disabled]="modelingInput['goalInput']['goalStates']['content']==''">Proceeed to Goal
           Reconstruction</button>
       </div>
 
@@ -263,7 +263,7 @@
         </mat-accordion>
 
         <button mat-raised-button class="proceed-button" color="primary" (click)="uploadFile('goalInput', 'goalModel')"
-          [disabled]="!selectedFile || modelingInput['goalInput']['goalModel']['content']==''">Proceeed to Goal
+          [disabled]="modelingInput['goalInput']['goalModel']['content']==''">Proceeed to Goal
           Reconstruction</button>
       </div>
 
@@ -346,7 +346,7 @@
 
         <button mat-raised-button class="proceed-button" color="primary"
           (click)="uploadFile('constraintInput', 'constraintText')"
-          [disabled]="!selectedFile || modelingInput['constraintInput']['constraintText']['content']==''">Proceeed to
+          [disabled]="modelingInput['constraintInput']['constraintText']['content']==''">Proceeed to
           Constraint Model Reconstruction</button>
       </div>
 
@@ -377,7 +377,7 @@
 
         <button mat-raised-button class="proceed-button" color="primary"
           (click)="uploadFile('constraintInput', 'constraintModel')"
-          [disabled]="!selectedFile || modelingInput['constraintInput']['constraintModel']['content']==''">Proceeed to
+          [disabled]="modelingInput['constraintInput']['constraintModel']['content']==''">Proceeed to
           Constraint Model Reconstruction</button>
       </div>
 
