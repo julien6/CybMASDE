@@ -10,10 +10,12 @@
     color: white;
 }
 
-/* ::ng-deep .mat-horizontal-content-container {
-    padding: 0;
-    margin: 0;
-} */
+::ng-deep .mat-horizontal-content-container {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 0;
+    margin-right: 0;
+}
 
 mat-form-field {
     padding: 10px;

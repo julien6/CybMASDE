@@ -31,9 +31,7 @@ parallel_env = parallel_wrapper_fn(env)
 
 class AECEnvBuilder:
 
-    aecEnv
-
-    def __ini__t(self):
+    def __ini__t(self, metadata, agents, observation_spaces, action_spaces, state, terminations, truncations, rewards, infos, transition_function, reward_function):
         pass
 
     def set_observation_transition_function(self, otf):
