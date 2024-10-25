@@ -1,4 +1,4 @@
-from movingcompany.env.moving_company import (
+from custom_envs.movingcompany.env.moving_company import (
     env,
     parallel_env,
     raw_env,
