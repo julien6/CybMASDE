@@ -12,8 +12,10 @@ if (isDev) {
   });
 }
 
+let win;
+
 function createWindow() {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -63,6 +65,19 @@ app.whenReady().then(() => {
       event.sender.send('save-file-response', null); // Si l'utilisateur annule
     }
   });
+
+  // Écouter l'événement "open-file-dialog" pour ouvrir le sélecteur de fichiers
+  ipcMain.on('open-file-dialog', async (event) => {
+    const result = await dialog.showOpenDialog(win, {
+      properties: ['openFile'],
+      filters: [{ name: 'All Files', extensions: ['*'] }],
+    });
+    // Envoyer le chemin du fichier sélectionné au front-end
+    if (!result.canceled && result.filePaths.length > 0) {
+      event.sender.send('selected-file', result.filePaths[0]);
+    }
+  });
+
 
   pythonProcess.stdout.on('data', (data) => {
     console.log(`Python server: ${data}`);

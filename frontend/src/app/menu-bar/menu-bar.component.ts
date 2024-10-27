@@ -58,13 +58,16 @@ export class MenuBarComponent {
   }
 
   openProject() {
-    this.openFileDialog()
+    this.onWork = true;
+    // Ouvre le sélecteur de fichiers via Electron
+    window["electron"].openFileDialog();
+
+    // Récupère le chemin du fichier sélectionné
+    window["electron"].onFileSelected((path: string) => {
+      console.log('Fichier sélectionné :', path);
+    });
   }
 
-  // Fonction pour déclencher l'ouverture de l'explorateur de fichiers
-  openFileDialog() {
-    this.fileInput.nativeElement.click();
-  }
 
   closeApp() {
     if (window.electron && window["electron"].closeApp !== null) {

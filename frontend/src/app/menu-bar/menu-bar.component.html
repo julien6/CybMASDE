@@ -8,8 +8,8 @@
 
   <mat-menu #fileMenu="matMenu">
     <button mat-menu-item (click)="openProject()">Open</button>
-    <button mat-menu-item (click)="saveProjectAs()">Save As...</button>
-    <button mat-menu-item (click)="saveProject()">Save</button>
+    <button mat-menu-item (click)="saveProjectAs()" [disabled]="!this.onWork">Save As...</button>
+    <button mat-menu-item (click)="saveProject()" [disabled]="!this.onWork">Save</button>
     <button mat-menu-item (click)="createNewProject()">New Project</button>
     <button mat-menu-item (click)="closeApp()">Close</button>
   </mat-menu>

@@ -35,7 +35,7 @@ export class HomeComponent {
 
   // Action pour charger un projet
   loadProject() {
-    this.menuBar.openFileDialog();
+    // this.menuBar.openFileDialog();
   }
 
 }

@@ -10,5 +10,7 @@ contextBridge.exposeInMainWorld('electron', {
   process: {
     versions: process.versions,
   },
-  closeApp: () => ipcRenderer.send('close-app')
+  closeApp: () => ipcRenderer.send('close-app'),
+  openFileDialog: () => ipcRenderer.send('open-file-dialog'),
+  onFileSelected: (callback) => ipcRenderer.once('selected-file', (event, path) => callback(path)),
 });
