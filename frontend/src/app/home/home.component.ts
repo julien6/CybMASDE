@@ -9,9 +9,11 @@ import { MenuBarComponent } from '../menu-bar/menu-bar.component';
 })
 export class HomeComponent {
 
-  recentProjects: string[] = [];
+  recentProjects: any = [];
 
-  constructor(private http: HttpClient, @Optional() private menuBar: MenuBarComponent) {}
+  rootUrl = "http://127.0.0.1:5000/";
+
+  constructor(private http: HttpClient, @Optional() private menuBar: MenuBarComponent) { }
 
   ngOnInit(): void {
     this.loadRecentProjects();
@@ -19,9 +21,8 @@ export class HomeComponent {
 
   // Fonction pour charger les projets récents depuis un fichier .txt
   loadRecentProjects() {
-    // Suppose que le fichier recent_files_history.txt est accessible sur le serveur
-    this.http.get('../assets/recent_files_history.txt', { responseType: 'text' }).subscribe(data => {
-      this.recentProjects = data.split('\n').filter(line => line.trim() !== '');
+    this.http.get(this.rootUrl + 'get-recent-projects').subscribe(data => {
+      this.recentProjects = data;
     }, error => {
       console.error('Erreur lors du chargement des projets récents', error);
     });

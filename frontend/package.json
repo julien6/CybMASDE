@@ -1,12 +1,14 @@
 {
   "name": "frontend",
+  "main": "main.js",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "build": "ng build --base-href ./",
+    "watch": "ng build --watch --configuration development --base-href ./",
+    "test": "ng test",
+    "start": "concurrently \"ng serve\" \"npm run electron\"",
+    "electron": "ng build --base-href ./ && electron . --trace-warnings"
   },
   "private": true,
   "dependencies": {
@@ -31,8 +33,13 @@
     "@angular-devkit/build-angular": "^18.2.9",
     "@angular/cli": "^18.2.9",
     "@angular/compiler-cli": "^18.2.0",
+    "@types/electron": "^1.4.38",
     "@types/jasmine": "~5.1.0",
-    "@types/node": "^22.7.7",
+    "@types/node": "^22.8.1",
+    "@types/wicg-file-system-access": "^2023.10.5",
+    "concurrently": "^9.0.1",
+    "electron": "^33.0.2",
+    "electron-reload": "^2.0.0-alpha.1",
     "jasmine-core": "~5.2.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

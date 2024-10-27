@@ -2,41 +2,39 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-class 
+# Methods to handle the creation of an environment model.
+
+"""
+Fonction pour arrondir les prédictions en fonction d'un epsilon
+"""
+def round_with_epsilon(tensor, epsilon=0.1):
+    rounded_tensor = tensor.clone()  # Créer une copie du tenseur
+    for i in range(tensor.size(0)):  # Pour chaque valeur dans le tenseur
+        for j in range(tensor.size(1)):
+            val = tensor[i][j].item()
+            if abs(val - round(val)) <= epsilon:  # Si proche de l'entier
+                rounded_tensor[i][j] = round(val)  # Arrondir à l'entier
+            else:
+                # Garder la valeur d'origine si pas proche
+                rounded_tensor[i][j] = val
+    return rounded_tensor
+
+# Modèle RNN pour prédire les observations en fonction des actions
+
+
+class RNNActionToObservationModel(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(RNNActionToObservationModel, self).__init__()
+        self.rnn = nn.LSTM(input_size, hidden_size, batch_first=True)
+        self.fc = nn.Linear(hidden_size, output_size)
+
+    def forward(self, x):
+        _, (hn, _) = self.rnn(x)
+        hn = hn.view(-1, hn.size(2))
+        return self.fc(hn)
+
 
 def convert_traces_to_otf(traces):
-
-    # Fonction pour arrondir les prédictions en fonction d'un epsilon
-    def round_with_epsilon(tensor, epsilon=0.1):
-        rounded_tensor = tensor.clone()  # Créer une copie du tenseur
-        for i in range(tensor.size(0)):  # Pour chaque valeur dans le tenseur
-            for j in range(tensor.size(1)):
-                val = tensor[i][j].item()
-                if abs(val - round(val)) <= epsilon:  # Si proche de l'entier
-                    rounded_tensor[i][j] = round(val)  # Arrondir à l'entier
-                else:
-                    # Garder la valeur d'origine si pas proche
-                    rounded_tensor[i][j] = val
-        return rounded_tensor
-
-    # Modèle RNN pour prédire les observations en fonction des actions
-    class RNNActionToObservationModel(nn.Module):
-        def __init__(self, input_size, hidden_size, output_size):
-            super(RNNActionToObservationModel, self).__init__()
-            self.rnn = nn.LSTM(input_size, hidden_size, batch_first=True)
-            self.fc = nn.Linear(hidden_size, output_size)
-
-        def forward(self, x):
-            _, (hn, _) = self.rnn(x)
-            hn = hn.view(-1, hn.size(2))
-            return self.fc(hn)
-
-    # trajectories = [
-    #     [([[0, 1, 0], [1, 0, 2], [0, 1, 0]], 0), ([[0, 1, 0], [1, 0, 2],
-    #                                                [0, 1, 0]], 1), ([[1, 0, 1], [0, 2, 0], [0, 1, 2]], 5)],
-    #     [([[0, 1, 1], [0, 0, 2], [2, 1, 0]], 2), ([[0, 1, 1], [0, 0, 2],
-    #                                                [2, 1, 0]], 3), ([[1, 0, 0], [2, 1, 2], [0, 0, 1]], 6)],
-    # ]
 
     # Convertir les actions et observations en tenseurs
     actions = []
@@ -61,7 +59,7 @@ def convert_traces_to_otf(traces):
     # Hyperparamètres
     input_size = 1  # Une action par entrée (car codée par un entier)
     hidden_size = 64
-    output_size = 9  # 3x3 grid aplatie
+    output_size = observations[0].shape[0]  # 3x3 grid aplatie
     batch_size = 2
     n_epochs = 3000
     lr = 0.001
@@ -117,9 +115,20 @@ def collect_traces_in_environment():
     # env.reset()
     # for i, agent in enumerate(env.possible_agents):
     #     print(f"agent {agent} plays 0, and got {env.observations[agent]}")
-
     pass
 
 
-def add_otf_in_problem:
+def add_otf_in_problem():
     pass
+
+
+if __name__ == '__main__':
+
+    trajectories = [
+        [([[0, 1, 0], [1, 0, 2], [0, 1, 0]], 0), ([[0, 1, 0], [1, 0, 2],
+                                                   [0, 1, 0]], 1), ([[1, 0, 1], [0, 2, 0], [0, 1, 2]], 5)],
+        [([[0, 1, 1], [0, 0, 2], [2, 1, 0]], 2), ([[0, 1, 1], [0, 0, 2],
+                                                   [2, 1, 0]], 3), ([[1, 0, 0], [2, 1, 2], [0, 0, 1]], 6)],
+    ]
+
+    convert_traces_to_otf(trajectories)

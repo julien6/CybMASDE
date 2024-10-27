@@ -7,14 +7,15 @@
   </mat-toolbar>
 
   <mat-menu #fileMenu="matMenu">
-    <button mat-menu-item (click)="openFileDialog()">Open</button>
-    <button mat-menu-item>Save As...</button>
+    <button mat-menu-item (click)="openProject()">Open</button>
+    <button mat-menu-item (click)="saveProjectAs()">Save As...</button>
+    <button mat-menu-item (click)="saveProject()">Save</button>
     <button mat-menu-item (click)="createNewProject()">New Project</button>
-    <button mat-menu-item>Close</button>
+    <button mat-menu-item (click)="closeApp()">Close</button>
   </mat-menu>
 
   <!-- Input file caché pour sélectionner un fichier JSON -->
-  <input type="file" accept=".json" #fileInput (change)="onFileSelected($event)" style="display:none">
+  <!-- <input type="file" accept=".json" #fileInput (change)="onFileSelected($event)" style="display:none"> -->
 
   <mat-menu #editMenu="matMenu">
     <button mat-menu-item>Preferences</button>

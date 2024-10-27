@@ -12,12 +12,8 @@ from pettingzoo.utils import agent_selector, wrappers
 from gymnasium.utils import EzPickle
 from PIL import Image
 from pprint import pprint
-from pettingzoo.utils.conversions import parallel_wrapper_fn, to_parallel
-from movingcompany.env.moving_company import GridRenderer
 from pettingzoo.utils.env import ParallelEnv
-from pettingzoo.utils.wrappers import BaseWrapper
-from pettingzoo.utils.env import ObsType, ActionType, AgentID, ObsDict, ActionDict
-from pettingzoo.atari import entombed_cooperative_v3
+from pettingzoo.utils.env import AgentID, ObsDict, ActionDict
 
 
 def createParallelEnv(metadata, agents, observation_spaces, action_spaces, terminations, truncations, rewards, infos, transition_function, reward_function, initial_state=None, options=None) -> 'ParallelEnv':

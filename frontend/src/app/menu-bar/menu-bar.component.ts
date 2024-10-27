@@ -1,4 +1,7 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ElectronService } from '../electron.service';
+
 
 @Component({
   selector: 'app-menu-bar',
@@ -10,16 +13,52 @@ export class MenuBarComponent {
   @ViewChild('fileInput', { static: false })
   fileInput!: ElementRef;
 
-  constructor() { }
+  constructor(private http: HttpClient, private electronService: ElectronService) { }
 
   ngOnInit() {
   }
 
+  rootUrl = "http://127.0.0.1:5000/";
   onWork = false;
 
   createNewProject() {
-    // TODO: créer un nouveau projet en backend et envoyer dans l'interface
-    this.onWork = true
+
+    this.http.get(this.rootUrl + 'new-project').subscribe(data => {
+      this.onWork = true;
+    }, error => {
+      console.error('Erreur lors du chargement des projets récents', error);
+    });
+
+  }
+
+  savedFilePath: string | null = null;
+
+  async saveProjectAs() {
+    this.savedFilePath = await this.electronService.saveFile();
+    if (this.savedFilePath) {
+      this.http.get(this.rootUrl + 'save-project-as?path=' + this.savedFilePath).subscribe(data => {
+        // console.log(data);
+        this.onWork = true;
+      }, error => {
+        console.error('Error while loading non saved project', error);
+      });
+
+    } else {
+      console.log('Sauvegarde annulée');
+    }
+  }
+
+  saveProject() {
+
+    this.http.get(this.rootUrl + 'save-project').subscribe(data => {
+    }, error => {
+      console.error('Error while saving project', error);
+    });
+
+  }
+
+  openProject() {
+    this.openFileDialog()
   }
 
   // Fonction pour déclencher l'ouverture de l'explorateur de fichiers
@@ -27,36 +66,11 @@ export class MenuBarComponent {
     this.fileInput.nativeElement.click();
   }
 
-  // Fonction pour gérer la sélection du fichier
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-
-      // Vérifier que le fichier est bien un fichier JSON
-      if (file.type === 'application/json') {
-        const reader = new FileReader();
-
-        // Lire le fichier comme texte
-        reader.onload = () => {
-          const fileContent = reader.result as string;
-          try {
-            // Convertir le texte en objet JSON
-            const json = JSON.parse(fileContent);
-            console.log('JSON project file loaded:', json);
-            // TODO: load the JSON file into the interface
-            this.onWork = true
-            // Ici, vous pouvez traiter le contenu JSON comme vous le souhaitez
-          } catch (error) {
-            console.error('Error while loading the JSON project file:', error);
-          }
-        };
-
-        reader.readAsText(file);
-      } else {
-        console.error('Please select a JSON project file.');
-      }
+  closeApp() {
+    if (window.electron && window["electron"].closeApp !== null) {
+      window["electron"].closeApp();
+    } else {
+      console.warn("La fonction closeApp n'est pas disponible.");
     }
   }
 
