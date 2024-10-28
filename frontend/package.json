@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "CybMASDE",
   "main": "main.js",
   "version": "0.0.0",
   "description": "An application for developping MAS",
@@ -45,7 +45,8 @@
     },
     "linux": {
       "target": [
-        "AppImage"
+        "AppImage",
+        "deb"
       ],
       "icon": "./src/assets/favicon.png",
       "category": "Development"

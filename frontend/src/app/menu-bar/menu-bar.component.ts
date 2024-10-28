@@ -21,6 +21,7 @@ export class MenuBarComponent {
 
   rootUrl = "http://127.0.0.1:5000/";
   onWork = false;
+  saved = false;
 
   createNewProject() {
 
@@ -40,6 +41,7 @@ export class MenuBarComponent {
       this.http.get(this.rootUrl + 'save-project-as?path=' + this.savedFilePath).subscribe(data => {
         // console.log(data);
         this.onWork = true;
+        this.saved = true;
       }, error => {
         console.error('Error while loading non saved project', error);
       });

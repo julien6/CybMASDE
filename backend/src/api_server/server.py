@@ -16,11 +16,16 @@ class Project:
         self.filePath = None
 
     def save(self, filePath: str = None) -> None:
-        if filePath is None and self.filePath:
-            json.dump({}, open(self.filePath, "w+"))
-        else:
-            json.dump({}, open(filePath, "w+"))
+        if filePath is not None:
             self.filePath = filePath
+
+        try:
+            if os.path.exists(self.filePath):
+                shutil.rmtree(self.filePath)
+            os.makedirs(self.filePath)
+            json.dump({}, open(f'{self.filePath}/project_model.json', "w+"))
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
 
 current_project = None

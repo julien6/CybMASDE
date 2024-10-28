@@ -1,0 +1,42 @@
+{
+    "modeling": {
+        "input": {
+            "transition_function": {
+                "traces": {
+                    "in_file": ["traces_file1.json", "traces_file2.json"],
+                    "in_follow": {"observation_label_mapping": {}, "llm_text_model": {}, "data": [["#l:obs0", "#l:act0"], ["#t:the ball is over a piston", "act1"], ["#l:obs2", "act2"]]}
+                },
+                "model": {
+                    "in_file": ["transition_function1.py"]
+                },
+                "exploratory_api": {}
+            },
+            "reward_function": {
+                "sought_observations": {},
+                "sought_states": {},
+                "model": {}
+            }
+
+        },
+        "process": {},
+        "output": {}
+    },
+    "solving": {
+
+    },
+    "solution": {
+
+    },
+    "analyzing": {
+
+    },
+    "analysis": {
+
+    },
+    "transfering": {
+
+    },
+    "transfer": {
+        
+    }
+}

@@ -93,9 +93,9 @@ app.whenReady().then(() => {
   // Événements IPC
   ipcMain.on('open-save-dialog', async (event) => {
     const result = await dialog.showSaveDialog({
-      title: 'Enregistrer le fichier',
-      defaultPath: 'myFile.txt',
-      filters: [{ name: 'Text Files', extensions: ['txt'] }, { name: 'All Files', extensions: ['*'] }],
+      title: 'Save the current project',
+      defaultPath: 'default_project.cybmasde',
+      filters: [{ name: 'CybMASDE Project Files', extensions: ['cybmasde'] }],
     });
 
     event.sender.send('save-file-response', result.canceled ? null : result.filePath);
