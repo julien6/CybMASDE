@@ -1,7 +1,8 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ElectronService } from '../electron.service';
-
+import { AboutDialogComponent } from '../about-dialog/about-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-menu-bar',
@@ -13,7 +14,7 @@ export class MenuBarComponent {
   @ViewChild('fileInput', { static: false })
   fileInput!: ElementRef;
 
-  constructor(private http: HttpClient, private electronService: ElectronService) { }
+  constructor(private http: HttpClient, private electronService: ElectronService, private cdr: ChangeDetectorRef, private dialog: MatDialog) { }
 
   ngOnInit() {
   }
@@ -58,16 +59,22 @@ export class MenuBarComponent {
   }
 
   openProject() {
-    this.onWork = true;
     // Ouvre le sélecteur de fichiers via Electron
     window["electron"].openFileDialog();
 
     // Récupère le chemin du fichier sélectionné
     window["electron"].onFileSelected((path: string) => {
       console.log('Fichier sélectionné :', path);
+      this.onWork = true;
+      this.cdr.detectChanges();
     });
   }
 
+  openAbout() {
+    this.dialog.open(AboutDialogComponent, {
+      width: '500px'
+    });
+  }
 
   closeApp() {
     if (window.electron && window["electron"].closeApp !== null) {

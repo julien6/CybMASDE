@@ -43,6 +43,7 @@ import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import {MatChipsModule} from '@angular/material/chips';
 import { MenuBarComponent } from './menu-bar/menu-bar.component';
 import { HomeComponent } from './home/home.component';
+import { AboutDialogComponent } from './about-dialog/about-dialog.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { HomeComponent } from './home/home.component';
     SolvingComponent,
     HomeComponent,
     AnalyzingComponent,
+    AboutDialogComponent,
     TransferingComponent,
     MenuBarComponent
   ],

@@ -2,15 +2,55 @@
   "name": "frontend",
   "main": "main.js",
   "version": "0.0.0",
+  "description": "An application for developping MAS",
+  "homepage": "https://github.com/julien6/CybMASDE",
+  "author": {
+    "name": "Julien Soule",
+    "email": "julien.soule@lcis.grenoble-inp.fr"
+  },
   "scripts": {
     "ng": "ng",
+    "build-server": "cd ../backend/src/api_server/ ; pyinstaller --onefile server.py ; cd ../../../frontend",
+    "build-angular": "ng build --configuration production --base-href ./",
     "build": "ng build --base-href ./",
     "watch": "ng build --watch --configuration development --base-href ./",
     "test": "ng test",
     "start": "concurrently \"ng serve\" \"npm run electron\"",
-    "electron": "ng build --base-href ./ && electron . --trace-warnings"
+    "electron": "ng build --configuration development --base-href ./ && electron . --trace-warnings",
+    "dist": "npm run build-server && npm run build-angular && electron-builder"
   },
   "private": true,
+  "build": {
+    "appId": "com.example.cybmasde",
+    "productName": "CybMASDE",
+    "files": [
+      "dist/frontend/**/*",
+      "../backend/src/api_server/dist/server",
+      "main.js",
+      "package.json",
+      "preload.js",
+      "node_modules/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "../backend/src/api_server/dist/server",
+        "to": "server",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "directories": {
+      "buildResources": "./src/assets"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "icon": "./src/assets/favicon.png",
+      "category": "Development"
+    }
+  },
   "dependencies": {
     "@angular/animations": "^18.2.0",
     "@angular/cdk": "^18.2.9",
@@ -39,6 +79,7 @@
     "@types/wicg-file-system-access": "^2023.10.5",
     "concurrently": "^9.0.1",
     "electron": "^33.0.2",
+    "electron-builder": "^25.1.8",
     "electron-reload": "^2.0.0-alpha.1",
     "jasmine-core": "~5.2.0",
     "karma": "~6.4.0",

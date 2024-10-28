@@ -3,7 +3,6 @@ from flask_cors import CORS
 import os
 import time
 import json
-import os
 import shutil
 from typing import Dict, List, Any
 
@@ -26,13 +25,21 @@ class Project:
 
 current_project = None
 
+cybmasde_conf = os.path.join(os.path.expanduser("~"), ".cybmasde")
+try:
+    os.makedirs(cybmasde_conf, exist_ok=True)
+except Exception as e:
+    print(f"An error occurred: {e}")
+
 
 @app.get("/get-recent-projects")
 def get_recent_projects():
     """Get the recent projects as a list"""
+
     try:
-        recent_projects_file = "../backend/src/api_server/recent_projects.json"
+        recent_projects_file = f"{cybmasde_conf}/recent_projects.json"
         recent_projects = []
+
         if (os.path.exists(recent_projects_file)):
             recent_projects = json.load(open(recent_projects_file, "r"))
         else:
@@ -40,8 +47,9 @@ def get_recent_projects():
         return jsonify(recent_projects)
 
     except Exception as e:
+        print(str(e))
         return Response(
-            f'{{"error": "{str(e)}"}}', status=500, mimetype="application/json"
+            f'{{"error": "{str(e)}, {str(os.path.abspath("."))}, {str([f for f in os.listdir(".") if os.path.isfile(f)])}"}}', status=500, mimetype="application/json"
         )
 
 

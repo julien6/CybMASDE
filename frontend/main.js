@@ -1,83 +1,78 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, globalShortcut, shell } = require('electron');
 const { spawn } = require('child_process');
+const { format } = require('url');
 const path = require('path');
+
+
 const isDev = !app.isPackaged; // Détecte si l'application est en mode dev ou prod
 
-
-// Recharge automatique si en développement
+// Recharge automatique en mode développement
 if (isDev) {
   require('electron-reload')(path.join(__dirname, 'dist/frontend'), {
     electron: path.join(__dirname, 'node_modules', '.bin', 'electron'),
-    awaitWriteFinish: true, // Petit délai pour éviter les rechargements rapides
+    awaitWriteFinish: true,
   });
 }
 
-let win;
+let mainWindow;
 
 function createWindow() {
-  win = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'), // Spécifie le fichier preload ici
+      preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
       contextIsolation: true,
     },
   });
 
-  // Masquer la barre de menu
-  win.setMenuBarVisibility(false);
+  mainWindow.setMenuBarVisibility(false); // Masquer la barre de menu
 
-  // Charger la page d'accueil
-  // win.loadURL(`file://${path.join(__dirname, 'dist/frontend/browser/index.html')}`);
-  win.webContents.openDevTools();
-
-  // Charge l'URL de développement ou les fichiers locaux en fonction du mode
+  // Charge l'URL de développement ou le fichier local selon le mode
   if (isDev) {
-    win.loadURL('http://localhost:4200'); // Utilise `ng serve` en développement
+    mainWindow.loadURL('http://localhost:4200');
   } else {
-    win.loadFile(path.join(__dirname, '/dist/frontend/browser/index.html'));
+    // mainWindow.loadFile(path.join(__dirname, 'dist', 'frontend', 'index.html'));
+
+    console.log("Chemin d'index.html:", path.join(__dirname, 'dist', 'frontend', 'browser', 'index.html'));
+
+    mainWindow.loadURL(
+      format({
+        pathname: path.join(__dirname, 'dist', 'frontend', 'browser', 'index.html'),
+        protocol: 'file:',
+        slashes: true,
+      })
+    );
   }
+
+  // Ouvrir le lien externe dans le navigateur par défaut
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    shell.openExternal(url);
+    return { action: 'deny' }; // Annule l'ouverture dans Electron
+  });
 
 }
 
 app.whenReady().then(() => {
-  // Démarrage du backend Python en activant l'environnement virtuel
-  const pythonProcess = spawn('bash', [
-    '-c',
-    `source ${path.join(__dirname, '../backend/venv/bin/activate')} && python ${path.join(__dirname, '../backend/src/api_server/server.py')}`
-  ]);
+  console.log("Application Electron prête");
 
-  ipcMain.on('open-save-dialog', async (event) => {
-    const result = await dialog.showSaveDialog({
-      title: 'Enregistrer le fichier',
-      defaultPath: 'myFile.txt', // Optionnel: nom par défaut
-      filters: [
-        { name: 'Text Files', extensions: ['txt'] }, // Vous pouvez personnaliser selon votre besoin
-        { name: 'All Files', extensions: ['*'] },
-      ],
-    });
+  let pythonProcess = null;
 
-    // Vérifie si un chemin a été sélectionné et renvoie le chemin
-    if (!result.canceled && result.filePath) {
-      event.sender.send('save-file-response', result.filePath);
-    } else {
-      event.sender.send('save-file-response', null); // Si l'utilisateur annule
-    }
+  if (app.isPackaged) {
+    pythonProcess = spawn(path.join(process.resourcesPath, 'server'));
+  }
+  else {
+    // Démarrage du serveur Python avec l'environnement virtuel
+    pythonProcess = spawn('bash', [
+      '-c',
+      `source ${path.join(__dirname, '../backend/venv/bin/activate')} && python ${path.join(__dirname, '../backend/src/api_server/server.py')}`
+    ]);
+  }
+
+  globalShortcut.register('CommandOrControl+R', () => {
+    console.log('Rechargement désactivé');
   });
-
-  // Écouter l'événement "open-file-dialog" pour ouvrir le sélecteur de fichiers
-  ipcMain.on('open-file-dialog', async (event) => {
-    const result = await dialog.showOpenDialog(win, {
-      properties: ['openFile'],
-      filters: [{ name: 'All Files', extensions: ['*'] }],
-    });
-    // Envoyer le chemin du fichier sélectionné au front-end
-    if (!result.canceled && result.filePaths.length > 0) {
-      event.sender.send('selected-file', result.filePaths[0]);
-    }
-  });
-
 
   pythonProcess.stdout.on('data', (data) => {
     console.log(`Python server: ${data}`);
@@ -87,21 +82,41 @@ app.whenReady().then(() => {
     console.error(`Python server error: ${data}`);
   });
 
+  // Écoute de la fermeture de l'application pour arrêter le serveur Python proprement
   app.on('before-quit', () => {
-    pythonProcess.kill(); // Fermer le serveur Python proprement
+    console.log("Arrêt du serveur Python...");
+    pythonProcess.kill();
   });
 
   createWindow();
 
+  // Événements IPC
+  ipcMain.on('open-save-dialog', async (event) => {
+    const result = await dialog.showSaveDialog({
+      title: 'Enregistrer le fichier',
+      defaultPath: 'myFile.txt',
+      filters: [{ name: 'Text Files', extensions: ['txt'] }, { name: 'All Files', extensions: ['*'] }],
+    });
+
+    event.sender.send('save-file-response', result.canceled ? null : result.filePath);
+  });
+
+  ipcMain.on('open-file-dialog', async (event) => {
+    const result = await dialog.showOpenDialog(mainWindow, {
+      properties: ['openFile'],
+      filters: [{ name: 'All Files', extensions: ['*'] }],
+    });
+
+    event.sender.send('selected-file', result.canceled ? null : result.filePaths[0]);
+  });
+
+  ipcMain.on('close-app', () => {
+    app.quit();
+  });
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
-
-  // Écouter l'événement "close-app" depuis Angular
-  ipcMain.on('close-app', () => {
-    app.quit(); // Termine l'application
-  });
-
 });
 
 app.on('window-all-closed', () => {
