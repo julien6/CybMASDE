@@ -10,7 +10,7 @@
   },
   "scripts": {
     "ng": "ng",
-    "build-server": "cd ../backend/src/api_server/ ; pyinstaller --onefile server.py ; cd ../../../frontend",
+    "build-server": "bash -c 'cd ../backend/src/api_server/ && source ../../venv/bin/activate && pyinstaller --onefile server.py && cd ../../../frontend'",
     "build-angular": "ng build --configuration production --base-href ./",
     "build": "ng build --base-href ./",
     "watch": "ng build --watch --configuration development --base-href ./",
@@ -45,8 +45,7 @@
     },
     "linux": {
       "target": [
-        "AppImage",
-        "deb"
+        "AppImage"
       ],
       "icon": "./src/assets/favicon.png",
       "category": "Development"

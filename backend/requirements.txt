@@ -16,3 +16,4 @@ paramiko
 pygame
 tensorflow
 torch
+pyinstaller

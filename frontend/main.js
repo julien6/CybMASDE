@@ -24,14 +24,18 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
       contextIsolation: true,
+      // enableRemoteModule: false,
+      // sandbox: false
     },
   });
 
-  mainWindow.setMenuBarVisibility(false); // Masquer la barre de menu
+  mainWindow.setMenuBarVisibility(true); // Masquer la barre de menu
 
   // Charge l'URL de développement ou le fichier local selon le mode
   if (isDev) {
     mainWindow.loadURL('http://localhost:4200');
+    mainWindow.webContents.openDevTools(); // Ouvre DevTools en mode dev
+
   } else {
     // mainWindow.loadFile(path.join(__dirname, 'dist', 'frontend', 'index.html'));
 
@@ -50,6 +54,11 @@ function createWindow() {
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);
     return { action: 'deny' }; // Annule l'ouverture dans Electron
+  });
+
+  mainWindow.webContents.session.clearCache().then(() => {
+    console.log('Cache réseau effacé');
+    // mainWindow.loadURL('http://localhost:4200');
   });
 
 }
@@ -118,6 +127,12 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
+
+// app.commandLine.appendSwitch('no-sandbox');
+
+// app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
+
+// app.commandLine.appendSwitch('disable-dev-shm-usage'); // Utilise la RAM au lieu de /dev/shm
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
