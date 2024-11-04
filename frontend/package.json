@@ -1,0 +1,92 @@
+{
+  "name": "CybMASDE",
+  "main": "main.js",
+  "version": "0.0.0",
+  "description": "An application for developping MAS",
+  "homepage": "https://github.com/julien6/CybMASDE",
+  "author": {
+    "name": "Julien Soule",
+    "email": "julien.soule@lcis.grenoble-inp.fr"
+  },
+  "scripts": {
+    "ng": "ng",
+    "build-server": "bash -c 'cd ../backend/src/api_server/ && source ../../venv/bin/activate && pyinstaller --onefile server.py && cd ../../../frontend'",
+    "build-angular": "ng build --configuration production --base-href ./",
+    "build": "ng build --base-href ./",
+    "watch": "ng build --watch --configuration development --base-href ./",
+    "test": "ng test",
+    "start": "concurrently \"ng serve\" \"npm run electron\"",
+    "electron": "ng build --configuration development --base-href ./ && electron . --trace-warnings",
+    "dist": "npm run build-server && npm run build-angular && electron-builder"
+  },
+  "private": true,
+  "build": {
+    "appId": "com.example.cybmasde",
+    "productName": "CybMASDE",
+    "files": [
+      "dist/frontend/**/*",
+      "../backend/src/api_server/dist/server",
+      "main.js",
+      "package.json",
+      "preload.js",
+      "node_modules/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "../backend/src/api_server/dist/server",
+        "to": "server",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "directories": {
+      "buildResources": "./src/assets"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "icon": "./src/assets/favicon.png",
+      "category": "Development"
+    }
+  },
+  "dependencies": {
+    "@angular/animations": "^18.2.0",
+    "@angular/cdk": "^18.2.9",
+    "@angular/common": "^18.2.0",
+    "@angular/compiler": "^18.2.0",
+    "@angular/core": "^18.2.0",
+    "@angular/flex-layout": "^15.0.0-beta.42",
+    "@angular/forms": "^18.2.0",
+    "@angular/material": "^18.2.9",
+    "@angular/platform-browser": "^18.2.0",
+    "@angular/platform-browser-dynamic": "^18.2.0",
+    "@angular/router": "^18.2.0",
+    "monaco-editor": "^0.50.0",
+    "ngx-monaco-editor-v2": "^18.1.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.14.10"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^18.2.9",
+    "@angular/cli": "^18.2.9",
+    "@angular/compiler-cli": "^18.2.0",
+    "@types/electron": "^1.4.38",
+    "@types/jasmine": "~5.1.0",
+    "@types/node": "^22.8.1",
+    "@types/wicg-file-system-access": "^2023.10.5",
+    "concurrently": "^9.0.1",
+    "electron": "^33.0.2",
+    "electron-builder": "^25.1.8",
+    "electron-reload": "^2.0.0-alpha.1",
+    "jasmine-core": "~5.2.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "typescript": "~5.5.2"
+  }
+}

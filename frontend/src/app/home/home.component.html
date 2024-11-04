@@ -1,0 +1,44 @@
+<mat-grid-list cols="2" rowHeight="fit" gutterSize="20px">
+    <!-- Partie gauche : Titre, Start et Recent Projects -->
+    <mat-grid-tile>
+        <div class="left-panel">
+            <h1>CybMASDE</h1>
+
+            <div class="section">
+                <h2>Start</h2>
+                <ul>
+                    <li>
+                        <mat-icon aria-hidden="false" aria-label="Create New Folder icon" fontIcon="create_new_folder"></mat-icon>
+                        <a href="#" (click)="newProject()">New Project</a>
+                    </li>
+                    <li>
+                        <mat-icon aria-hidden="false" aria-label="Folder Open Icon" fontIcon="folder_open"></mat-icon>
+                        <a href="#" (click)="loadProject()">Load a Project</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2>Recent Projects</h2>
+                <ul>
+                    <li *ngFor="let project of recentProjects">{{ project }}</li>
+                </ul>
+            </div>
+        </div>
+    </mat-grid-tile>
+
+    <!-- Partie droite : Help -->
+    <mat-grid-tile>
+        <mat-card>
+            <div class="right-panel">
+                <div class="section">
+                    <h2>Help</h2>
+                    <ul>
+                        <li><a href="https://example.com/wiki" target="_blank">Wiki</a></li>
+                        <li><a href="https://youtube.com" target="_blank">YouTube</a></li>
+                    </ul>
+                </div>
+            </div>
+        </mat-card>
+    </mat-grid-tile>
+</mat-grid-list>

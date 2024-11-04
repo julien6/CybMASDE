@@ -1,0 +1,47 @@
+<mat-card appearance="outlined">
+  <mat-stepper [linear]="false" #stepper>
+
+    <mat-step label="Input">
+      <mat-card appearance="outlined">
+        <mat-card-content>Trained Joint-policy model</mat-card-content>
+      </mat-card>
+      <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+      <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
+      <mat-icon matTooltip="A compliant trained joint-policy (.pth)" aria-hidden="false" aria-label="Help icon"
+        fontIcon="help"></mat-icon>
+
+      <mat-card appearance="outlined">
+        <mat-card-content>Analysis approaches to include</mat-card-content>
+      </mat-card>
+      <section class="example-section">
+        <span class="example-list-section">
+          <mat-checkbox class="example-margin" [checked]="kosiaEnabled">
+            KOSIA
+          </mat-checkbox>
+          <mat-checkbox class="example-margin" [checked]="gosiaEnabled">
+            GOSIA
+          </mat-checkbox>
+        </span>
+      </section>
+
+    </mat-step>
+
+    <mat-step label="Running">
+      <mat-card appearance="outlined">
+        <mat-card-content>Running analyzing</mat-card-content>
+      </mat-card>
+      <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="runningOutput"></ngx-monaco-editor>
+    </mat-step>
+
+    <mat-step label="Ouput">
+      <button mat-raised-button color="primary">Get enriched MOISE+MARL model</button>
+      <button mat-raised-button color="primary">Get textual description of MOISE+MARL model (alpha)</button>
+      <mat-card appearance="outlined">
+        <mat-card-content>Enriched MOISE+MARL overview</mat-card-content>
+      </mat-card>
+      <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="analyzingOutput"></ngx-monaco-editor>
+    </mat-step>
+
+  </mat-stepper>
+
+</mat-card>

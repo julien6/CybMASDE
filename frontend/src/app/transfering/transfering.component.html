@@ -1,0 +1,84 @@
+<mat-card appearance="outlined">
+  <mat-stepper [linear]="false" #stepper>
+
+    <mat-step label="Input">
+      <mat-card appearance="outlined">
+        <mat-card-content>Trained Joint-policy model</mat-card-content>
+      </mat-card>
+      <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+      <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
+      <mat-icon matTooltip="A compliant trained joint-policy (.pth)" aria-hidden="false" aria-label="Help icon"
+        fontIcon="help"></mat-icon>
+      <mat-card appearance="outlined">
+        <mat-card-content>Enriched MOISE+MARL description</mat-card-content>
+      </mat-card>
+      <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+      <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
+      <mat-icon matTooltip="A description of the enriched MOISE+MARL model" aria-hidden="false" aria-label="Help icon"
+        fontIcon="help"></mat-icon>
+
+      <mat-card appearance="outlined">
+        <mat-card-content>Curating approaches to include</mat-card-content>
+      </mat-card>
+      <section class="example-section">
+        <span class="example-list-section">
+          <mat-checkbox class="example-margin" [checked]="manualEnabled">
+            Manual-based curating
+          </mat-checkbox>
+          <mat-checkbox class="example-margin" [checked]="llmEnabled">
+            LLM-based curating (alpha)
+          </mat-checkbox>
+        </span>
+      </section>
+
+    </mat-step>
+
+    <mat-step label="Curating roles and goals">
+      <mat-card appearance="outlined">
+        <mat-card-content>Running transfering</mat-card-content>
+      </mat-card>
+      <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="runningOutput"></ngx-monaco-editor>
+    </mat-step>
+
+    <mat-step label="Assessing in simulation">
+      <mat-card appearance="outlined">
+        <mat-card-content>Running transfering</mat-card-content>
+      </mat-card>
+      <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="runningOutput"></ngx-monaco-editor>
+    </mat-step>
+
+    <mat-step label="Assessing in emulation">
+      <mat-card appearance="outlined">
+        <mat-card-content>Running packaging</mat-card-content>
+      </mat-card>
+      <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="runningOutput"></ngx-monaco-editor>
+      <button mat-raised-button color="primary">Get packages</button>
+      <mat-card appearance="outlined">
+        <mat-card-content>Running deployment</mat-card-content>
+      </mat-card>
+      <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="runningOutput"></ngx-monaco-editor>
+    </mat-step>
+
+    <mat-step label="Assessing in target environment">
+      <mat-card appearance="outlined">
+        <mat-card-content>Running packaging</mat-card-content>
+      </mat-card>
+      <button mat-raised-button color="primary">Get packages</button>
+      <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="runningOutput"></ngx-monaco-editor>
+      <mat-card appearance="outlined">
+        <mat-card-content>Running deployment</mat-card-content>
+      </mat-card>
+      <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="runningOutput"></ngx-monaco-editor>
+    </mat-step>
+
+    <mat-step label="Ouput">
+      <button mat-raised-button color="primary">Logs and statistics</button>
+      <mat-card appearance="outlined">
+        <mat-card-content>Logs and statistics overview</mat-card-content>
+      </mat-card>
+      <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="transferingOutput"></ngx-monaco-editor>
+    </mat-step>
+
+  </mat-stepper>
+
+</mat-card>

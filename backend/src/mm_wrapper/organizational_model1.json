@@ -1,0 +1,233 @@
+{
+    "structural_specifications": {
+        "roles": {
+            "role_1": {
+                "history_functions": {
+                    "policy_functions": [],
+                    "reward_functions": []
+                },
+                "history_patterns": [
+                    ""
+                ],
+                "history_rules": {}
+            },
+            "role_2": {
+                "history_functions": {
+                    "policy_functions": [],
+                    "reward_functions": []
+                },
+                "history_patterns": [
+                    ""
+                ],
+                "history_rules": {}
+            }
+        },
+        "role_inheritance_relations": {
+            "role_2": [
+                "role_1"
+            ],
+            "role_3": [
+                "role_1"
+            ]
+        },
+        "root_groups": {
+            "group1": {
+                "roles": [
+                    "role_1",
+                    "role_2",
+                    "role_3"
+                ],
+                "sub_groups": {},
+                "intra_links": [
+                    {
+                        "source": "role_1",
+                        "destination": "role_2",
+                        "type": "ACQ"
+                    },
+                    {
+                        "source": "role_2",
+                        "destination": "role_3",
+                        "type": "ACQ"
+                    }
+                ],
+                "inter_links": [],
+                "intra_compatibilities": [],
+                "inter_compatibilities": [],
+                "role_cardinalities": {
+                    "role_0": {
+                        "lower_bound": 1,
+                        "upper_bound": 1
+                    },
+                    "role_1": {
+                        "lower_bound": 1,
+                        "upper_bound": 1
+                    },
+                    "role_2": {
+                        "lower_bound": 1,
+                        "upper_bound": 1
+                    }
+                },
+                "sub_group_cardinalities": {}
+            }
+        }
+    },
+    "functional_specifications": {
+        "social_scheme": {
+            "scheme1": {
+                "goals": {
+                    "goal1": {
+                        "history_functions": {
+                            "policy_functions": [],
+                            "reward_functions": []
+                        },
+                        "history_patterns": [
+                            ""
+                        ],
+                        "history_rules": {}
+                    },
+                    "goal2": {
+                        "history_functions": {
+                            "policy_functions": [],
+                            "reward_functions": []
+                        },
+                        "history_patterns": [
+                            ""
+                        ],
+                        "history_rules": {}
+                    },
+                    "goal3": {
+                        "history_functions": {
+                            "policy_functions": [],
+                            "reward_functions": []
+                        },
+                        "history_patterns": [
+                            ""
+                        ],
+                        "history_rules": {}
+                    }
+                },
+                "missions": [
+                    "mission1",
+                    "mission2"
+                ],
+                "goals_structure": {
+                    "goal": "goal1",
+                    "sub_goals": [
+                        "goal2",
+                        "goal3"
+                    ],
+                    "operator": "SEQUENCE",
+                    "probability": 1.0
+                },
+                "mission_to_goals": {
+                    "mission1": [
+                        "goal1",
+                        "goal2"
+                    ],
+                    "mission2": [
+                        "goal1",
+                        "goal3"
+                    ]
+                },
+                "mission_to_agent_cardinality": {
+                    "mission1": {
+                        "lower_bound": 1,
+                        "upper_bound": 1
+                    },
+                    "mission2": {
+                        "lower_bound": 1,
+                        "upper_bound": 1
+                    }
+                }
+            },
+            "scheme2": {
+                "goals": {
+                    "goal1": {
+                        "history_functions": {
+                            "policy_functions": [],
+                            "reward_functions": []
+                        },
+                        "history_patterns": [
+                            ""
+                        ],
+                        "history_rules": {}
+                    },
+                    "goal2": {
+                        "history_functions": {
+                            "policy_functions": [],
+                            "reward_functions": []
+                        },
+                        "history_patterns": [
+                            ""
+                        ],
+                        "history_rules": {}
+                    },
+                    "goal3": {
+                        "history_functions": {
+                            "policy_functions": [],
+                            "reward_functions": []
+                        },
+                        "history_patterns": [
+                            ""
+                        ],
+                        "history_rules": {}
+                    }
+                },
+                "missions": [
+                    "mission1",
+                    "mission2"
+                ],
+                "goals_structure": {
+                    "goal": "goal1",
+                    "sub_goals": [
+                        "goal2",
+                        "goal3"
+                    ],
+                    "operator": "SEQUENCE",
+                    "probability": 1.0
+                },
+                "mission_to_goals": {
+                    "mission1": [
+                        "goal1",
+                        "goal2"
+                    ],
+                    "mission2": [
+                        "goal1",
+                        "goal3"
+                    ]
+                },
+                "mission_to_agent_cardinality": {
+                    "mission1": {
+                        "lower_bound": 1,
+                        "upper_bound": 9
+                    },
+                    "mission2": {
+                        "lower_bound": 1,
+                        "upper_bound": 1
+                    }
+                }
+            }
+        },
+        "social_preferences": [
+            {
+                "preferred_social_scheme": "scheme1",
+                "disfavored_scheme": "scheme2"
+            }
+        ]
+    },
+    "deontic_specifications": {
+        "permissions": {
+            "(role_1, mission1, ANY)": [
+                "agent_1"
+            ],
+            "(role_3, mission1, ANY)": [
+                "agent_3"
+            ]
+        },
+        "obligations": {
+            "(role_2, mission2, ANY)": [
+                "agent_2"
+            ]
+        }
+    }
+}

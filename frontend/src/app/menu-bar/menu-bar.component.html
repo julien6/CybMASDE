@@ -1,0 +1,40 @@
+<div class="menubar">
+  <mat-toolbar color="primary">
+    <button mat-button [matMenuTriggerFor]="fileMenu">File</button>
+    <button mat-button [matMenuTriggerFor]="editMenu">Edit</button>
+    <button mat-button [matMenuTriggerFor]="viewMenu">View</button>
+    <button mat-button [matMenuTriggerFor]="helpMenu">Help</button>
+  </mat-toolbar>
+
+  <mat-menu #fileMenu="matMenu">
+    <button mat-menu-item (click)="openProject()">Open</button>
+    <button mat-menu-item (click)="saveProjectAs()" [disabled]="!this.onWork">Save As...</button>
+    <button mat-menu-item (click)="saveProject()" [disabled]="!this.onWork && !this.saved">Save</button>
+    <button mat-menu-item (click)="createNewProject()">New Project</button>
+    <button mat-menu-item (click)="closeApp()">Close</button>
+  </mat-menu>
+
+  <!-- Input file caché pour sélectionner un fichier JSON -->
+  <!-- <input type="file" accept=".json" #fileInput (change)="onFileSelected($event)" style="display:none"> -->
+
+  <mat-menu #editMenu="matMenu">
+    <button mat-menu-item>Preferences</button>
+    <button mat-menu-item>Library</button>
+  </mat-menu>
+
+  <mat-menu #viewMenu="matMenu">
+    <button mat-menu-item>Zoom In</button>
+    <button mat-menu-item>Zoom Out</button>
+    <button mat-menu-item>Full Screen</button>
+    <button mat-menu-item>Hide/Show</button>
+  </mat-menu>
+
+  <mat-menu #helpMenu="matMenu">
+    <button mat-menu-item>Wiki</button>
+    <button mat-menu-item (click)="openAbout()">About CybMASDE</button>
+  </mat-menu>
+</div>
+
+<app-home *ngIf="!onWork"></app-home>
+
+<app-phases *ngIf="onWork"></app-phases>

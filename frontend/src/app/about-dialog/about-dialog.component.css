@@ -1,0 +1,24 @@
+.about-dialog-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+h5 {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.about-dialog-image {
+    flex: 1;
+    padding-right: 20px;
+}
+
+.about-dialog-image img {
+    max-width: 100%;
+    height: auto;
+}
+
+.about-dialog-text {
+    flex: 2;
+}

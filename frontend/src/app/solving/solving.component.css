@@ -1,0 +1,13 @@
+mat-icon {
+    position: relative;
+    top: 9px;
+    /*Change this to adjust the icon*/
+    padding-left: 10px;
+    margin-right: 10px;
+
+}
+
+
+::ng-deep .mdc-tooltip {
+    white-space: pre-line !important;
+}
