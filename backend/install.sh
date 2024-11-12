@@ -54,15 +54,16 @@ conda install -c conda-forge libstdcxx-ng
 pip install pyglet==1.5.11
 
 pip install marllib==1.0.3
-pip install numpy==1.23.5
 pip install torch -U
 
 # Obtenir le chemin absolu du script en cours d'exécution
 declare script_path="$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
-cd \$script_path
+cd $script_path
 
 pip install -r requirements.txt
+
+pip install numpy==1.23.5
 EOT
 
 # echo -e "\n\nINSTALLATION ON INTERFACE LOCAL MACHINE\n"

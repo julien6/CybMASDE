@@ -24,24 +24,25 @@ from ray.rllib.env.multi_agent_env import MultiAgentEnv
 from gym.spaces import Dict as GymDict, Discrete, Box
 import supersuit as ss
 from ray.rllib.env import PettingZooEnv, ParallelPettingZooEnv
-from custom_envs.movingcompany import moving_company_v0
+from pettingzoo.butterfly.pistonball import pistonball
 from gym import spaces
 
 import time
 
 REGISTRY = {}
-REGISTRY["moving_company"] = moving_company_v0.parallel_env
+REGISTRY["pistonball"] = pistonball.parallel_env
 
 policy_mapping_dict = {
-    "moving_company":{
-    "description": "Moving Company",
-    "team_prefix": ("agent_",),
-    "all_agents_one_policy": True,
-    "one_agent_one_policy": True,
+    "pistonball": {
+        "description": "Pistonball",
+        "team_prefix": ("piston_",),
+        "all_agents_one_policy": True,
+        "one_agent_one_policy": True,
     }
 }
 
-class RLlibMCY(MultiAgentEnv):
+
+class RLlibBTF(MultiAgentEnv):
 
     def __init__(self, env_config):
         map = env_config["map_name"]
@@ -54,18 +55,19 @@ class RLlibMCY(MultiAgentEnv):
         # env = ss.pad_action_space_v0(env)
 
         self.env = ParallelPettingZooEnv(env)
-        # self.action_space = self.env.action_spaces[self.env.agents[0]]
 
-        self.action_space = spaces.Discrete(self.env.action_spaces[self.env.agents[0]].n)
+        self.action_space = spaces.Box(
+            self.env.action_spaces[self.env.agents[0]].low[0],
+            self.env.action_spaces[self.env.agents[0]].high[0],
+            shape=(self.env.action_spaces[self.env.agents[0]].shape[0],),
+            dtype=self.env.action_spaces[self.env.agents[0]].dtype)
 
-        # if GymSpace is MultiDiscrete, then we need to convert it to Box
         self.observation_space = GymDict({"obs": Box(
-            low=0,
-            high=self.env.observation_space.nvec[0],
-            shape=(self.env.observation_space.shape[0],),
-            dtype=self.env.observation_space.dtype)})
-
-        # self.observation_space = GymDict({"obs": self.env.observation_spaces[self.env.agents[0]]})
+            low=self.env.observation_spaces[self.env.agents[0]].low[0][0][0],
+            high=self.env.observation_spaces[self.env.agents[0]].high[0][0][0],
+            shape=(self.env.observation_spaces[self.env.agents[0]].shape),
+            dtype=self.env.observation_spaces[self.env.agents[0]].dtype)
+        })
 
         self.agents = self.env.agents
         self.num_agents = len(self.agents)
@@ -110,6 +112,40 @@ class RLlibMCY(MultiAgentEnv):
         return env_info
 
 
-if __name__ == '__main__':
+legal_scenarios = ["pistonball"]
 
-    t = RLlibMCY({'map_name': 'moving_company', 'size': 6, 'seed': 42, 'max_cycles': 30})
+
+class RLlibBTF_FCOOP(RLlibBTF):
+
+    def __init__(self, env_config):
+        if env_config["map_name"] not in legal_scenarios:
+            raise ValueError("must in: 1.pistonball")
+        super().__init__(env_config)
+
+    def step(self, action_dict):
+        o, r, d, info = self.env.step(action_dict)
+        reward = 0
+        for key in r.keys():
+            reward += r[key]
+        rewards = {}
+        obs = {}
+        for key in action_dict.keys():
+            rewards[key] = reward/self.num_agents
+            obs[key] = {
+                "obs": o[key]
+            }
+        dones = {"__all__": d["__all__"]}
+        return obs, rewards, dones, info
+
+
+if __name__ == "__main__":
+    env = RLlibBTF({"map_name": "pistonball"})
+    env.reset()    
+    for i in range(100):
+        action = {i: env.action_space.sample() for i in env.agents}
+        obs, reward, done, info = env.step(action)
+        env.render()
+        if done["__all__"]:
+            env.reset()
+    env.close()
+    print("done")

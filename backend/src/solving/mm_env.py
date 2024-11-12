@@ -28,7 +28,7 @@ from mm_wrapper.deontic_specifications_ttl import deontic_specifications_ttl
 from mm_wrapper.utils import OBLIGATION_REWARD_FACTOR
 
 
-class RLlibMPE_action_wrapper(RLlibMPE):
+class RLlibMCY_action_wrapper(RLlibMPE):
 
     def __init__(self, env: RLlibMPE, organizational_model: organizational_model = None, bonus: int = 10, malus: int = -10):
         self.env = env
@@ -184,6 +184,7 @@ def make_env(
         map_name: str,
         force_coop: bool = False,
         organizational_model: organizational_model = None,
+        env_config_dict: Dict = None,
         **env_params
 ) -> Tuple[MultiAgentEnv, Dict]:
     """
@@ -205,11 +206,10 @@ def make_env(
         env_config_file_path = os.path.join(os.path.dirname(local_file),
                                             "../../examples/config/env_config/{}.yaml".format(environment_name))
 
-    with open(env_config_file_path, "r") as f:
-        env_config_dict = yaml.load(f, Loader=yaml.FullLoader)
-        f.close()
-
-    print("TODO: ", env_config_dict)
+    if os.path.exists(env_config_file_path):
+        with open(env_config_file_path, "r") as f:
+            env_config_dict = yaml.load(f, Loader=yaml.FullLoader)
+            f.close()
 
     # update function-fixed config
     env_config_dict["env_args"] = dict_update(
@@ -259,11 +259,11 @@ def make_env(
     env_reg_name = env_config["env"] + "_" + env_config["env_args"]["map_name"]
 
     if env_config["force_coop"]:
-        register_env(env_reg_name, lambda _: RLlibMPE_action_wrapper(
+        register_env(env_reg_name, lambda _: RLlibMCY_action_wrapper(
             COOP_ENV_REGISTRY[env_config["env"]](env_config["env_args"]), organizational_model))
         env = COOP_ENV_REGISTRY[env_config["env"]](env_config["env_args"])
     else:
-        register_env(env_reg_name, lambda _: RLlibMPE_action_wrapper(
+        register_env(env_reg_name, lambda _: RLlibMCY_action_wrapper(
             ENV_REGISTRY[env_config["env"]](env_config["env_args"]), organizational_model))
         env = ENV_REGISTRY[env_config["env"]](env_config["env_args"])
 
