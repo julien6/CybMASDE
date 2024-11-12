@@ -118,7 +118,6 @@ mappo = marl.algos.mappo(hyperparam_source="test")
 model = marl.build_model(
     env, mappo, {"core_arch": "mlp", "encode_layer": "128-256"})
 
-
 checkpoint_freq = 10
 
 if len(sys.argv) > 1 and sys.argv[1] == "--test":
