@@ -52,7 +52,7 @@ KEY_ACTIONS = {
     pygame.K_q: 6  # Drop
 }
 
-def draw_grid(screen, grid, agent_positions):
+def draw_grid(screen, grid, agent_positions, agent_states):
     """
     Dessine la grille en fonction de l'état actuel.
     Args:
@@ -80,7 +80,7 @@ def draw_grid(screen, grid, agent_positions):
 
     # Dessiner les agents par-dessus la grille
     for agent, (row, col) in agent_positions.items():
-        agent_image_path = IMAGES.get(grid[row, col], "asset/agent.png")
+        agent_image_path = IMAGES.get(agent_states[agent], "asset/agent.png")
         agent_image = pygame.image.load(agent_image_path)
         agent_image = pygame.transform.scale(
             agent_image, (CELL_SIZE, CELL_SIZE))
@@ -132,7 +132,7 @@ def run_visualization():
         screen.fill((0, 0, 0))
 
         # Dessiner la grille
-        draw_grid(screen, warehouse_env.grid, warehouse_env.agent_positions)
+        draw_grid(screen, warehouse_env.grid, warehouse_env.agent_positions, warehouse_env.agent_states)
 
         # Afficher les scores en haut de l'écran
         font = pygame.font.Font(None, 36)
