@@ -4,6 +4,7 @@ from pettingzoo.utils.env import ParallelEnv
 from pettingzoo.utils import wrappers
 import numpy as np
 from typing import Dict, Tuple
+from copy import deepcopy
 
 
 def env(grid_size=(10, 10), agents_number=3, view_size=3):
@@ -64,6 +65,8 @@ class WarehouseManagementEnv(ParallelEnv):
         self.EMPTY_OUTPUT = 13
         self.OUTPUT_WITH_OBJECT = 14
 
+        self.directions = [(0, 1), (1, 0), (-1, 0), (0, -1)]
+
         self.reset()
 
     def reset(self):
@@ -91,19 +94,19 @@ class WarehouseManagementEnv(ParallelEnv):
         self.grid[2, 0] = self.EMPTY_INPUT
         self.grid[3, 0] = self.INPUT_WITH_OBJECT
         self.grid[4, 0] = self.INPUT_WITH_OBJECT
-        self.grid[5, 0] = self.EMPTY_INPUT
+        self.grid[5, 0] = self.INPUT_WITH_OBJECT
         self.grid[6, 0] = self.INPUT_WITH_OBJECT
-        self.grid[7, 0] = self.INPUT_WITH_OBJECT
+        self.grid[7, 0] = self.EMPTY_INPUT
 
         # Define craft zones
-        self.grid[3, 4] = self.INPUT_CRAFT_WITH_OBJECT # EMPTY_INPUT_CRAFT
+        self.grid[3, 4] = self.EMPTY_INPUT_CRAFT  # EMPTY_INPUT_CRAFT
         self.grid[6, 4] = self.EMPTY_INPUT_CRAFT
         self.grid[4, 5] = self.EMPTY_OUTPUT_CRAFT
-        self.grid[5, 5] = self.OUTPUT_CRAFT_WITH_OBJECT
+        self.grid[5, 5] = self.EMPTY_OUTPUT_CRAFT
 
         # Define output zones
         self.grid[4, 9] = self.EMPTY_OUTPUT
-        self.grid[5, 9] = self.OUTPUT_CRAFT_WITH_OBJECT
+        self.grid[5, 9] = self.EMPTY_OUTPUT
 
     def _initialize_agents(self):
         """
@@ -140,6 +143,7 @@ class WarehouseManagementEnv(ParallelEnv):
         Args:
             actions (dict): A dictionary mapping agents to their actions.
         """
+        previous_state = deepcopy(self.grid)
         for agent, action in actions.items():
             if self.terminated[agent]:
                 continue
@@ -152,7 +156,8 @@ class WarehouseManagementEnv(ParallelEnv):
                 self._drop_object(agent)
 
         # Compute rewards and check terminations
-        self._update_rewards()
+        self._update_rewards(previous_state)
+
         self.terminated = {agent: self._check_termination(
             agent) for agent in self.agents}
 
@@ -184,36 +189,126 @@ class WarehouseManagementEnv(ParallelEnv):
         Handles picking up objects from valid cells.
         """
         x, y = self.agent_positions[agent]
-        if self.grid[x, y] in [self.PRIMARY_OBJECT, self.INPUT_WITH_OBJECT]:
-            self.agent_states[agent] = self.AGENT_WITH_PRIMARY
-            self.grid[x, y] = self.EMPTY
+
+        for transform_data in [(self.INPUT_CRAFT_WITH_OBJECT, self.AGENT_WITH_PRIMARY, self.EMPTY_INPUT_CRAFT), (self.INPUT_WITH_OBJECT, self.AGENT_WITH_PRIMARY, self.EMPTY_INPUT), (self.OUTPUT_WITH_OBJECT, self.AGENT_WITH_SECONDARY, self.EMPTY_OUTPUT), (self.OUTPUT_CRAFT_WITH_OBJECT, self.AGENT_WITH_SECONDARY, self.EMPTY_OUTPUT_CRAFT), (self.PRIMARY_OBJECT, self.AGENT_WITH_PRIMARY, self.EMPTY),
+                               (self.SECONDARY_OBJECT, self.AGENT_WITH_SECONDARY, self.EMPTY)]:
+            if self.agent_states[agent] in [self.AGENT_WITHOUT_OBJECT]:
+                for direction in self.directions:
+                    next_x, next_y = x + direction[0] if 0 <= x + direction[0] and x + direction[0] < self.grid.shape[0] else x, \
+                        y + direction[1] if 0 <= y + direction[1] and y + \
+                        direction[1] <= self.grid.shape[1] else y
+                    if self.grid[next_x, next_y] == transform_data[0]:
+                        self.agent_states[agent] = transform_data[1]
+                        self.grid[next_x, next_y] = transform_data[2]
+                        return
 
     def _drop_object(self, agent: str):
         """
         Handles dropping objects onto valid cells.
         """
         x, y = self.agent_positions[agent]
-        if self.agent_states[agent] == self.AGENT_WITH_PRIMARY:
-            if self.grid[x, y] in [self.EMPTY_INPUT_CRAFT]:
-                self.grid[x, y] = self.INPUT_CRAFT_WITH_OBJECT
-                self.agent_states[agent] = self.AGENT_WITHOUT_OBJECT
 
-    def _update_rewards(self):
+        if self.agent_states[agent] in [self.AGENT_WITH_PRIMARY]:
+            for transform_data in [(self.EMPTY_INPUT_CRAFT, self.AGENT_WITHOUT_OBJECT, self.INPUT_CRAFT_WITH_OBJECT), (self.EMPTY_INPUT, self.AGENT_WITHOUT_OBJECT, self.INPUT_WITH_OBJECT), (self.EMPTY, self.AGENT_WITHOUT_OBJECT, self.PRIMARY_OBJECT)]:
+
+                for direction in self.directions:
+                    next_x, next_y = x + direction[0] if 0 <= x + direction[0] and x + direction[0] < self.grid.shape[0] else x, \
+                        y + direction[1] if 0 <= y + direction[1] and y + \
+                        direction[1] <= self.grid.shape[1] else y
+                    if self.grid[next_x, next_y] == transform_data[0]:
+                        self.agent_states[agent] = transform_data[1]
+                        self.grid[next_x, next_y] = transform_data[2]
+                        self._update_craft()
+                        return
+
+        if self.agent_states[agent] in [self.AGENT_WITH_SECONDARY]:
+            for transform_data in [(self.EMPTY_OUTPUT, self.AGENT_WITHOUT_OBJECT, self.OUTPUT_WITH_OBJECT), (self.EMPTY_OUTPUT_CRAFT, self.AGENT_WITHOUT_OBJECT, self.OUTPUT_CRAFT_WITH_OBJECT), (self.EMPTY, self.AGENT_WITHOUT_OBJECT, self.SECONDARY_OBJECT)]:
+
+                for direction in self.directions:
+                    next_x, next_y = x + direction[0] if 0 <= x + direction[0] and x + direction[0] < self.grid.shape[0] else x, \
+                        y + direction[1] if 0 <= y + direction[1] and y + \
+                        direction[1] <= self.grid.shape[1] else y
+                    if self.grid[next_x, next_y] == transform_data[0]:
+                        self.agent_states[agent] = transform_data[1]
+                        self.grid[next_x, next_y] = transform_data[2]
+                        return
+
+    def _update_craft(self):
+        """
+        Update the grid to craft secondary object when all input craft are full
+        """
+        for row in range(self.grid.shape[0]):
+            for col in range(self.grid.shape[1]):
+                cell_value = self.grid[row, col]
+                if cell_value == self.EMPTY_INPUT_CRAFT:
+                    return
+
+        for row in range(self.grid.shape[0]):
+            for col in range(self.grid.shape[1]):
+                cell_value = self.grid[row, col]
+                if cell_value == self.INPUT_CRAFT_WITH_OBJECT:
+                    self.grid[row, col] = self.EMPTY_INPUT_CRAFT
+
+        for row in range(self.grid.shape[0]):
+            for col in range(self.grid.shape[1]):
+                cell_value = self.grid[row, col]
+                if cell_value == self.EMPTY_OUTPUT_CRAFT:
+                    self.grid[row, col] = self.OUTPUT_CRAFT_WITH_OBJECT
+                    return
+
+    def _update_rewards(self, previous_state):
         """
         Update rewards based on the state of the environment.
         """
-        for agent in self.agents:
-            self.rewards[agent] = 0  # Default reward
-            x, y = self.agent_positions[agent]
-            if self.grid[x, y] == self.OUTPUT_WITH_OBJECT:
-                # Reward for delivering a secondary object
-                self.rewards[agent] += 10
+        total_reward = 0
+        for row in range(self.grid.shape[0]):
+            for col in range(self.grid.shape[1]):
+                cell_value = self.grid[row, col]
+                # primary in input
+                if cell_value in [self.EMPTY_OUTPUT]:
+                    total_reward -= 1
+
+                # primary with agent
+                if cell_value == self.AGENT_WITH_PRIMARY and previous_state[row, col] == self.AGENT_WITHOUT_OBJECT:
+                    total_reward += 0
+
+                # primary on ground
+                if cell_value == self.PRIMARY_OBJECT:
+                    total_reward += 0
+
+                # primary in input craft
+                if cell_value == self.INPUT_CRAFT_WITH_OBJECT and previous_state[row, col] == self.EMPTY_INPUT_CRAFT:
+                    total_reward += 15
+
+                # secondary in output craft
+                if cell_value == self.OUTPUT_CRAFT_WITH_OBJECT and previous_state[row, col] == self.EMPTY_OUTPUT_CRAFT:
+                    total_reward += 30
+
+                # secondary on ground
+                if cell_value == self.SECONDARY_OBJECT:
+                    total_reward += 0
+
+                # secondary with agent
+                if cell_value == self.AGENT_WITH_SECONDARY and previous_state[row, col] == self.AGENT_WITHOUT_OBJECT:
+                    total_reward += 50
+
+                # secondary in output
+                if cell_value == self.OUTPUT_WITH_OBJECT and previous_state[row, col] == self.EMPTY_OUTPUT:
+                    total_reward += 100
+
+        self.rewards = {agent: reward + total_reward for agent,
+                        reward in self.rewards.items()}
 
     def _check_termination(self, agent: str) -> bool:
         """
         Check whether an agent has completed its task.
         """
-        return False  # No termination conditions yet.
+        for row in range(self.grid.shape[0]):
+            for col in range(self.grid.shape[1]):
+                cell_value = self.grid[row, col]
+                if cell_value == self.EMPTY_OUTPUT:
+                    return False
+        return True
 
     def render(self, mode="human"):
         """
@@ -254,7 +349,8 @@ if __name__ == "__main__":
         print(f"\n=== Étape {step + 1} ===")
 
         # Actions aléatoires pour tous les agents
-        actions = {agent: warehouse_env.action_space[agent].sample() for agent in warehouse_env.agents}
+        actions = {agent: warehouse_env.action_space[agent].sample(
+        ) for agent in warehouse_env.agents}
         print(f"Actions des agents: ", {
               agent: number_to_action[action] for agent, action in actions.items()})
 

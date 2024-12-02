@@ -42,6 +42,15 @@ IMAGES = {
     14: "asset/secondary_object.png",
 }
 
+# Mapping des touches pour les actions
+KEY_ACTIONS = {
+    pygame.K_UP: 1,     # Move up
+    pygame.K_DOWN: 2,   # Move down
+    pygame.K_LEFT: 3,   # Move left
+    pygame.K_RIGHT: 4,  # Move right
+    pygame.K_a: 5,  # Pick up
+    pygame.K_q: 6  # Drop
+}
 
 def draw_grid(screen, grid, agent_positions):
     """
@@ -81,6 +90,7 @@ def draw_grid(screen, grid, agent_positions):
 def run_visualization():
     """
     Lance l'environnement visuel avec PyGame.
+    Permet de contrôler un agent manuellement via les flèches du clavier.
     """
     pygame.init()
     screen = pygame.display.set_mode(WINDOW_SIZE)
@@ -90,26 +100,44 @@ def run_visualization():
     warehouse_env = env(grid_size=GRID_SIZE, agents_number=3)
     observations = warehouse_env.reset()
 
+    # Agent à contrôler manuellement
+    manual_agent = "agent_0"
     clock = pygame.time.Clock()
     running = True
 
     while running:
+        actions = {}
+
+        # Gestion des événements (clavier)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            elif event.type == pygame.KEYDOWN:
+                # Assigner une action à l'agent contrôlé manuellement
+                if event.key in KEY_ACTIONS:
+                    actions[manual_agent] = KEY_ACTIONS[event.key]
 
-        # Actions aléatoires pour les agents
-        actions = {agent: warehouse_env.action_space[agent].sample() for agent in warehouse_env.agents}
+        # Actions automatiques pour les autres agents
+        for agent in warehouse_env.agents:
+            if agent != manual_agent:
+                actions[agent] = warehouse_env.action_space[agent].sample()
 
         # Effectuer une étape dans l'environnement
-        observations, rewards, terminated, truncated = warehouse_env.step(
-            actions)
+        observations, rewards, terminated, truncated = warehouse_env.step(actions)
+
+        if True in terminated.values():
+            break
 
         # Effacer l'écran
         screen.fill((0, 0, 0))
 
         # Dessiner la grille
         draw_grid(screen, warehouse_env.grid, warehouse_env.agent_positions)
+
+        # Afficher les scores en haut de l'écran
+        font = pygame.font.Font(None, 36)
+        score_text = font.render(f"Rewards: {rewards[manual_agent]}", True, (0, 0, 0))
+        screen.blit(score_text, (10, 10))
 
         # Mettre à jour l'écran
         pygame.display.flip()
