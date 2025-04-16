@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain, dialog, globalShortcut, shell } = require('electron');
+const http = require('http');
 const { spawn } = require('child_process');
 const { format } = require('url');
 const path = require('path');
@@ -15,6 +16,26 @@ if (isDev) {
 }
 
 let mainWindow;
+
+function waitForFlaskServer(url, timeout = 10000, interval = 500) {
+  return new Promise((resolve, reject) => {
+    const startTime = Date.now();
+
+    const checkServer = () => {
+      http.get(url, () => {
+        resolve();
+      }).on('error', (err) => {
+        if (Date.now() - startTime > timeout) {
+          reject(new Error('Le serveur Flask n\'est pas prêt après 10 secondes.'));
+        } else {
+          setTimeout(checkServer, interval);
+        }
+      });
+    };
+
+    checkServer();
+  });
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -34,7 +55,7 @@ function createWindow() {
   // Charge l'URL de développement ou le fichier local selon le mode
   if (isDev) {
     mainWindow.loadURL('http://localhost:4200');
-    mainWindow.webContents.openDevTools(); // Ouvre DevTools en mode dev
+    // mainWindow.webContents.openDevTools(); // Ouvre DevTools en mode dev
 
   } else {
     // mainWindow.loadFile(path.join(__dirname, 'dist', 'frontend', 'index.html'));
@@ -76,7 +97,7 @@ app.whenReady().then(() => {
     // Démarrage du serveur Python avec l'environnement virtuel
     pythonProcess = spawn('bash', [
       '-c',
-      `source ${path.join(__dirname, '../backend/venv/bin/activate')} && python ${path.join(__dirname, '../backend/src/api_server/server.py')}`
+      `source ~/miniconda3/etc/profile.d/conda.sh && conda init && conda activate ${path.join(__dirname, '../backend/env')} && python ${path.join(__dirname, '../backend/server.py')}`
     ]);
   }
 
@@ -89,16 +110,25 @@ app.whenReady().then(() => {
   });
 
   pythonProcess.stderr.on('data', (data) => {
-    console.error(`Python server error: ${data}`);
+    console.error(`Python server: ${data}`);
   });
 
-  // Écoute de la fermeture de l'application pour arrêter le serveur Python proprement
   app.on('before-quit', () => {
     console.log("Arrêt du serveur Python...");
     pythonProcess.kill();
   });
 
-  createWindow();
+  // Attendre que le serveur Flask soit prêt avant de créer la fenêtre principale
+  waitForFlaskServer('http://127.0.0.1:5000/get-recent-projects')
+    .then(() => {
+      console.log('Le serveur Flask est prêt. Création de la fenêtre principale.');
+      createWindow();
+    })
+    .catch((err) => {
+      console.error('Erreur lors de l\'attente du serveur Flask :', err);
+      app.quit();
+    });
+
 
   // Événements IPC
   ipcMain.on('open-save-dialog', async (event) => {
@@ -131,7 +161,7 @@ app.whenReady().then(() => {
 
 // app.commandLine.appendSwitch('no-sandbox');
 
-// app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
+app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
 
 // app.commandLine.appendSwitch('disable-dev-shm-usage'); // Utilise la RAM au lieu de /dev/shm
 
