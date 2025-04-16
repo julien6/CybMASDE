@@ -10,7 +10,7 @@
   },
   "scripts": {
     "ng": "ng",
-    "build-server": "bash -c 'cd ../backend/src/api_server/ && source ../../venv/bin/activate && pyinstaller --onefile server.py && cd ../../../frontend'",
+    "build-server": "bash -c 'source ~/miniconda3/etc/profile.d/conda.sh && conda init && conda activate ../backend/env && cd ../backend/src/api_server/ && pyinstaller --onefile server.py && cd ../../../frontend'",
     "build-angular": "ng build --configuration production --base-href ./",
     "build": "ng build --base-href ./",
     "watch": "ng build --watch --configuration development --base-href ./",
@@ -26,6 +26,7 @@
     "files": [
       "dist/frontend/**/*",
       "../backend/src/api_server/dist/server",
+      "dist/frontend/browser/assets/favicon.png",
       "main.js",
       "package.json",
       "preload.js",
@@ -41,13 +42,13 @@
       }
     ],
     "directories": {
-      "buildResources": "./src/assets"
+      "buildResources": "dist/frontend/browser"
     },
     "linux": {
       "target": [
-        "AppImage"
+        "AppImage", "deb"
       ],
-      "icon": "./src/assets/favicon.png",
+      "icon": "assets/favicon.png",
       "category": "Development"
     }
   },

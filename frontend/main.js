@@ -41,6 +41,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    icon: isDev? path.join(__dirname, 'src', 'assets', 'favicon.png') : path.join(__dirname, 'dist', 'frontend', 'browser', 'assets', 'favicon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
@@ -97,7 +98,7 @@ app.whenReady().then(() => {
     // Démarrage du serveur Python avec l'environnement virtuel
     pythonProcess = spawn('bash', [
       '-c',
-      `source ~/miniconda3/etc/profile.d/conda.sh && conda init && conda activate ${path.join(__dirname, '../backend/env')} && python ${path.join(__dirname, '../backend/server.py')}`
+      `source ~/miniconda3/etc/profile.d/conda.sh && conda init && conda activate ${path.join(__dirname, '../backend/env')} && python ${path.join(__dirname, '../backend/src/api_server/server.py')}`
     ]);
   }
 
