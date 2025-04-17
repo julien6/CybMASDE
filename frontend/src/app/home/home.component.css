@@ -1,23 +1,67 @@
-/* Mise en page principale */
-.container {
+.grid-wrapper {
   width: 100%;
-  height: 100vh;
+  padding: 0px;
+  margin: 0px;
+}
+
+.grid-flex {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.left-panel {
+  margin-left: 5%;
+  flex: 1 1 60%;
+  min-width: 300px;
+}
+
+.right-panel {
+  flex: 1 1 30%;
+  min-width: 200px;
+}
+
+mat-card {
+  padding: 6%;
+  background-color: #61dafb;
+  font-weight: bold;
+  h2 {
+    color: white;
+    padding-bottom: 45%;
+  }
+  width: 200px;
+  margin-top: 50px;
+}
+
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+
+
+
+/* -------------------------- */
+
+/* Mise en page principale */
+.home_container {
   background-color: #1e1e1e;
   color: #ffffff;
-  padding: 20px;
+  padding-top: 50px;
 }
 
-.left-panel, .right-panel {
-  padding: 10px;
-}
-
-.section {
-  margin-top: 20px;
+::ng-deep grid-wrapper{
+  padding-top: 50px;
 }
 
 .material-icons {
   position: relative;
-  top: 5px; /*Change this to adjust the icon*/
+  top: 5px;
   padding-left: 10px;
   margin-right: 10px;
 }
@@ -60,11 +104,10 @@ li {
   color:white;
 }
 
-mat-grid-list {
-  height: 100vh;
+/* mat-grid-list {
+  height: 100%;
 }
 
 mat-grid-tile {
   background-color: #252526;
-  padding: 10px;
-}
+} */

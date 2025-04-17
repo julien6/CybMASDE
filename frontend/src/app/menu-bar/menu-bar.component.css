@@ -25,4 +25,18 @@ button[mat-button] {
         color: #fff;
         /* Couleur du texte lors du survol */
     }
+    flex-shrink: 0;
+
+}
+
+:host {
+    /* display: block; */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+app-home {
+    display: block;
+    width: 100%;
 }
