@@ -21,8 +21,8 @@ else
 fi
 
 conda --version
-conda create -n marllib python=3.8 -y
-conda activate marllib
+conda create -p ./env python=3.8 -y
+conda activate ./env
 
 
 rm -rf Miniconda3-latest-Linux-x86_64.sh

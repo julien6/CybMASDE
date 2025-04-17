@@ -1,19 +1,21 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.full-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .app-detail-panel{
   display: block;
 }
 
 .app-menu-bar {
-  display: block;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-* { 
-  box-sizing: border-box; 
-} 
-
-:host {
   display: block;
   width: 100%;
   margin: 0;

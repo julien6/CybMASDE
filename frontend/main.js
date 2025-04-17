@@ -39,9 +39,11 @@ function waitForFlaskServer(url, timeout = 10000, interval = 500) {
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    icon: isDev? path.join(__dirname, 'src', 'assets', 'favicon.png') : path.join(__dirname, 'dist', 'frontend', 'browser', 'assets', 'favicon.png'),
+    'minHeight': 700,
+    'minWidth': 500,
+    'width': 1000,
+    'height': 800,
+    icon: isDev ? path.join(__dirname, 'src', 'assets', 'favicon.png') : path.join(__dirname, 'dist', 'frontend', 'browser', 'assets', 'favicon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
@@ -71,6 +73,12 @@ function createWindow() {
       })
     );
   }
+
+  mainWindow.on('will-resize', (event, newBounds) => {
+    if (newBounds.width < 500) {
+      event.preventDefault();
+    }
+  });
 
   // Ouvrir le lien externe dans le navigateur par défaut
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {

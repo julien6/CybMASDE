@@ -46,7 +46,8 @@
     },
     "linux": {
       "target": [
-        "AppImage", "deb"
+        "AppImage",
+        "deb"
       ],
       "icon": "assets/favicon.png",
       "category": "Development"
@@ -78,7 +79,7 @@
     "@types/jasmine": "~5.1.0",
     "@types/node": "^22.8.1",
     "@types/wicg-file-system-access": "^2023.10.5",
-    "concurrently": "^9.0.1",
+    "concurrently": "^9.1.2",
     "electron": "^33.0.2",
     "electron-builder": "^25.1.8",
     "electron-reload": "^2.0.0-alpha.1",

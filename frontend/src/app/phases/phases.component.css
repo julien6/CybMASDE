@@ -2,8 +2,8 @@
     display: block;
     margin: 0;
     padding: 0;
-    width: 100%;
-    height: 100%;
+    /* width: 100%; */
+    /* height: 100%; */
 }
 
 ::ng-deep .mat-horizontal-stepper-header-container{
@@ -13,14 +13,14 @@
 ::ng-deep .mat-horizontal-content-container{
     padding: 0;
     margin: 0;
-    width: 100%;
+    /* width: 100%; */
 }
 
 ::ng-deep .mat-horizontal-stepper-content{
     margin: 0;
     padding: 0;
-    width: 100%;
-    height: 100%;
+    /* width: 100%; */
+    /* height: 100%; */
 }
 
 ::ng-deep mat-step{
@@ -30,6 +30,6 @@
 ::ng-deep mat-stepper {
     padding: 0;
     margin: 0;
-    width: 100%;
-    height: 100%;
+    /* width: 100%; */
+    /* height: 100%; */
 }
