@@ -1,3 +1,5 @@
+cmake==3.25.0
+hanabi-learning-environment==0.0.4
 gymnasium
 mpld3
 Flask
@@ -6,7 +8,7 @@ Werkzeug
 pytest
 pyyaml
 numpy
-gym
+gym==0.25.2
 prettytable
 docutils
 pettingzoo

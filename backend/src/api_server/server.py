@@ -7,8 +7,7 @@ import shutil
 from typing import Dict, List, Any
 
 app = Flask(__name__)
-CORS(app)
-
+CORS(app, origins=["http://localhost:4200"])
 
 class Project:
 

@@ -4,6 +4,15 @@ const { spawn } = require('child_process');
 const { format } = require('url');
 const path = require('path');
 
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  app.quit();
+  return;
+}
+
+let flaskStarted = false;
+let pythonProcess = null;
 
 const isDev = !app.isPackaged; // Détecte si l'application est en mode dev ou prod
 
@@ -39,7 +48,7 @@ function waitForFlaskServer(url, timeout = 10000, interval = 500) {
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    'minHeight': 700,
+    'minHeight': 800,
     'minWidth': 500,
     'width': 1000,
     'height': 800,
@@ -95,6 +104,10 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+
+  if (flaskStarted) return; // ⚠️ important
+  flaskStarted = true;
+
   console.log("Application Electron prête");
 
   let pythonProcess = null;
