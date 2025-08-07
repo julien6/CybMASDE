@@ -1,0 +1,94 @@
+{
+  "batch_mode": "truncate_episodes",
+  "clip_param": 0.3,
+  "entropy_coeff": 0.01,
+  "env": "wmt_warehouse_management",
+  "evaluation_interval": 50,
+  "framework": "torch",
+  "kl_coeff": 0.2,
+  "lambda": 1.0,
+  "lr": 0.0005,
+  "model": {
+    "custom_model": "Centralized_Critic_Model",
+    "custom_model_config": {
+      "agent_level_batch_update": false,
+      "agent_name_ls": [
+        "agent_0",
+        "agent_1",
+        "agent_2"
+      ],
+      "algorithm": "mappo",
+      "checkpoint_end": true,
+      "checkpoint_freq": 20,
+      "env": "wmt",
+      "env_args": {
+        "agents_number": 3,
+        "grid_size": [
+          10,
+          10
+        ],
+        "map_name": "warehouse_management",
+        "max_cycles": 100,
+        "view_size": 3
+      },
+      "episode_limit": 30,
+      "evaluation_interval": 50,
+      "force_coop": false,
+      "framework": "torch",
+      "global_state_flag": false,
+      "local_dir": "",
+      "local_mode": false,
+      "mask_flag": false,
+      "model_arch_args": {
+        "core_arch": "mlp",
+        "encode_layer": "128-256",
+        "fc_layer": 2,
+        "hidden_state_size": 256,
+        "out_dim_fc_0": 128,
+        "out_dim_fc_1": 64
+      },
+      "num_agents": 3,
+      "num_cpus_per_worker": 1,
+      "num_gpus": 0,
+      "num_gpus_per_worker": 0,
+      "num_workers": 1,
+      "opp_action_in_cc": true,
+      "policy_mapping_info": {
+        "warehouse_management": {
+          "all_agents_one_policy": true,
+          "description": "Warehouse Management",
+          "one_agent_one_policy": true,
+          "team_prefix": [
+            "agent_"
+          ]
+        }
+      },
+      "restore_path": {
+        "model_path": "",
+        "params_path": ""
+      },
+      "seed": 321,
+      "share_policy": "group",
+      "space_act": "Discrete(7)",
+      "space_obs": "Dict(obs:Box([0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n 0 0 0 0 0 0 0 0 0 0 0 0], [14 14 14 14 14 14 14 14 14 14 14 14 14 14 14 14 14 14 14 14 14 14 14 14\n 14 14 14 14 14 14 14 14 14 14 14 14 14 14 14 14 14 14 14 14 14 14 14 14\n 14], (49,), int64))",
+      "stop_iters": 9999999,
+      "stop_reward": 999999,
+      "stop_timesteps": 2000000
+    }
+  },
+  "multiagent": {
+    "policies": "{'shared_policy'}",
+    "policy_mapping_fn": "<function run_cc.<locals>.<lambda> at 0x740a27961790>"
+  },
+  "num_gpus": 0,
+  "num_gpus_per_worker": 0,
+  "num_sgd_iter": 2,
+  "num_workers": 1,
+  "seed": 321,
+  "sgd_minibatch_size": 60,
+  "simple_optimizer": false,
+  "train_batch_size": 60,
+  "use_gae": true,
+  "vf_clip_param": 10.0,
+  "vf_loss_coeff": 1.0
+}

@@ -1,0 +1,39 @@
+{
+    "configuration": {
+        "environment_api_url": "URL de l'API faisant l'interface avec l'environment cible",
+        "action_space": "Chemin ou code python de l'espace Gym pour les actions",
+        "observation_space": "Chemin ou code python de l'espace Gym pour les observations"
+    },
+    "modelling": {
+        "simulated_environment": {
+            "environment_path": "Chemin vers un fichier Python contenant l'implémentation PettingZoo ou RLlib",
+            "generated_environment": {
+                "world_model": {
+                    "statistics": "Chemin ou JSON contenant les statistiques du World Model après entrainement",
+                    "model": "Chemin vers le meilleur modèle World Model sauvegardé",
+                    "hyperparameters": "Chemin ou JSON contenant les intervales de recherche des hyperparamètres du World Model",
+                    "used_traces_path": "Chemin vers le dossier contenant les trajectoires JSON"
+                },
+                "reward_function": "Chemin ou code python de la fonction de récompense basée historique"
+            }
+        },
+        "organizational_specifications": "Chemin ou JSON ou Python du modèle MOISE+MARL"
+    },
+    "training": {
+        "hyperparameters": "Chemin ou JSON contenant les intervales de recherche des hyperparamètres de l'entrainement de la politique conjointe",
+        "joint_policy": "Chemin vers le meilleur modèle de politique conjointe sauvegardé",
+        "statistics": "Chemin ou JSON contenant les statistiques de la politique conjointe après entrainement"
+    },
+    "analyzing": {
+        "hyperparameters": "Chemin ou JSON contenant les intervales de recherche des hyperparamètres du l'analyse de la politique conjointe",
+        "statistics": "Chemin ou JSON contenant les statistiques de la politique conjointe après analyse",
+        "figures_path": "Chemin des figures générées",
+        "post_training_trajectories_path": "Chemin vers le dossier contenant les trajectoires des agents entrainés en JSON",
+        "inferred_organizational_specifications": "Chemin ou JSON ou Python du modèle MOISE+MARL"
+    },
+    "transferring": {
+        "trajectory_retrieve_frequency": "Fréquence de collecte des trajectoires des agents déployés",
+        "trajectory_batch_size": "Nombre de trajectoires des agents entrainés dans un seul batch",
+        "deploy_mode": "remote or direct"
+    }
+}

@@ -29,7 +29,7 @@ export class ModelingComponent implements OnInit {
     "goalInput": {
       'goalText': { 'fullName': 'Goal Text (alpha)', 'content': '' },
       'goalModel': { 'fullName': 'Reward Function Model', 'content': '' },
-      'goalStates': { 'fullName': 'Goal States', 'content': '' }      
+      'goalStates': { 'fullName': 'Goal States', 'content': '' }
     },
     "constraintInput": {
       'constraintText': { 'fullName': 'Constraint Text (alpha)', 'content': '' },
@@ -47,7 +47,7 @@ export class ModelingComponent implements OnInit {
       this.selectedFile = input.files[0];
       const reader = new FileReader();
       reader.onload = () => {
-          this.modelingInput[inputCategory][inputType]['content'] = reader.result as string;
+        this.modelingInput[inputCategory][inputType]['content'] = reader.result as string;
       };
       reader.readAsText(this.selectedFile);
     }
@@ -61,13 +61,13 @@ export class ModelingComponent implements OnInit {
       // Lire le contenu du fichier comme texte
       reader.onload = () => {
         const fileContent = reader.result as string;
-        
+
         try {
           // Convertir le texte en JSON
           const traces = JSON.parse(fileContent);
 
           // Envoyer les traces au backend
-          this.http.post('http://localhost:5000/modeling-transition-traces', traces, {
+          this.http.post('http://localhost:5001/modeling-transition-traces', traces, {
             headers: new HttpHeaders({
               'Content-Type': 'application/json'
             })

@@ -1,0 +1,365 @@
+{
+    "structural_specifications": {
+        "roles": {
+            "role_1": {
+                "label_manager": {
+                    "module_name": "__main__",
+                    "class_name": "label_manager_ex"
+                },
+                "pattern_rules": {
+                    "(o0,a0;o1)": [
+                        [
+                            "a1",
+                            1.0
+                        ]
+                    ]
+                },
+                "reward_reshape_standard": 100,
+                "script_rules": []
+            },
+            "role_2": {
+                "label_manager": {
+                    "module_name": "__main__",
+                    "class_name": "label_manager_ex"
+                },
+                "pattern_rules": {},
+                "reward_reshape_standard": 100,
+                "script_rules": [
+                    {
+                        "function_name": "<lambda>",
+                        "module_name": "__main__",
+                        "source": "def lamba_e0a7c7eddf44a98c3cb79a3d830c190e(tp,obs,agt,lbl_mngr):\n    return  [(2., 1)]"
+                    }
+                ]
+            },
+            "role_3": {
+                "label_manager": {
+                    "module_name": "__main__",
+                    "class_name": "label_manager_ex"
+                },
+                "pattern_rules": {},
+                "reward_reshape_standard": 100,
+                "script_rules": [
+                    {
+                        "function_name": "role_3_func",
+                        "module_name": "__main__",
+                        "source": "def role_3_func(tp, ob, agt, lbl_mngr):\n    return [(3, 1.1)]\n"
+                    }
+                ]
+            },
+            "role_4": {
+                "label_manager": {
+                    "module_name": "__main__",
+                    "class_name": "label_manager_ex"
+                },
+                "pattern_rules": {},
+                "reward_reshape_standard": 100,
+                "script_rules": [
+                    {
+                        "function_name": "role_4_func",
+                        "module_name": "__main__",
+                        "source": "def role_4_func(tp, ob, agt, lbl_mngr): return [(4., 1.7)]\n"
+                    }
+                ]
+            },
+            "role_5": {
+                "label_manager": {
+                    "module_name": "__main__",
+                    "class_name": "label_manager_ex"
+                },
+                "pattern_rules": {},
+                "reward_reshape_standard": 100,
+                "script_rules": [
+                    {
+                        "function_name": "role_5_func",
+                        "module_name": "__main__",
+                        "source": "def role_5_func(tp, obs, agt, lbl_mngr): return [(5, 1.2)]\n"
+                    }
+                ]
+            },
+            "role_6": {
+                "label_manager": {
+                    "module_name": "__main__",
+                    "class_name": "label_manager_ex"
+                },
+                "pattern_rules": {
+                    "(o5,a5;o6)": [
+                        [
+                            "a6",
+                            1
+                        ]
+                    ]
+                },
+                "reward_reshape_standard": 100,
+                "script_rules": []
+            }
+        },
+        "role_inheritance_relations": {
+            "role_2": [
+                "role_1"
+            ],
+            "role_3": [
+                "role_1"
+            ]
+        },
+        "root_groups": {
+            "group1": {
+                "roles": [
+                    "role_1",
+                    "role_2",
+                    "role_3"
+                ],
+                "sub_groups": {},
+                "intra_links": [
+                    {
+                        "source": "role_1",
+                        "destination": "role_2",
+                        "type": "ACQ"
+                    },
+                    {
+                        "source": "role_2",
+                        "destination": "role_3",
+                        "type": "ACQ"
+                    }
+                ],
+                "inter_links": [],
+                "intra_compatibilities": [],
+                "inter_compatibilities": [],
+                "role_cardinalities": {
+                    "role_0": {
+                        "lower_bound": 1,
+                        "upper_bound": 1
+                    },
+                    "role_1": {
+                        "lower_bound": 1,
+                        "upper_bound": 1
+                    },
+                    "role_2": {
+                        "lower_bound": 1,
+                        "upper_bound": 1
+                    }
+                },
+                "sub_group_cardinalities": {}
+            }
+        }
+    },
+    "functional_specifications": {
+        "goals": {
+            "goal_1": {
+                "label_manager": {
+                    "module_name": "__main__",
+                    "class_name": "label_manager_ex"
+                },
+                "pattern_rules": {},
+                "reward_reshape_standard": 100,
+                "script_rules": [
+                    {
+                        "function_name": "func1",
+                        "module_name": "__main__"
+                    }
+                ]
+            },
+            "goal_2": {
+                "label_manager": {
+                    "module_name": "__main__",
+                    "class_name": "label_manager_ex"
+                },
+                "pattern_rules": {},
+                "reward_reshape_standard": 100,
+                "script_rules": [
+                    {
+                        "function_name": "<lambda>",
+                        "module_name": "__main__",
+                        "source": "def lamba_110fafe99c820050e240a18672bf3702(x,agt,lbl_mngr):\n    return  2"
+                    }
+                ]
+            },
+            "goal_3": {
+                "label_manager": {
+                    "module_name": "__main__",
+                    "class_name": "label_manager_ex"
+                },
+                "pattern_rules": {},
+                "reward_reshape_standard": 100,
+                "script_rules": [
+                    {
+                        "function_name": "func3",
+                        "module_name": "__main__",
+                        "source": "def func3(x, agt: str, lbl_mngr: label_manager): return (3.)\n"
+                    }
+                ]
+            },
+            "goal_4": {
+                "label_manager": {
+                    "module_name": "__main__",
+                    "class_name": "label_manager_ex"
+                },
+                "pattern_rules": {},
+                "reward_reshape_standard": 100,
+                "script_rules": [
+                    {
+                        "function_name": "func4",
+                        "module_name": "__main__",
+                        "source": "def func4(x, agt: str, lbl_mngr: label_manager): return (4.)\n"
+                    }
+                ]
+            },
+            "goal_5": {
+                "label_manager": {
+                    "module_name": "__main__",
+                    "class_name": "label_manager_ex"
+                },
+                "pattern_rules": {},
+                "reward_reshape_standard": 100,
+                "script_rules": [
+                    {
+                        "function_name": "func5",
+                        "module_name": "__main__",
+                        "source": "def func5(x, agt: str, lbl_mngr: label_manager): return (5.)\n"
+                    }
+                ]
+            },
+            "goal_6": {
+                "label_manager": {
+                    "module_name": "__main__",
+                    "class_name": "label_manager_ex"
+                },
+                "pattern_rules": {},
+                "reward_reshape_standard": 100,
+                "script_rules": [
+                    {
+                        "function_name": "func6",
+                        "module_name": "__main__",
+                        "source": "def func6(tp: trajectory, agent_name: str, lbl_mngr: 'label_manager') -> float:\n    # I can use the label manager and the agent name here...\n    labeled_trajectory = lbl_mngr.label_trajectory(\n        tp)\n    return 6.\n"
+                    }
+                ]
+            }
+        },
+        "social_scheme": {
+            "scheme1": {
+                "goals_structure": {
+                    "goal": "goal_1",
+                    "sub_plan": {
+                        "operator": "SEQUENCE",
+                        "sub_goals": [
+                            "goal_2",
+                            "goal_3",
+                            {
+                                "goal": "goal_4",
+                                "sub_plan": {
+                                    "operator": "PARALLEL",
+                                    "sub_goals": [
+                                        "goal5",
+                                        "goal6"
+                                    ]
+                                },
+                                "probability": 0.8
+                            }
+                        ]
+                    },
+                    "probability": 1.0
+                },
+                "mission_to_goals": {
+                    "mission11": [
+                        "goal_1",
+                        "goal_2"
+                    ],
+                    "mission12": [
+                        "goal_1",
+                        "goal_3"
+                    ]
+                },
+                "mission_to_agent_cardinality": {
+                    "mission11": {
+                        "lower_bound": 1,
+                        "upper_bound": 1
+                    },
+                    "mission12": {
+                        "lower_bound": 1,
+                        "upper_bound": 1
+                    }
+                }
+            },
+            "scheme2": {
+                "goals_structure": {
+                    "goal": "goal_1",
+                    "sub_plan": {
+                        "operator": "SEQUENCE",
+                        "sub_goals": [
+                            "goal_2",
+                            "goal_3",
+                            {
+                                "goal": "goal_4",
+                                "sub_plan": {
+                                    "operator": "PARALLEL",
+                                    "sub_goals": [
+                                        "goal5",
+                                        "goal6"
+                                    ]
+                                },
+                                "probability": 0.8
+                            }
+                        ]
+                    },
+                    "probability": 1.0
+                },
+                "mission_to_goals": {
+                    "mission21": [
+                        "goal_1",
+                        "goal_2"
+                    ],
+                    "mission22": [
+                        "goal_1",
+                        "goal_3"
+                    ]
+                },
+                "mission_to_agent_cardinality": {
+                    "mission21": {
+                        "lower_bound": 1,
+                        "upper_bound": 9
+                    },
+                    "mission22": {
+                        "lower_bound": 1,
+                        "upper_bound": 1
+                    }
+                }
+            }
+        },
+        "mission_preferences": [
+            {
+                "prefer": "mission1",
+                "over": "mission2"
+            }
+        ]
+    },
+    "deontic_specifications": {
+        "permissions": [
+            {
+                "role": "role_1",
+                "agents": [
+                    "agent_1"
+                ],
+                "missions": "mission1",
+                "time_constraint": "ANY"
+            },
+            {
+                "role": "role_3",
+                "agents": [
+                    "agent_2"
+                ],
+                "missions": "mission1",
+                "time_constraint": "ANY"
+            }
+        ],
+        "obligations": [
+            {
+                "role": "role_2",
+                "agents": [
+                    "agent_1"
+                ],
+                "missions": "mission2",
+                "time_constraint": "ANY"
+            }
+        ]
+    }
+}

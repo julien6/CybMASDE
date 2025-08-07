@@ -11,7 +11,7 @@ export class HomeComponent {
 
   recentProjects: any = [];
 
-  rootUrl = "http://127.0.0.1:5000/";
+  rootUrl = "http://127.0.0.1:5001/";
 
   constructor(private http: HttpClient, @Optional() private menuBar: MenuBarComponent) { }
 

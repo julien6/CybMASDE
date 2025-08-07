@@ -1,0 +1,119 @@
+{
+  "batch_mode": "truncate_episodes",
+  "clip_param": 0.3,
+  "entropy_coeff": 0.01,
+  "env": "cyborg_cage3",
+  "evaluation_interval": 50,
+  "framework": "torch",
+  "kl_coeff": 0.2,
+  "lambda": 1.0,
+  "lr": 0.0005,
+  "model": {
+    "custom_model": "Centralized_Critic_Model",
+    "custom_model_config": {
+      "agent_level_batch_update": false,
+      "agent_name_ls": [
+        "blue_agent_0",
+        "blue_agent_1",
+        "blue_agent_2",
+        "blue_agent_3",
+        "blue_agent_4",
+        "blue_agent_5",
+        "blue_agent_6",
+        "blue_agent_7",
+        "blue_agent_8",
+        "blue_agent_9",
+        "blue_agent_10",
+        "blue_agent_11",
+        "blue_agent_12",
+        "blue_agent_13",
+        "blue_agent_14",
+        "blue_agent_15",
+        "blue_agent_16",
+        "blue_agent_17"
+      ],
+      "algorithm": "mappo",
+      "checkpoint_end": true,
+      "checkpoint_freq": 20,
+      "env": "cyborg",
+      "env_args": {
+        "agents": null,
+        "drone_swarm_scenario_configuration": {
+          "agent_to_drone_mapping": null,
+          "all_external": false,
+          "data_link_bandwidth": 100,
+          "default_red_agent": null,
+          "max_length_data_links": 30,
+          "maximum_steps": 500,
+          "num_drones": 18,
+          "red_internal_only": true,
+          "red_spawn_rate": 0.05,
+          "starting_num_red": 0,
+          "starting_positions": null
+        },
+        "env_config": null,
+        "environment": "sim",
+        "map_name": "cage3",
+        "seed": null
+      },
+      "episode_limit": 30,
+      "evaluation_interval": 50,
+      "force_coop": false,
+      "framework": "torch",
+      "global_state_flag": false,
+      "local_dir": "",
+      "local_mode": false,
+      "mask_flag": false,
+      "model_arch_args": {
+        "core_arch": "mlp",
+        "encode_layer": "128-256",
+        "fc_layer": 2,
+        "hidden_state_size": 256,
+        "out_dim_fc_0": 128,
+        "out_dim_fc_1": 64
+      },
+      "num_agents": 18,
+      "num_cpus_per_worker": 1,
+      "num_gpus": 0,
+      "num_gpus_per_worker": 0,
+      "num_workers": 1,
+      "opp_action_in_cc": true,
+      "policy_mapping_info": {
+        "cage3": {
+          "all_agents_one_policy": true,
+          "description": "CybORG 3rd CAGE Challenge",
+          "one_agent_one_policy": true,
+          "team_prefix": [
+            "agent_"
+          ]
+        }
+      },
+      "restore_path": {
+        "model_path": "",
+        "params_path": ""
+      },
+      "seed": 321,
+      "share_policy": "group",
+      "space_act": "Discrete(56)",
+      "space_obs": "Dict(obs:Box([0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0], [101 101 101 101 101 101 101 101 101 101 101 101 101 101 101 101 101 101\n 101 101 101 101 101 101 101 101 101 101 101 101 101 101 101 101 101 101\n 101 101 101 101 101 101 101 101 101 101 101 101 101 101 101 101 101 101\n 101 101 101 101 101 101 101 101 101 101 101 101 101 101 101 101 101 101\n 101 101 101 101 101 101 101 101 101 101 101 101 101 101 101 101 101 101\n 101 101 101 101 101 101 101 101 101 101 101 101 101 101 101 101 101 101], (108,), int64))",
+      "stop_iters": 9999999,
+      "stop_reward": 999999,
+      "stop_timesteps": 2000000
+    }
+  },
+  "multiagent": {
+    "policies": "{'shared_policy'}",
+    "policy_mapping_fn": "<function run_cc.<locals>.<lambda> at 0x7f4e935464c0>"
+  },
+  "num_gpus": 0,
+  "num_gpus_per_worker": 0,
+  "num_sgd_iter": 2,
+  "num_workers": 1,
+  "seed": 321,
+  "sgd_minibatch_size": 60,
+  "simple_optimizer": false,
+  "train_batch_size": 60,
+  "use_gae": true,
+  "vf_clip_param": 10.0,
+  "vf_loss_coeff": 1.0
+}

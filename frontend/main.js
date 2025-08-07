@@ -141,7 +141,7 @@ app.whenReady().then(() => {
   });
 
   // Attendre que le serveur Flask soit prêt avant de créer la fenêtre principale
-  waitForFlaskServer('http://127.0.0.1:5000/get-recent-projects')
+  waitForFlaskServer('http://127.0.0.1:5001/get-recent-projects')
     .then(() => {
       console.log('Le serveur Flask est prêt. Création de la fenêtre principale.');
       createWindow();

@@ -1,87 +1,69 @@
 #!/bin/bash
 
-if [ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]; then
-    sudo apt-get install libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6
-fi
+git config --global http.postBuffer 524288000
+git config --global http.lowSpeedLimit 0
+git config --global http.lowSpeedTime 999999
+git config --global core.compression 0
 
-cat << 'EOT' > tmp_install.sh
-#!/bin/bash
-
-if [ ! -f "/applis/environments/conda.sh" ] && [ ! -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]; then
-    echo -e "\n\nINSTALLATION OF MINICONDA\n"
-    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-    chmod +x Miniconda3-latest-Linux-x86_64.sh
-    ./Miniconda3-latest-Linux-x86_64.sh
-fi
-
-if [ -e "/applis/environments/conda.sh" ]; then
-    source /applis/environments/conda.sh
+if command -v python3.8 >/dev/null 2>&1; then
+    echo "✅ Python 3.8 was found."
 else
-    source ~/miniconda3/etc/profile.d/conda.sh
+    echo $()$(
+        ❌ Python 3.8 is not installed. Please install it, here is an installation script:
+
+        sudo apt install software-properties-common
+        sudo add-apt-repository ppa:deadsnakes/ppa
+        sudo apt update
+        sudo apt install python3.8 python3.8-venv
+        python3.8 --version
+    )$()
+    exit 1
 fi
 
-conda --version
-conda create -p ./env python=3.8 -y
-conda activate ./env
+echo "🛠️  Creating virtual Python 3.8 environment..."
+python3.8 -m venv ./env
 
+echo "Activation of the virtual environment..."
+source ./env/bin/activate
 
-rm -rf Miniconda3-latest-Linux-x86_64.sh
-git clone https://github.com/Replicable-MARL/MARLlib.git
+pip install --upgrade pip setuptools
+
+git clone https://github.com/julien6/PettingZoo.git
+
+cd PettingZoo
+
+pip install -e .
+
+cd ..
+
+git clone https://github.com/julien6/MARLlib.git
 cd MARLlib
 pip install --upgrade pip
-pip install -r requirements.txt
 pip install setuptools==65.5.0 pip==21
-pip install wheel==0.38.0
-pip install scikit-learn
+pip install wheel==0.38.0 # gym 0.21 installation is broken with more recent versions
 pip install -r requirements.txt
+
+# we recommend the gym version between 0.20.0~0.22.0.
 pip install "gym>=0.20.0,<0.22.0"
-pip install ray[tune]
 
-pip install protobuf==3.20.*
-python marllib/patch/add_patch.py -y
-
-export PYTHONPATH="${PYTHONPATH}:./src"
-
-pip install pettingzoo # ==1.23.1
-pip install supersuit # ==3.9.0
-pip install pygame==2.3.0
-pip install numpy==1.23.5
-
-pip install pettingzoo --upgrade
-pip install supersuit --upgrade
-
-conda install -c conda-forge libstdcxx-ng
+pip install numpy==1.20.3
+# pip install pettingzoo==1.12.0
 pip install pyglet==1.5.11
 
-pip install marllib==1.0.3
-pip install numpy==1.23.5
-pip install torch -U
+cd marllib
+# add patch files to MARLlib
+python patch/add_patch.py -y
 
-# Obtenir le chemin absolu du script en cours d'exécution
-declare script_path="$(dirname "$(readlink -f "$BASH_SOURCE")")"
+cd ..
 
-cd \$script_path
+pip install -e .
+
+cd ..
+
+cd mma
+
+pip install -e .
+
+cd ..
 
 pip install -r requirements.txt
-EOT
-
-# echo -e "\n\nINSTALLATION ON INTERFACE LOCAL MACHINE\n"
-chmod +x tmp_install.sh
-./tmp_install.sh;
-rm -rf tmp_install.sh
-
-# if [ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]; then
-#     echo -e "\n\nINSTALLATION ON COMPUTATIONAL REMOTE SERVER\n"
-#     ssh soulej@bigfoot.ciment -t "cd /bettik/soulej ; rm -rf omarl_experiments ; mkdir omarl_experiments"
-#     rsync -avxH tmp_install.sh oar_launch.sh train_test.py  soulej@bigfoot.ciment:/bettik/soulej/omarl_experiments/
-#     rm -rf tmp_install.sh
-#     ssh soulej@bigfoot.ciment -t "cd /bettik/soulej/omarl_experiments ; ./tmp_install.sh ; rm -rf tmp_install.sh ; echo -e \"\n\nINSTALLATION FINISHED!\n\""
-# fi
-
-# if [ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]; then
-#     echo -e "\n\nINSTALLATION ON COMPUTATIONAL REMOTE SERVER\n"
-#     ssh soulej@bigfoot.ciment -t "cd /bettik/soulej ; rm -rf omarl_experiments ; git clone https://github.com/julien6/omarl_experiments.git ; cd omarl_experiments ; git checkout test ; cd prahom_wrapper/tests/test"
-#     rsync -avxH tmp_install.sh soulej@bigfoot.ciment:/bettik/soulej/omarl_experiments/prahom_wrapper/tests/test
-#     rm -rf tmp_install.sh
-#     ssh soulej@bigfoot.ciment -t "cd /bettik/soulej/omarl_experiments/prahom_wrapper/tests/test ; ./tmp_install.sh ; rm -rf tmp_install.sh ; echo -e \"\n\nINSTALLATION FINISHED!\n\""
-# fi
