@@ -75,8 +75,8 @@ class TransferringProcess(Process):
                     last_joint_histories = [[] for _ in range(nb_agents)]
 
     def load_latest_joint_policy(self):
-        """Charge la dernière politique conjointe depuis le checkpoint."""
-        # À adapter selon ton format de sauvegarde/checkpoint
+        """Load the latest joint policy from the checkpoint."""
+        # To be adapted according to your save/checkpoint format
         checkpoint_path = os.path.join(
             current_project.checkpoints_dir, "latest_joint_policy.json")
         with open(checkpoint_path, "r") as f:
@@ -85,7 +85,7 @@ class TransferringProcess(Process):
         return self.joint_policy.from_dict(policy_data)
 
     def create_mta_process(self, last_joint_histories):
-        """Sauvegarde asynchrone et lancement du MTA si besoin."""
+        """Asynchronous save and launch of the MTA if needed."""
 
         threading.Thread(target=self.save_joint_histories,
                          args=(last_joint_histories,)).start()
@@ -102,7 +102,7 @@ class TransferringProcess(Process):
                     mta.start()
                     mta.join()
                     mta.close()
-                    print("MTA terminé, chargement de la nouvelle politique...")
+                    print("MTA finished, loading the new joint policy...")
                     new_joint_policy = self.load_latest_joint_policy()
                     self.joint_policy = new_joint_policy
                     if self.transferring.deploy_mode == DeployMode.DIRECT:
@@ -110,9 +110,9 @@ class TransferringProcess(Process):
                             self.joint_policy, self.transferring.trajectory_retrieve_frequency)
                         self.environment_api.deploy_joint_policy(
                             deployable_joint_policy)
-                        print("Nouvelle politique conjointe déployée (DIRECT).")
+                        print("New joint policy deployed (DIRECT).")
                     elif self.transferring.deploy_mode == DeployMode.REMOTE:
-                        print("Nouvelle politique conjointe chargée (REMOTE).")
+                        print("New joint policy loaded (REMOTE).")
                 self.mta_thread = threading.Thread(target=run_mta)
                 self.mta_thread.start()
                 print("MTA process started.")
@@ -120,11 +120,11 @@ class TransferringProcess(Process):
                 print("MTA process already running.")
 
     def save_joint_histories(self, last_joint_histories):
-        """Méthode à implémenter pour sauvegarder les trajectoires sur disque."""
-        # ...implémentation de la sauvegarde...
+        """MMethod to implement to save the trajectories to disk."""
+        # ...implementation of the save...
         pass
 
     def prepare_deployable_joint_policy(self, joint_policy, frequency):
-        """Méthode à implémenter pour préparer la politique déployable."""
-        # ...implémentation...
+        """MMethod to implement to prepare the deployable policy."""
+        # ...implementation...
         pass

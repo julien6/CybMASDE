@@ -4,7 +4,7 @@ import os
 from dataclasses import dataclass
 from enum import Enum
 import time
-from typing import Optional
+from typing import Dict, Optional
 from transferring_process import TransferringProcess
 from mta_process import MTAProcess
 from environment_api import EnvironmentAPI
@@ -36,10 +36,18 @@ class WorldModel:
 
 
 @dataclass
+class Autoencoder:
+    """Class representing the autoencoder."""
+    model: str  # Path to best saved model
+    hyperparameters: str  # Path or JSON
+
+
+@dataclass
 class GeneratedEnvironment:
     """Class representing the generated environment."""
     world_model: WorldModel
     reward_function: str  # Path or inline Python code
+    autoencoder: Autoencoder  # Path or JSON
 
 
 @dataclass
@@ -64,6 +72,7 @@ class Training:
     hyperparameters: str  # Path or JSON
     joint_policy: str  # Path to best trained joint policy
     statistics: str  # Path or JSON
+    configuration: Dict  # Object representing the configuration for training
 
 
 @dataclass
