@@ -96,7 +96,7 @@ def train_vae(model, optimizer, train_loader, val_loader, kl_weight, device, epo
 # --- Fonction objectif Optuna ---
 
 
-def objective(trial, observations, input_dim, device, max_mse, hp_space):
+def objective(trial, joint_observations, input_dim, device, max_mse, hp_space):
     # 1. Echantillonnage des hyper-paramètres à partir de hp_space
     latent_dim = trial.suggest_categorical(
         "latent_dim", hp_space["latent_dim"])
@@ -113,7 +113,7 @@ def objective(trial, observations, input_dim, device, max_mse, hp_space):
         "kl_weight", hp_space["kl_weight"][0], hp_space["kl_weight"][1])
 
     # 2. Préparation des données (inchangé)
-    obs = torch.tensor(observations, dtype=torch.float32)
+    obs = torch.tensor(joint_observations, dtype=torch.float32)
     n = len(obs)
     idx = np.arange(n)
     np.random.shuffle(idx)
@@ -132,10 +132,15 @@ def objective(trial, observations, input_dim, device, max_mse, hp_space):
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
     # 4. Entraînement
-    val_loss = train_vae(model, optimizer, train_loader,
-                         val_loader, kl_weight, device)
+    val_loss = float(train_vae(model, optimizer, train_loader,
+                               val_loader, kl_weight, device))
 
     # 5. Retourne la loss de validation (Optuna cherche à la minimiser)
-    if val_loss < max_mse:
+
+    print(val_loss, " - ", max_mse)
+
+    if type(max_mse) == str and max_mse == "inf":
+        return val_loss
+    elif val_loss < max_mse:
         torch.save(model.state_dict(), "best_vae.pth")
     return val_loss

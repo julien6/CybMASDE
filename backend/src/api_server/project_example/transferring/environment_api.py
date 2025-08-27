@@ -8,11 +8,7 @@ from typing import Optional
 class EnvironmentAPI:
     """Class representing the environment API for interacting with the environment."""
 
-    def __init__(self, api_url: str):
-        pass
-
-    def agents(self) -> int:
-        """Return the agents in the environment."""
+    def __init__(self):
         pass
 
     def retrieve_joint_observation(self):

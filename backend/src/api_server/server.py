@@ -8,7 +8,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:4200"])
 
-current_project = None
+current_project: Project = None
 
 cybmasde_conf = os.path.join(os.path.expanduser("~"), ".cybmasde")
 try:
