@@ -2,7 +2,7 @@
     "common": {
         "project_name": "Project name",
         "project_description": "Project description",
-        "project_path": "/home/soulej/Documents/CybMASDE/backend/src/api_server/project_example",
+        "project_path": "",
         "label_manager": "label_manager.py"
     },
     "modelling": {
@@ -39,11 +39,11 @@
         "statistics": "training/statistics.json"
     },
     "analyzing": {
-        "hyperparameters": "/home/soulej/Documents/CybMASDE/backend/src/project_example/analyzing/hyperparameters.json",
-        "statistics": "/home/soulej/Documents/CybMASDE/backend/src/project_example/analyzing/statistics.json",
-        "figures_path": "/home/soulej/Documents/CybMASDE/backend/src/project_example/analyzing/figures",
-        "post_training_trajectories_path": "/home/soulej/Documents/CybMASDE/backend/src/project_example/analyzing/trajectories",
-        "inferred_organizational_specifications": "/home/soulej/Documents/CybMASDE/backend/src/project_example/analyzing/inferred_organizational_specifications"
+        "hyperparameters": "analyzing/hyperparameters.json",
+        "statistics": "analyzing/statistics.json",
+        "figures_path": "analyzing/figures",
+        "post_training_trajectories_path": "analyzing/trajectories",
+        "inferred_organizational_specifications": "analyzing/inferred_organizational_specifications"
     },
     "transferring": {
         "configuration": "transferring/configuration.json",

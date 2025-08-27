@@ -52,6 +52,10 @@ class MeanStdStopper(Stopper):
         return False  # Continue
 
 
+if not os.path.exists(os.path.join(os.path.expanduser("~"), ".cybmasde", "configuration.json")):
+    json.dump({}, open(os.path.join(os.path.expanduser(
+        "~"), ".cybmasde", "configuration.json"), "w+"))
+
 cybmasde_conf = json.load(
     open(os.path.join(os.path.expanduser("~"), ".cybmasde", "configuration.json")))
 
@@ -561,8 +565,8 @@ if __name__ == "__main__":
                     configuration.common.project_path, configuration.common.label_manager))
         return lbl_manager
 
-    project_configuration = configuration = Configuration.from_json(
-        "/home/soulej/Documents/new_test/project_configuration.json")
+    project_configuration = configuration = Configuration.from_json(os.path.join(
+        os.path.expanduser("~"), "Documents/new_test/project_configuration.json"))
 
     lbl_manager = load_label_manager(project_configuration)
     component_functions = load_component_functions(

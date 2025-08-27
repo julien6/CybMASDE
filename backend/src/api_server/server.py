@@ -1,7 +1,7 @@
+from project import Project
 import os
 import json
 
-from project import Project
 from flask import Flask, Response, request, request, jsonify
 from flask_cors import CORS
 
@@ -15,6 +15,7 @@ try:
     os.makedirs(cybmasde_conf, exist_ok=True)
 except Exception as e:
     print(f"An error occurred: {e}")
+
 
 # ====================================================================
 # # =========================== GET ==================================
@@ -124,7 +125,7 @@ def save_project():
 
 
 @app.post("/save-and-run")
-def save_project_as():
+def save_and_run():
     """Save the project as a new folder and run it."""
     try:
         path = request.args.get('path')

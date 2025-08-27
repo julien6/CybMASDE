@@ -27,8 +27,6 @@ class Project:
         else:
             self.configuration = Configuration.from_json(os.path.join(
                 os.getcwd(), "project_example", "project_configuration.json"))
-            self.configuration.common.project_path = os.path.join(
-                os.path.join(os.path.expanduser("~"), "project_example"))
 
         self.transferring_process = None
 
@@ -112,7 +110,7 @@ if __name__ == '__main__':
     # project.run()
     # project.save("/home/soulej/Documents/", "new_test")
 
-    project.load("/home/soulej/Documents/new_test")
+    project.load(os.path.join(os.path.expanduser("~"), "Documents/new_test"))
     # print(project.configuration.common.project_name)
 
     try:
