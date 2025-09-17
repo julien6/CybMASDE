@@ -1,10 +1,5 @@
 ### **WARNING : This projet is a work in progress, onging changes are likely to break some of the functionalities**
 
-Parfait 🚀 Voici la traduction anglaise complète et adaptée du **README** pour CybMASDE.
-J’ai conservé le style clair, technique et orienté vers l’usage, mais en rendant certains passages plus accessibles à un public international (par exemple pour Overcooked-AI ou Cyber-defense).
-
----
-
 # CybMASDE
 
 **CybMASDE** (Cyber Multi-Agent System Design Environment) is a modular and extensible platform for the **design, training, analysis, and deployment of multi-agent systems (MAS)**.
@@ -21,7 +16,7 @@ Its purpose is to produce **joint policies that are efficient, stable, and expla
 
 ## 🚀 Key Features
 
-* Structured project creation and validation (`init`,  `validate`)
+* Structured project creation and validation (`init`,   `validate`)
 * Automatic environment modelling via **World Models (VAE, LSTM, JOPM)** or manual modelling via **MCAS**
 * Multi-agent training with **MARLlib + Ray RLlib** (MAPPO, MADDPG, QMIX, etc.)
 * Native integration of **MOISE+MARL organizational constraints** (action masking, reward shaping)
