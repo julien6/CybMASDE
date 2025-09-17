@@ -8,15 +8,11 @@ git config --global core.compression 0
 if command -v python3.8 >/dev/null 2>&1; then
     echo "✅ Python 3.8 was found."
 else
-    echo $()$(
-        ❌ Python 3.8 is not installed. Please install it, here is an installation script:
-
-        sudo apt install software-properties-common
-        sudo add-apt-repository ppa:deadsnakes/ppa
-        sudo apt update
-        sudo apt install python3.8 python3.8-venv
-        python3.8 --version
-    )$()
+    echo "❌ Python 3.8 is not installed. Please install it, here is an installation script:
+    sudo apt install software-properties-common
+    sudo add-apt-repository ppa:deadsnakes/ppa\nsudo apt update
+    sudo apt install python3.8 python3.8-venv
+    python3.8 --version"
     exit 1
 fi
 
