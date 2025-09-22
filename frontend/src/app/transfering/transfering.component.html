@@ -1,6 +1,19 @@
 <mat-card appearance="outlined">
   <mat-stepper [linear]="false" #stepper>
 
+    <ul>
+      <li>If users can adapt their emulated/real environment to the <mat-chip color="accent"
+          matTooltip="A proposed API for monitoring the deployment, updating, removal of agents and interacting externally with them"
+          (click)="openLink('https://www.google.com')" class="clickable-chip">CybMASDE Monitoring
+          API</mat-chip>, then the root <mat-chip>Environment API URL</mat-chip> can be taken as an input.
+      </li>
+      <li>Else, compliant <mat-chip color="accent"
+          matTooltip="Agents designed to explore their environment and collect traces when deployed in an environment"
+          (click)="openLink('https://www.google.com')" class="clickable-chip">Exploratory
+          Agents</mat-chip> can be designed and deployed manually to collect traces to be retrieved
+        afterward.</li>
+    </ul>
+
     <mat-step label="Input">
       <mat-card appearance="outlined">
         <mat-card-content>Trained Joint-policy model</mat-card-content>

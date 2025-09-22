@@ -25,8 +25,8 @@ class Project:
         if configuration is not None:
             self.configuration = configuration
         else:
-            self.configuration = Configuration.from_json(os.path.join(
-                os.getcwd(), "project_example", "project_configuration.json"))
+            self.configuration = Configuration.from_json(os.path.join(os.path.dirname(
+                os.path.abspath(__file__)), "project_example", "project_configuration.json"))
 
         self.transferring_process = None
 
@@ -35,7 +35,8 @@ class Project:
 
         self.configuration.common.project_name = name
 
-        src = Path(os.path.join(os.getcwd(), "project_example"))
+        src = Path(os.path.join(os.path.dirname(
+            os.path.abspath(__file__)), "project_example"))
         dst = None
         if filePath is not None:
             dst = Path(os.path.join(filePath, name))

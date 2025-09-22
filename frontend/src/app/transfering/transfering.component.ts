@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import {FormBuilder, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-transfering',
@@ -35,6 +35,10 @@ export class TransferingComponent implements OnInit {
   editorOptions = { theme: 'vs-dark', language: 'python' };
 
   ngOnInit() {
+  }
+
+  openLink(url: string) {
+    window.open(url, '_blank');
   }
 
 }

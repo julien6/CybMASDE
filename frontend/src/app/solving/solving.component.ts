@@ -1,5 +1,6 @@
 import { FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChangeDetectionStrategy, Component, OnInit, inject, computed, signal } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 export interface Algorithm {
   name: string;
@@ -14,6 +15,11 @@ export interface Algorithm {
   styleUrls: ['./solving.component.css']
 })
 export class SolvingComponent implements OnInit {
+
+  constructor(private http: HttpClient) { }
+
+  ngOnInit() {
+  }
 
   private _formBuilder = inject(FormBuilder);
 
@@ -144,19 +150,80 @@ export class SolvingComponent implements OnInit {
     });
   }
 
-  private selectedFileName: string | null = null;
-
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      this.selectedFileName = file.name;
+  modelingInput: any = {
+    "environmentInput": {
+      'environmentApi': { 'fullName': 'Environment API URL', 'content': '' },
+      'environmentTraces': { 'fullName': 'Environment Traces', 'content': '' },
+      'environmentModel': { 'fullName': 'Observation Transition Function Model', 'content': '' }
+    },
+    "goalInput": {
+      'goalText': { 'fullName': 'Goal Text (alpha)', 'content': '' },
+      'goalModel': { 'fullName': 'Reward Function Model', 'content': '' },
+      'goalStates': { 'fullName': 'Goal States', 'content': '' }
+    },
+    "constraintInput": {
+      'constraintText': { 'fullName': 'Constraint Text (alpha)', 'content': '' },
+      'constraintModel': { 'fullName': 'Constraint Model', 'content': '' },
     }
   }
 
-  constructor() { }
+  outputEnvironmentModel = ""
+  selectedFile: File | null = null;
+  selectedConstraintInput = "constraintModel"
 
-  ngOnInit() {
+  onFileSelected(event: Event, inputCategory: string | null = null, inputType: string | null = null): void {
+    const input = event.target as HTMLInputElement;
+
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
+      if (inputCategory !== null && inputType !== null) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.modelingInput[inputCategory!][inputType!]['content'] = reader.result as string;
+        };
+        reader.readAsText(this.selectedFile);
+      }
+    }
+  }
+
+  openLink(url: string) {
+    window.open(url, '_blank');
+  }
+
+  // Fonction pour envoyer le fichier au serveur
+  uploadFile(inputCategory: string, inputType: string): void {
+    if (this.selectedFile) {
+      const reader = new FileReader();
+
+      // Lire le contenu du fichier comme texte
+      reader.onload = () => {
+        const fileContent = reader.result as string;
+
+        try {
+          // Convertir le texte en JSON
+          const traces = JSON.parse(fileContent);
+
+          // Envoyer les traces au backend
+          this.http.post('http://localhost:5001/modeling-transition-traces', traces, {
+            headers: new HttpHeaders({
+              'Content-Type': 'application/json'
+            })
+          }).subscribe(
+            response => {
+              console.log('Réponse du serveur:', response);
+            },
+            error => {
+              console.error('Erreur lors de l\'envoi des traces:', error);
+            }
+          );
+        } catch (error) {
+          console.error('Le fichier sélectionné n\'est pas un fichier JSON valide.', error);
+        }
+      };
+
+      // Lire le fichier
+      reader.readAsText(this.selectedFile);
+    }
   }
 
 }

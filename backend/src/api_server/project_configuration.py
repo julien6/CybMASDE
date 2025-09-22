@@ -154,7 +154,8 @@ class Configuration:
         project_folder_path = data["common"]["project_path"]
 
         if project_folder_path == "":
-            project_folder_path = os.path.join(os.getcwd(), "project_example")
+            project_folder_path = os.path.join(os.path.dirname(
+                os.path.abspath(__file__)), "project_example")
 
         def build_autoencoder(d: Dict[str, Any]) -> Autoencoder_conf:
             return Autoencoder_conf(max_mean_square_error=d["max_mean_square_error"], **{k: os.path.join(project_folder_path, v) for k, v in d.items() if k != "max_mean_square_error"})
