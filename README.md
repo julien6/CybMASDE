@@ -1,210 +1,135 @@
-
 ### **WARNING : This projet is a work in progress, onging changes are likely to break some of the functionalities**
 
-  
+# CybMASDE
 
-# Cyber Multi-Agent System Development Environment
+**CybMASDE** (Cyber Multi-Agent System Design Environment) is a modular and extensible platform for the **design, training, analysis, and deployment of multi-agent systems (MAS)**.
+It implements the **MAMAD** method (MOISE+MARL Assisted MAS Design), combining:
 
-**Cyber Multi-Agent System Development Environment (CybMASDE)** is intended to implement a Dec-POMDP model of any environment where agents have to collaborate to reach a global goal under extra constraints. CybMASDE is mostly intended to model a Cyberdefense scenario dealing with a network on which attack and defender agents are interacting each other.
+* **Modelling**: generation of simulated environments (via World Models or MCAS)
+* **Training**: multi-agent learning constrained by organizational specifications (MOISE+MARL)
+* **Analyzing**: inference and explainability of organizational structures (Auto-TEMM / TEMM)
+* **Transferring**: deployment and synchronization with real environments
 
-  
+Its purpose is to produce **joint policies that are efficient, stable, and explainable**, applicable both in **academic research** and **industrial contexts** (with a strong focus on cyber-defense).
 
-## Project Goals
+---
 
-This project is largely inspired by the context of [CyberBattleSim](https://github.com/microsoft/CyberBattleSim) in a multi-agent approach.
+## 🚀 Key Features
 
-It aims to provide a way to simulate a network of nodes on which attack actions are coordinately applied by attacking agents according to a realistic based attack scenario.
+* Structured project creation and validation (`init`,   `validate`)
+* Automatic environment modelling via **World Models (VAE, LSTM, JOPM)** or manual modelling via **MCAS**
+* Multi-agent training with **MARLlib + Ray RLlib** (MAPPO, MADDPG, QMIX, etc.)
+* Native integration of **MOISE+MARL organizational constraints** (action masking, reward shaping)
+* Organizational analysis with **Auto-TEMM**: trajectory clustering, role/goal extraction, organizational metrics (SOF, FOF, OF)
+* Automatic or manual refinement loops combining training and analysis
+* Deployment into real environments, with two execution modes:
 
-Additionally, like cyber-attackers, it also aims to implement defenders whose behaviors result in different organization (whether pre-determined or not).
+  + **DIRECT**: policy embedded in the agents
+  + **REMOTE**: policy executed by CybMASDE, actions sent to agents via API
+* Result tracking and export (logs, metrics, visualizations, organizational specifications in JSON/CSV/YAML)
 
-Consequences of applied action brings out a new environment state, optionally changing the agent knowledge and observations and bringing agents closer or further from their local goals.
+---
 
-  
+## 🏗 Software Architecture
 
-## Requirements
+CybMASDE is organized around a **Python backend** orchestrated by a **REST API**, accessible via:
 
-- Python version >= 3.9
+* a **unified CLI** (`cybmasde ...`) for automation (batch/HPC), 
+* an **Angular-based GUI** for project configuration and visual monitoring.
 
-- Node version >= v18.14.x
+**Core technologies:**
 
-  
+* **Python 3.8+ / Flask**: backend and REST API
+* **PyTorch**: training World Models (VAE, LSTM)
+* **MARLlib + Ray RLlib**: scalable multi-agent reinforcement learning
+* **Optuna**: hyperparameter optimization
+* **Angular**: modern and ergonomic GUI
 
-## Installation
+---
 
-In "backend", type: "python install requirements.txt"
+## ⚙️ Installation
 
-Then, in "backend/src", type: "python -m flask --app server run"
-
-  
-
-In "frontend", type "npm install"
-
-Then, in "frontend", type "npm run start"
-
-  
-
-Open a webpage at http://localhost:4200/
-
-The user interface should be displayed
-
-  
-
-## Basic interface usage
-
-  
-
-When using terminal, avaialbe command lines are
-
-  
-
-- ls : list avaialbe environment scenarios
-
-- load [environment_file.json]
-
-  
-
-![alt text](https://github.com/julien6/CybMASDE/blob/main/blop/basics.gif?raw=true)
-
-  
-
-- next : so next agent plays to interact with environment / other agents
-
-  
-
-![alt text](https://github.com/julien6/CybMASDE/blob/main/blop/next.gif?raw=true)
-
-  
-
-- iterate_over [number of iteration] : so several iteration can occur in a single command
-
-  
-
-![alt text](https://github.com/julien6/CybMASDE/blob/main/blop/iterate_over.gif?raw=true)
-
-## Environment creation
-
-An simulation saving file describes:
- - The nodes (such as firewalls, workstation, server...) with their properties including deployed agents' ones as well :
-
-*Nodes environement skeleton :*
-```json
-{
-	"meta_data": {},
-	"nodes_properties": {
-		"employee_workstation": {
-			"installed_operating_system": "Windows/12",
-			"installed_softwares": "MSOffice/2021",
-			...
-			"processes": {
-				"agents": {
-					...
-				}
-			}
-			...
-		},
-		"db_server": {
-			...
-		}
-	},
-	"actions": {
-		...
-	}
-}
-```
-*Example of agents :*
-```json
-{
-	"attacker1": {
-		"behaviour": "idle",
-		"observations": {
-			"found_password_file": "pwd.txt",
-			...
-		},
-		"running": true,
-		"binary_file_location": "C:\\Users\\mwlr.exe",
-		...
-	},
-	"defender1": {
-		"behaviour": "idle",
-		"observations": {
-			"is_anomaly_in_log": true,
-			...
-		},
-		"running": true,
-		"root_privilege": "root",
-		"binary_file_location": "C:\\Users\\dfdr.exe"
-		...
-	}
-}
+```bash
+git clone https://github.com/julien6/CybMASDE.git
+cd CybMASDE
+pip install -r requirements.txt
 ```
 
- - The actions to interact with nodes
+Optional: for the GUI
 
-```json
-"example_Action": {
-    "cost": 15,
-    "description": "Example action description",
-    "precondition": "({{agent}}.property_id1.property_id1_1 == 'v1' and {{node}}.id2 == 'v2) or {{include(precondition_file)}}",
-    "postcondition": {
-        "{{agent}}.knowledge.reimagable": "{{node}}.reimagable",
-        "{{node}}.logs.{{last_index}}": "'{{agent}} observed \"reimagable\" of {{node}} at {{current_time}}'"
-    },
-    "success_probability": 1
-}
+```bash
+cd frontend
+npm install
+npm start
 ```
 
+---
 
-A full example is given below :
-```json
-{
-	"meta_data": {},
-	"nodes_properties": {
-		"node1_id": {
-			"installed_operating_system": "Windows/12",
-			"installed_softwares": "MSOffice/2021",
-			...
-			"processes": {
-				"agents": {
-					"attacker1": {
-						"behaviour": "idle",
-						"observations": {
-							"found_password_file": "pwd.txt",
-							...
-						},
-						"running": true,
-						"binary_file_location": "C:\\Users\\mwlr.exe",
-						...
-					},
-					"defender1": {
-						"behaviour": "idle",
-						"observations": {
-							"is_anomaly_in_log": true,
-							...
-						},
-						"running": true,
-						"root_privilege": "root",
-						"binary_file_location": "C:\\Users\\dfdr.exe"
-						...
-					}
-				}
-				...
-			}
-		},
-		"node2_id": {
-			...
-		}
-	},
-	"actions": {
-		"example_action": {
-	        "cost": 15,
-	        "description": "Example action description",
-	        "precondition": "({{agent}}.property_id1.property_id1_1 == 'v1' and {{node}}.id2 == 'v2) or {{include(precondition_file)}}",
-	        "postcondition": {
-	            "{{agent}}.knowledge.reimagable": "{{node}}.reimagable",
-	            "{{node}}.logs.{{last_index}}": "'{{agent}} observed \"reimagable\" of {{node}} at {{current_time}}'"
-	        },
-	        "success_probability": 1
-        }
-	}
-}
+## 📘 Quickstart
+
+### Create and configure a project
+
+```bash
+cybmasde init -n overcooked_test --template worldmodel
+cybmasde validate
 ```
+
+### Run the full pipeline in fully automated mode
+
+```bash
+cybmasde run --full-auto \
+  --project ./overcooked_test \
+  --max-refine 10 \
+  --reward-threshold 3.5 \
+  --std-threshold 0.05 \
+  --accept-inferred
+```
+
+### Deploy a policy into a real environment
+
+```bash
+cybmasde deploy --remote --api http://localhost:8080/api
+```
+
+### Export results
+
+```bash
+cybmasde export --format json --output ./results
+```
+
+---
+
+## 📂 Project Structure
+
+```
+<project_name>/
+│── project_configuration.json   # main configuration
+│── modelling/                   # simulated environments + MCAS
+│── training/                    # hyperparameters, checkpoints
+│── analyzing/                   # metrics, visualizations, inferred specs
+│── transferring/                # configuration and deployment
+└── label_manager.py             # observation/action label mapping
+```
+
+---
+
+## 📑 Use Cases
+
+* **Academic research**: rapid prototyping of MARL environments, organizational explainability via Auto-TEMM
+* **Cyber-defense**: integration with real infrastructures (via environment APIs) to evaluate resilience and adaptability
+* **Industry**: deployment of robust and interpretable policies in distributed environments
+
+---
+
+## 📖 References
+
+* Method **MAMAD**: MOISE+MARL Assisted MAS Design
+* Organizational framework **MOISE+MARL API (MMA)**: [github.com/julien6/MOISE-MARL](https://github.com/julien6/MOISE-MARL)
+* Libraries: [MARLlib](https://github.com/Replicable-MARL/MARLlib), [Ray RLlib](https://docs.ray.io), [Optuna](https://optuna.org)
+* Associated PhD thesis: see `/docs`
+
+---
+
+## ✍️ Author
+
+Developed in the context of a PhD in **Distributed AI for Cyber-Defense**, by [Julien Soule](https://julien6.github.io/home/).
