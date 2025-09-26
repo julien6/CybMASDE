@@ -123,8 +123,9 @@ class Transferring:
     last_checkpoint: str
     max_nb_iteration: int
 
-    def __init__(self, configuration: str, last_checkpoint: str):
-        configuration = json.load(open(configuration, 'r'))
+    def __init__(self, project_folder_path: str, configuration: str, last_checkpoint: str):
+        configuration = json.load(
+            open(os.path.join(project_folder_path, configuration), 'r'))
         self.trajectory_retrieve_frequency = configuration["trajectory_retrieve_frequency"]
         self.trajectory_batch_size = configuration["trajectory_batch_size"]
         self.deploy_mode = configuration["deploy_mode"]
@@ -158,25 +159,23 @@ class Configuration:
                 os.path.abspath(__file__)), "project_example")
 
         def build_autoencoder(d: Dict[str, Any]) -> Autoencoder_conf:
-            return Autoencoder_conf(max_mean_square_error=d["max_mean_square_error"], **{k: os.path.join(project_folder_path, v) for k, v in d.items() if k != "max_mean_square_error"})
+            return Autoencoder_conf(**d)
 
         def build_rdlm(d: Dict[str, Any]) -> RDLM_conf:
-            return RDLM_conf(max_mean_square_error=d["max_mean_square_error"], **{k: os.path.join(project_folder_path, v) for k, v in d.items() if k != "max_mean_square_error"})
+            return RDLM_conf(**d)
 
         def build_jopm(d: Dict[str, Any]) -> JOPM:
             d["autoencoder"] = build_autoencoder(d["autoencoder"])
             d["rdlm"] = build_rdlm(d["rdlm"])
-            return JOPM(autoencoder=d["autoencoder"], rdlm=d["rdlm"], **{k: os.path.join(project_folder_path, v) for k, v in d.items() if k != "autoencoder" and k != "rdlm"})
+            return JOPM(**d)
 
         def build_world_model(d: Dict[str, Any]) -> WorldModel:
             d["jopm"] = build_jopm(d["jopm"])
-            return WorldModel(jopm=d["jopm"], **{k: os.path.join(project_folder_path, v) for k, v in d.items() if k != "jopm"})
+            return WorldModel(**d)
 
         def build_generated_env(d: Dict[str, Any]) -> GeneratedEnvironment:
             d = dict(d)
             d["world_model"] = build_world_model(d["world_model"])
-            d["component_functions_path"] = os.path.join(
-                project_folder_path, d["component_functions_path"])
             return GeneratedEnvironment(**d)
 
         def build_sim_env(d: Dict[str, Any]) -> SimulatedEnvironment:
@@ -185,29 +184,25 @@ class Configuration:
             if "generated_environment" in d and d["generated_environment"] is not None:
                 d["generated_environment"] = build_generated_env(
                     d["generated_environment"])
-            d["environment_path"] = os.path.join(
-                project_folder_path, d["environment_path"])
             return SimulatedEnvironment(**d)
+
+        def build_common(d: Dict[str, Any]) -> Common:
+            return Common(**d)
 
         def build_modelling(d: Dict[str, Any]) -> Modelling:
             d = dict(d)
             d["simulated_environment"] = build_sim_env(
                 d["simulated_environment"])
-            d["organizational_specifications"] = os.path.join(
-                project_folder_path, d["organizational_specifications"])
             return Modelling(**d)
 
-        def build_common(d: Dict[str, Any]) -> Common:
-            return Common(**d)
-
         def build_training(d: Dict[str, Any]) -> Training:
-            return Training(**{k: os.path.join(project_folder_path, v) for k, v in d.items()})
+            return Training(**d)
 
         def build_analyzing(d: Dict[str, Any]) -> Analyzing:
-            return Analyzing(**{k: os.path.join(project_folder_path, v) for k, v in d.items()})
+            return Analyzing(**d)
 
         def build_transferring(d: Dict[str, Any]) -> Transferring:
-            return Transferring(**{k: os.path.join(project_folder_path, v) for k, v in d.items()})
+            return Transferring(project_folder_path, **d)
 
         return cls(
             common=build_common(data["common"]),
@@ -260,12 +255,12 @@ class Configuration:
         dst = Path(
             dst) if dst else project_configuration_dict["common"]["project_path"]
 
+        del project_configuration_dict["transferring"]["max_nb_iteration"]
         del project_configuration_dict["transferring"]["environment_api"]
         del project_configuration_dict["transferring"]["deploy_mode"]
         del project_configuration_dict["transferring"]["trajectory_batch_size"]
         del project_configuration_dict["transferring"]["trajectory_retrieve_frequency"]
-        project_configuration_dict["transferring"]["configuration"] = os.path.join(
-            dst, "configuration.json")
+        project_configuration_dict["transferring"]["configuration"] = "transferring/configuration.json"
         return project_configuration_dict
 
     def to_json(self, dst: Union[str, Path], indent: int = 2) -> None:

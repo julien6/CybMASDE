@@ -70,7 +70,7 @@ class Project:
         """Run the project, executing activities."""
 
         print("Running project:", os.path.join(
-            self.configuration.common.project_path, "transferring/environment_api"))
+            self.configuration.common.project_path, "transferring/environment_api.py"))
         spec = importlib.util.spec_from_file_location(
             "EnvironmentAPI", os.path.join(
                 self.configuration.common.project_path, "transferring/environment_api.py"))
@@ -84,6 +84,7 @@ class Project:
         else:
             raise ImportError(
                 f"No EnvironmentAPI class found in {self.configuration.transferring.environment_api}")
+
         self.run_transferring_process()
 
     def run_transferring_process(self):
@@ -106,13 +107,12 @@ if __name__ == '__main__':
 
     project = Project()
 
-    # project = Project.from_dict(
-    #     data=json.load(open("../project_example/project_configuration.json")))
-    # project.run()
-    # project.save("/home/soulej/Documents/", "new_test")
+    # project.save(os.path.join(
+    #     os.path.expanduser("~"), "Documents"), "new_test")
 
-    project.load(os.path.join(os.path.expanduser("~"), "Documents/new_test"))
-    # print(project.configuration.common.project_name)
+    project.load(os.path.join(
+        os.path.expanduser("~"), "Documents", "new_test"))
+    print(project.configuration.common.project_name)
 
     try:
         project.run()
