@@ -6,14 +6,14 @@ git config --global http.lowSpeedTime 999999
 git config --global core.compression 0
 
 if command -v python3.8 >/dev/null 2>&1; then
-    echo "✅ Python 3.8 was found."
+	echo "✅ Python 3.8 was found."
 else
-    echo "❌ Python 3.8 is not installed. Please install it, here is an installation script:
+	echo "❌ Python 3.8 is not installed. Please install it, here is an installation script:
     sudo apt install software-properties-common
     sudo add-apt-repository ppa:deadsnakes/ppa\nsudo apt update
     sudo apt install python3.8 python3.8-venv
     python3.8 --version"
-    exit 1
+	exit 1
 fi
 
 echo "🛠️  Creating virtual Python 3.8 environment..."
@@ -34,6 +34,7 @@ cd ..
 
 git clone https://github.com/julien6/MARLlib.git
 cd MARLlib
+git checkout cybmasde
 pip install --upgrade pip
 pip install setuptools==65.5.0 pip==21
 pip install wheel==0.38.0 # gym 0.21 installation is broken with more recent versions

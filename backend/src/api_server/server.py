@@ -1,7 +1,7 @@
-from project import Project
 import os
 import json
 
+from world_model.project import Project
 from flask import Flask, Response, request, request, jsonify
 from flask_cors import CORS
 

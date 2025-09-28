@@ -1,7 +1,0 @@
-{
-    "trajectory_retrieve_frequency": "Frequency of collecting trajectories from deployed agents",
-    "trajectory_batch_size": "Number of trajectories from trained agents in a single batch",
-    "deploy_mode": "remote or direct",
-    "max_nb_iteration": "Maximum number of iterations for the transferring process",
-    "environment_api": "The API interfacing with the target environment"
-}
