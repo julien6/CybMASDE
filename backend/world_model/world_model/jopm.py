@@ -2,8 +2,8 @@ import os
 import torch
 import torch.nn as nn
 
-from vae_utils import VAE
-from rdlm_utils import RDLM
+from world_model.vae_utils import VAE
+from world_model.rdlm_utils import RDLM
 
 
 class JOPM(nn.Module):
@@ -19,44 +19,47 @@ class JOPM(nn.Module):
     def save(self, file_path):
         """Sauvegarde le modèle complet (autoencodeur + RDLM + observations initiales)."""
 
+        # Créer les dossiers si nécessaire
+        os.makedirs(os.path.join(file_path, "autoencoder"), exist_ok=True)
+        os.makedirs(os.path.join(file_path, "rdlm"), exist_ok=True)
+
         # Autoencodeur
-        torch.save(self.autoencoder.state_dict(), os.path.join(
-            file_path, "autoencoder", "model.pth"))
+        self.autoencoder.save(os.path.join(file_path, "autoencoder", "model"))
         print("Autoencoder saved in ", os.path.join(
-            file_path, "autoencoder", "model.pth"))
+            file_path, "autoencoder/model"))
 
         # RDLM
-        torch.save(self.rdlm.state_dict(), os.path.join(
-            file_path, "rdlm", "model.pth"))
-        print("RDLM saved in ", os.path.join(file_path, "rdlm", "model.pth"))
+        self.rdlm.save(os.path.join(file_path, "rdlm", "model"))
+        print("RDLM saved in ", os.path.join(file_path, "rdlm/model"))
 
         # Initial joint-observations
         torch.save(self.initial_joint_observations, os.path.join(
-            file_path, 'initial_joint_observations.json'))
+            file_path, 'initial_joint_observations.pth'))
         print("Initial joint-observations saved in ",
-              os.path.join(file_path, 'initial_joint_observations.json'))
+              os.path.join(file_path, 'initial_joint_observations.pth'))
 
     @classmethod
-    def load(self, file_path):
+    def load(cls, file_path):
         """Charge le modèle complet (autoencodeur + RDLM + observations initiales)."""
         # Autoencodeur
         autoencoder = VAE.load(os.path.join(
-            file_path, "autoencoder", "model.pth"))
+            file_path, "autoencoder", "model"))
 
         # RDLM
-        rdlm = RDLM.load(os.path.join(file_path, "rdlm", "model.pth"))
+        rdlm = RDLM.load(os.path.join(file_path, "rdlm", "model"))
 
         # Initial joint-observations
         initial_joint_observations = torch.load(os.path.join(
-            file_path, 'initial_joint_observations.json'))
+            file_path, 'initial_joint_observations.pth'))
 
-        return JOPM(autoencoder, rdlm, initial_joint_observations)
+        return cls(autoencoder, rdlm, initial_joint_observations)
 
     def reset_internal_state(self, batch_size, device) -> torch.Tensor:
         """Réinitialise l'état interne du RDLM (à appeler en début d'épisode ou de batch)."""
         # Choisir un épisode au hasard et prendre l'observation conjointe initiale associée
-        idx = torch.randint(0, self.initial_joint_observations.shape[0])
-        initial_obs = self.initial_joint_observations[idx].to(device)
+        idx = torch.randint(
+            0, self.initial_joint_observations.shape[0], (1,)).item()
+        initial_obs = self.initial_joint_observations[idx]
         self.rdlm.reset_internal_state(batch_size, device)
         return initial_obs
 

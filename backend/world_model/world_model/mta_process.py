@@ -16,10 +16,10 @@ from mma_wrapper.label_manager import label_manager
 from copy import copy
 from ray.tune.analysis.experiment_analysis import ExperimentAnalysis
 from pettingzoo.utils.env import ParallelEnv
-from rdlm_utils import rdlm_objective, RDLM
-from vae_utils import VAE, objective
-from component_functions import ComponentFunctions
-from project_configuration import JOPM, RDLM_conf, Configuration
+from world_model.rdlm_utils import rdlm_objective, RDLM
+from world_model.vae_utils import VAE, objective
+from world_model.component_functions import ComponentFunctions
+from world_model.project_configuration import JOPM, RDLM_conf, Configuration
 from multiprocessing import Process
 from marllib import marl
 from ray.tune.stopper import Stopper
@@ -85,7 +85,7 @@ class MTAProcess(Process):
         signal.signal(signal.SIGINT, self._signal_handler)
 
         # Run each activity of the MTA process
-        self.run_modelling_activity()
+        # self.run_modelling_activity()
 
         # # Run refinement cycles
         # for i in range(self.configuration.max_refinement_cycle):
@@ -167,12 +167,12 @@ class MTAProcess(Process):
                     "No RDLM hyperparameters research space provided, using default ones...")
                 self.rdlm_hyperparameters = cybmasde_conf["rdlm"]
 
-            if os.path.exists(os.path.join(self.configuration.common.project_path, self.configuration.modelling.simulated_environment.generated_environment.world_model.jopm.initial_joint_observations)):
-                self.initial_joint_observation = json.load(open(os.path.join(
-                    self.configuration.common.project_path, self.configuration.modelling.simulated_environment.generated_environment.world_model.jopm.initial_joint_observations)))
-            else:
-                raise Exception(
-                    "No initial joint observation provided...")
+            # if os.path.exists(os.path.join(self.configuration.common.project_path, self.configuration.modelling.simulated_environment.generated_environment.world_model.jopm.initial_joint_observations)):
+            #     self.initial_joint_observations = json.load(open(os.path.join(
+            #         self.configuration.common.project_path, self.configuration.modelling.simulated_environment.generated_environment.world_model.jopm.initial_joint_observations)))
+            # else:
+            #     raise Exception(
+            #         "No initial joint observation provided...")
 
             # Run the world model training with hyperparameter optimization (HPO)
             print("Running world model hyperparameter optimization...")
@@ -184,7 +184,7 @@ class MTAProcess(Process):
 
     def assemble_simulated_environment(self):
         self.jopm = JOPM(self.autoencoder, self.rdlm,
-                         self.initial_joint_observation)
+                         self.initial_joint_observations)
         self.jopm.save(os.path.dirname(os.path.join(self.configuration.common.project_path,
                        self.configuration.modelling.simulated_environment.generated_environment.world_model.jopm.initial_joint_observations)))
 
@@ -419,7 +419,7 @@ class MTAProcess(Process):
         print("Running training activity...")
 
         # Check if hyperparameters intervals are provided, else use default ones
-        if not self.configuration.training.hyperparameters:
+        if not self.configuration.training.hyperparameters or self.configuration.training.hyperparameters == {}:
             print(
                 "No training hyperparameters research space provided, using default ones...")
             self.configuration.training.hyperparameters = cybmasde_conf[
@@ -431,16 +431,24 @@ class MTAProcess(Process):
         for algorithm in self.configuration.training.hyperparameters["algorithms"]:
 
             env = marl.make_env(
-                environment_name="cybmasde", map_name="default", force_coop=False, organizational_model=self.configuration.modelling.organizational_specifications)
+                environment_name="cybmasde",
+                map_name="default",
+                force_coop=False,
+                organizational_model=self.configuration.modelling.organizational_specifications,
+                jopm_path=os.path.join(self.configuration.common.project_path, os.path.dirname(
+                    self.configuration.modelling.simulated_environment.generated_environment.world_model.jopm.initial_joint_observations)),
+                component_functions_path=os.path.join(
+                    self.configuration.common.project_path, self.configuration.modelling.simulated_environment.generated_environment.component_functions_path)
+            )
 
-            mappo = marl.algos.getattr(algorithm)(
+            algo = marl.algos.getattr(algorithm)(
                 hyperparam_source="common", **{k: v for k, v in self.configuration.training.hyperparameters["algorithms"][algorithm]["algorithm"].items(
                 ) if k in list(self.load_algorithm_default_hp(algorithm).keys())})
 
             model = marl.build_model(
-                env, mappo, self.configuration.training.hyperparameters[algorithm]["model"])
+                env, algo, self.configuration.training.hyperparameters[algorithm]["model"])
 
-            experiment_analysis: ExperimentAnalysis = mappo.fit(
+            experiment_analysis: ExperimentAnalysis = algo.fit(
                 env,
                 model,
                 stop=MeanStdStopper(mean_threshold=self.configuration.training.configuration.mean_threshold,

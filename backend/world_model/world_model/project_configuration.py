@@ -5,7 +5,7 @@ from dataclasses import dataclass, field, asdict
 from typing import Optional, Union, Dict, Any, Literal
 from pathlib import Path
 from typing import Any, Iterable, Tuple
-from jopm import JOPM
+from world_model.jopm import JOPM
 
 # ---------- Leaf structures ----------
 
@@ -86,9 +86,10 @@ class Training:
     joint_policy: str
     statistics: Union[str, Dict[str, Any]]
 
-    def __init__(self, hyperparameters: Union[str, Dict[str, Any]],
+    def __init__(self, project_folder_path: str, hyperparameters: Union[str, Dict[str, Any]],
                  statistics: Union[str, Dict[str, Any]], joint_policy: str):
-        self.hyperparameters = hyperparameters
+        self.hyperparameters = json.load(
+            open(os.path.join(project_folder_path, hyperparameters), 'r'))
         self.statistics = statistics
         self.joint_policy = joint_policy
 
@@ -101,11 +102,13 @@ class Analyzing:
     post_training_trajectories_path: str
     inferred_organizational_specifications: Union[str, Dict[str, Any]]
 
-    def __init__(self, hyperparameters: Union[str, Dict[str, Any]],
+    def __init__(self, project_folder_path: str, hyperparameters: Union[str, Dict[str, Any]],
                  statistics: Union[str, Dict[str, Any]], figures_path: str,
                  post_training_trajectories_path: str,
                  inferred_organizational_specifications: Union[str, Dict[str, Any]]):
-        self.hyperparameters = hyperparameters
+        self.hyperparameters = json.load(
+            open(os.path.join(project_folder_path, hyperparameters), 'r'))
+
         self.statistics = statistics
         self.figures_path = figures_path
         self.post_training_trajectories_path = post_training_trajectories_path
@@ -198,10 +201,10 @@ class Configuration:
             return Modelling(**d)
 
         def build_training(d: Dict[str, Any]) -> Training:
-            return Training(**d)
+            return Training(project_folder_path, **d)
 
         def build_analyzing(d: Dict[str, Any]) -> Analyzing:
-            return Analyzing(**d)
+            return Analyzing(project_folder_path, **d)
 
         def build_transferring(d: Dict[str, Any]) -> Transferring:
             return Transferring(project_folder_path, **d)

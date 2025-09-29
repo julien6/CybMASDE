@@ -13,17 +13,17 @@
                     "jopm": {
                         "autoencoder": {
                             "statistics": "modelling/simulated_environment/generated_environment/world_model/jopm/autoencoder/statistics.json",
-                            "model": "modelling/simulated_environment/generated_environment/world_model/jopm/autoencoder/model.pth",
+                            "model": "modelling/simulated_environment/generated_environment/world_model/jopm/autoencoder/model",
                             "hyperparameters": "modelling/simulated_environment/generated_environment/world_model/jopm/autoencoder/hyperparameters.json",
                             "max_mean_square_error": "inf"
                         },
                         "rdlm": {
                             "statistics": "modelling/simulated_environment/generated_environment/world_model/jopm/rdlm/statistics.json",
-                            "model": "modelling/simulated_environment/generated_environment/world_model/jopm/rdlm/model.pth",
+                            "model": "modelling/simulated_environment/generated_environment/world_model/jopm/rdlm/model",
                             "hyperparameters": "modelling/simulated_environment/generated_environment/world_model/jopm/rdlm/hyperparameters.json",
                             "max_mean_square_error": "inf"
                         },
-                        "initial_joint_observations": "modelling/simulated_environment/generated_environment/world_model/jopm/initial_joint_observations.json"
+                        "initial_joint_observations": "modelling/simulated_environment/generated_environment/world_model/jopm/initial_joint_observations.pth"
                     },
                     "statistics": "modelling/simulated_environment/generated_environment/world_model/statistics.json",
                     "used_traces_path": "modelling/simulated_environment/generated_environment/world_model/traces"

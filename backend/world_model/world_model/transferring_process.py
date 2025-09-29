@@ -7,12 +7,12 @@ import threading
 
 import gym
 from mma_wrapper.label_manager import label_manager
-from random_joint_policy import RandomJointPolicy
-from component_functions import ComponentFunctions
-from joint_policy import JointPolicy
-from mta_process import MTAProcess
-from environment_api import EnvironmentAPI
-from project_configuration import Configuration, DeployMode
+from world_model.random_joint_policy import RandomJointPolicy
+from world_model.component_functions import ComponentFunctions
+from world_model.joint_policy import JointPolicy
+from world_model.mta_process import MTAProcess
+from world_model.environment_api import EnvironmentAPI
+from world_model.project_configuration import Configuration, DeployMode
 from multiprocessing import Process
 
 
@@ -168,9 +168,9 @@ class TransferringProcess(Process):
                 def run_mta():
                     self.mta_process = MTAProcess(
                         self.configuration, self.component_functions)
-                    self.mta_process.start()
-                    self.mta_process.join()
-                    self.mta_process.close()
+                    # self.mta_process.start()
+                    # self.mta_process.join()
+                    # self.mta_process.close()
 
                     print("MTA finished, loading the new joint policy...")
                     new_joint_policy = self.load_latest_joint_policy()

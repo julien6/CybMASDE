@@ -1,6 +1,6 @@
 from typing import List
 import gym
-from joint_policy import JointPolicy
+from world_model.joint_policy import JointPolicy
 
 
 class RandomJointPolicy(JointPolicy):

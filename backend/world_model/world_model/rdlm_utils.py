@@ -23,13 +23,21 @@ class RDLM(nn.Module):
 
         super().__init__()
 
-        mlp_act = {"relu": nn.ReLU, "tanh": nn.Tanh,
-                   "elu": nn.ELU}[mlp_activation]
-
+        # Stocker les paramètres d'architecture pour la sauvegarde/chargement
         self.rchs_dim = rchs_dim
         self.latent_joint_observation_dim = latent_joint_observation_dim
         self.onehot_joint_action_dim = onehot_joint_action_dim
+        self.rnn_hidden_dim = rnn_hidden_dim
+        self.rnn_type = rnn_type
         self.rnn_layers = rnn_layers
+        self.rnn_activation = rnn_activation
+        self.mlp_layers = mlp_layers
+        self.mlp_hidden_dim = mlp_hidden_dim
+        self.mlp_activation = mlp_activation
+
+        mlp_act = {"relu": nn.ReLU, "tanh": nn.Tanh,
+                   "elu": nn.ELU}[mlp_activation]
+
         self.rnn_action = None if rnn_activation == "None" else {
             "relu": nn.ReLU, "tanh": nn.Tanh, "elu": nn.ELU}[rnn_activation]
 
@@ -101,6 +109,80 @@ class RDLM(nn.Module):
             self.rchs_tminus1 = rchs_t.detach()
 
         return z_tp1, rchs_t
+
+    def save(self, file_path):
+        """Sauvegarde le modèle RDLM avec ses paramètres d'architecture"""
+        import os
+        import json
+
+        file_path = os.path.join(file_path, "model.pth")
+
+        # Créer le dossier si nécessaire
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+        # Sauvegarder les poids du modèle
+        model_path = file_path if file_path.endswith(
+            '.pth') else file_path + '.pth'
+        torch.save(self.state_dict(), model_path)
+
+        # Sauvegarder les paramètres d'architecture
+        config_path = model_path.replace('.pth', '_config.json')
+        config = {
+            'rchs_dim': self.rchs_dim,
+            'latent_joint_observation_dim': self.latent_joint_observation_dim,
+            'onehot_joint_action_dim': self.onehot_joint_action_dim,
+            'rnn_hidden_dim': self.rnn_hidden_dim,
+            'rnn_type': self.rnn_type,
+            'rnn_layers': self.rnn_layers,
+            'rnn_activation': self.rnn_activation,
+            'mlp_layers': self.mlp_layers,
+            'mlp_hidden_dim': self.mlp_hidden_dim,
+            'mlp_activation': self.mlp_activation
+        }
+        with open(config_path, 'w') as f:
+            json.dump(config, f)
+
+    @classmethod
+    def load(cls, file_path):
+        """Charge un modèle RDLM sauvegardé"""
+        import os
+        import json
+
+        file_path = os.path.join(file_path, "model.pth")
+
+        # Déterminer les chemins
+        model_path = file_path if file_path.endswith(
+            '.pth') else file_path + '.pth'
+        config_path = model_path.replace('.pth', '_config.json')
+
+        # Charger la configuration
+        if os.path.exists(config_path):
+            with open(config_path, 'r') as f:
+                config = json.load(f)
+        else:
+            # Fallback: essayer de deviner les paramètres depuis le chemin ou lever une exception
+            raise FileNotFoundError(
+                f"Configuration file not found: {config_path}. Cannot load RDLM without architecture parameters.")
+
+        # Créer l'instance du modèle
+        model = cls(
+            rchs_dim=config['rchs_dim'],
+            latent_joint_observation_dim=config['latent_joint_observation_dim'],
+            onehot_joint_action_dim=config['onehot_joint_action_dim'],
+            rnn_hidden_dim=config['rnn_hidden_dim'],
+            rnn_type=config['rnn_type'],
+            rnn_layers=config['rnn_layers'],
+            rnn_activation=config['rnn_activation'],
+            mlp_layers=config['mlp_layers'],
+            mlp_hidden_dim=config['mlp_hidden_dim'],
+            mlp_activation=config['mlp_activation']
+        )
+
+        # Charger les poids
+        state_dict = torch.load(model_path, map_location='cpu')
+        model.load_state_dict(state_dict)
+
+        return model
 
 
 def rdlm_objective(trial, latent_obs_episodes, actions_episodes, device, max_mse, hp_space):

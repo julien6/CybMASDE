@@ -12,6 +12,13 @@ from torch.utils.data import DataLoader, TensorDataset
 class VAE(nn.Module):
     def __init__(self, input_dim, latent_dim, hidden_dim, n_layers, activation):
         super().__init__()
+        # Stocker les paramètres d'architecture pour la sauvegarde/chargement
+        self.input_dim = input_dim
+        self.latent_dim = latent_dim
+        self.hidden_dim = hidden_dim
+        self.n_layers = n_layers
+        self.activation = activation
+
         act = {"relu": nn.ReLU, "tanh": nn.Tanh, "elu": nn.ELU}[activation]
         # Encodeur
         encoder_layers = []
@@ -50,6 +57,70 @@ class VAE(nn.Module):
         z = self.reparameterize(mu, logvar)
         recon = self.decode(z)
         return recon, mu, logvar
+
+    def save(self, file_path):
+        """Sauvegarde le modèle VAE avec ses paramètres d'architecture"""
+        import os
+        import json
+
+        file_path = os.path.join(file_path, "model.pth")
+
+        # Créer le dossier si nécessaire
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+        # Sauvegarder les poids du modèle
+        model_path = file_path if file_path.endswith(
+            '.pth') else file_path + '.pth'
+        torch.save(self.state_dict(), model_path)
+
+        # Sauvegarder les paramètres d'architecture
+        config_path = model_path.replace('.pth', '_config.json')
+        config = {
+            'input_dim': self.input_dim,
+            'latent_dim': self.latent_dim,
+            'hidden_dim': self.hidden_dim,
+            'n_layers': self.n_layers,
+            'activation': self.activation
+        }
+        with open(config_path, 'w') as f:
+            json.dump(config, f)
+
+    @classmethod
+    def load(cls, file_path):
+        """Charge un modèle VAE sauvegardé"""
+        import os
+        import json
+
+        file_path = os.path.join(file_path, "model.pth")
+
+        # Déterminer les chemins
+        model_path = file_path if file_path.endswith(
+            '.pth') else file_path + '.pth'
+        config_path = model_path.replace('.pth', '_config.json')
+
+        # Charger la configuration
+        if os.path.exists(config_path):
+            with open(config_path, 'r') as f:
+                config = json.load(f)
+        else:
+            # Fallback: essayer de deviner les paramètres depuis le chemin ou lever une exception
+            raise FileNotFoundError(
+                f"Configuration file not found: {config_path}. Cannot load VAE without architecture parameters.")
+
+        # Créer l'instance du modèle
+        model = cls(
+            input_dim=config['input_dim'],
+            latent_dim=config['latent_dim'],
+            hidden_dim=config['hidden_dim'],
+            n_layers=config['n_layers'],
+            activation=config['activation']
+        )
+
+        # Charger les poids
+        state_dict = torch.load(model_path, map_location='cpu')
+        model.load_state_dict(state_dict)
+
+        return model
 
 # --- Fonction de perte VAE ---
 

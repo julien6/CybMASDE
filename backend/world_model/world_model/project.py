@@ -10,9 +10,9 @@ import shutil
 from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, Optional
-from transferring_process import TransferringProcess
-from environment_api import EnvironmentAPI
-from project_configuration import Configuration
+from world_model.transferring_process import TransferringProcess
+from world_model.environment_api import EnvironmentAPI
+from world_model.project_configuration import Configuration
 
 
 class Project:

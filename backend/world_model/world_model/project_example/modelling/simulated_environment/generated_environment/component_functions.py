@@ -1,5 +1,4 @@
-from backend.src.api_server.project import Project
-from backend.src.api_server.component_functions import ComponentFunctions
+from world_model.component_functions import ComponentFunctions
 
 
 class Example(ComponentFunctions):

@@ -1,25 +1,23 @@
 import importlib.util
 import random
+from mma_wrapper.label_manager import label_manager
 import torch
 
 from typing import Callable
 from ray.rllib.env.multi_agent_env import MultiAgentEnv
-from jopm import JOPM, JointObservationPredictionModel
-
-# TODO : transformer les éléments (jopm, component_functions...) en un seul package installable
+from world_model.component_functions import ComponentFunctions
+from world_model.jopm import JOPM
 
 
 class WorldModelEnv(MultiAgentEnv):
 
     def __init__(self,
                  jopm_path=None,
-                 component_functions_path=None,
-                 initial_joint_observations_path=None):
+                 component_functions_path=None):
         """
         Args:
             jopm_path (str): Path to the saved JOPM model.
             component_functions_path (str): Path to the Python file containing the ComponentFunctions class.
-            initial_joint_observations_path (str): Path to initial joint observations, shape (N, obs_dim).
         """
         super().__init__()
 
@@ -45,6 +43,42 @@ class WorldModelEnv(MultiAgentEnv):
                 return obj()
         raise ImportError(
             "No valid ComponentFunctions class found in the provided file.")
+
+    def _load_component_functions(file_path: str, lbl_manager: label_manager) -> ComponentFunctions:
+
+        def load_label_manager(file_path: str) -> label_manager:
+            spec = importlib.util.spec_from_file_location(
+                "label_manager", file_path)
+
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            # Recherche la classe label_manager dans le module
+            lbl_manager: label_manager = module
+            if hasattr(module, "label_manager"):
+                lbl_manager = getattr(
+                    module, "label_manager")()
+            else:
+                raise ImportError(
+                    "No label_manager class found in ", file_path)
+            return lbl_manager
+
+        # TODO: pass parameters if needed
+        lbl_manager = load_label_manager(file_path)
+
+        spec = importlib.util.spec_from_file_location(
+            "ComponentFunctions", file_path)
+
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        # Recherche la classe ComponentFunctions dans le module
+        component_functions: ComponentFunctions = module
+        if hasattr(module, "ComponentFunctions"):
+            component_functions = getattr(
+                module, "ComponentFunctions")(label_manager=lbl_manager)
+        else:
+            raise ImportError(
+                "No ComponentFunctions class found in ", file_path)
+        return component_functions
 
     def reset(self):
         return self.jopm.reset_internal_state(
