@@ -260,8 +260,7 @@ class MTAProcess(Process):
         observation_vector_dim = joint_observations.shape[3]
 
         # Extract all joint observations at time_step = 0 for each episode
-        self.initial_joint_observations = joint_observations[:, 0, :, :].reshape(
-            joint_observations.shape[0], -1)
+        self.initial_joint_observations = joint_observations[:, 0, :, :]
 
         # We reshape them to get 2D tensors
         joint_observations = joint_observations.reshape(
@@ -438,10 +437,12 @@ class MTAProcess(Process):
                 jopm_path=os.path.join(self.configuration.common.project_path, os.path.dirname(
                     self.configuration.modelling.simulated_environment.generated_environment.world_model.jopm.initial_joint_observations)),
                 component_functions_path=os.path.join(
-                    self.configuration.common.project_path, self.configuration.modelling.simulated_environment.generated_environment.component_functions_path)
+                    self.configuration.common.project_path, self.configuration.modelling.simulated_environment.generated_environment.component_functions_path),
+                label_manager_path=os.path.join(
+                    self.configuration.common.project_path, self.configuration.common.label_manager)
             )
 
-            algo = marl.algos.getattr(algorithm)(
+            algo = marl.algos.__getattribute__(algorithm)(
                 hyperparam_source="common", **{k: v for k, v in self.configuration.training.hyperparameters["algorithms"][algorithm]["algorithm"].items(
                 ) if k in list(self.load_algorithm_default_hp(algorithm).keys())})
 

@@ -13,38 +13,29 @@ class WorldModelEnv(MultiAgentEnv):
 
     def __init__(self,
                  jopm_path=None,
-                 component_functions_path=None):
+                 component_functions_path=None,
+                 label_manager_path=None):
         """
         Args:
             jopm_path (str): Path to the saved JOPM model.
             component_functions_path (str): Path to the Python file containing the ComponentFunctions class.
+            label_manager_path (str): Path to the Python file containing the label_manager class.
         """
         super().__init__()
 
         self.jopm = self._load_jopm(jopm_path)
         self.component_functions = self._load_component_functions(
-            component_functions_path)
+            component_functions_path, label_manager_path)
 
-        self.reset()
+        initial_observation = self.reset()
+
+        self.agents = [f"agent_{i}" for i in range(
+            0, initial_observation.shape[0])]
 
     def _load_jopm(self, jopm_path) -> JOPM:
         return JOPM.load(jopm_path)
 
-    def _load_component_functions(self, file_path):
-        # Dynamically load the ComponentFunctions class from a Python file
-        spec = importlib.util.spec_from_file_location(
-            "component_module", file_path)
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-        # Find the first class that inherits from ComponentFunctions
-        for attr in dir(module):
-            obj = getattr(module, attr)
-            if isinstance(obj, type) and hasattr(obj, "reward_fn") and hasattr(obj, "done_fn") and hasattr(obj, "render_fn"):
-                return obj()
-        raise ImportError(
-            "No valid ComponentFunctions class found in the provided file.")
-
-    def _load_component_functions(file_path: str, lbl_manager: label_manager) -> ComponentFunctions:
+    def _load_component_functions(self, component_functions_path: str, label_manager_path: str) -> ComponentFunctions:
 
         def load_label_manager(file_path: str) -> label_manager:
             spec = importlib.util.spec_from_file_location(
@@ -62,11 +53,10 @@ class WorldModelEnv(MultiAgentEnv):
                     "No label_manager class found in ", file_path)
             return lbl_manager
 
-        # TODO: pass parameters if needed
-        lbl_manager = load_label_manager(file_path)
+        lbl_manager = load_label_manager(label_manager_path)
 
         spec = importlib.util.spec_from_file_location(
-            "ComponentFunctions", file_path)
+            "ComponentFunctions", component_functions_path)
 
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
@@ -77,7 +67,7 @@ class WorldModelEnv(MultiAgentEnv):
                 module, "ComponentFunctions")(label_manager=lbl_manager)
         else:
             raise ImportError(
-                "No ComponentFunctions class found in ", file_path)
+                "No ComponentFunctions class found in ", component_functions_path)
         return component_functions
 
     def reset(self):
