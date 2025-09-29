@@ -1,0 +1,52 @@
+{
+    "common": {
+        "project_name": "Project name",
+        "project_description": "Project description",
+        "project_path": "",
+        "label_manager": "label_manager.py"
+    },
+    "modelling": {
+        "simulated_environment": {
+            "environment_path": "modelling/simulated_environment/handcrafted_environment.py",
+            "generated_environment": {
+                "world_model": {
+                    "jopm": {
+                        "autoencoder": {
+                            "statistics": "modelling/simulated_environment/generated_environment/world_model/jopm/autoencoder/statistics.json",
+                            "model": "modelling/simulated_environment/generated_environment/world_model/jopm/autoencoder/model.pth",
+                            "hyperparameters": "modelling/simulated_environment/generated_environment/world_model/jopm/autoencoder/hyperparameters.json",
+                            "max_mean_square_error": "inf"
+                        },
+                        "rdlm": {
+                            "statistics": "modelling/simulated_environment/generated_environment/world_model/jopm/rdlm/statistics.json",
+                            "model": "modelling/simulated_environment/generated_environment/world_model/jopm/rdlm/model.pth",
+                            "hyperparameters": "modelling/simulated_environment/generated_environment/world_model/jopm/rdlm/hyperparameters.json",
+                            "max_mean_square_error": "inf"
+                        },
+                        "initial_joint_observations": "modelling/simulated_environment/generated_environment/world_model/jopm/initial_joint_observations.json"
+                    },
+                    "statistics": "modelling/simulated_environment/generated_environment/world_model/statistics.json",
+                    "used_traces_path": "modelling/simulated_environment/generated_environment/world_model/traces"
+                },
+                "component_functions_path": "modelling/simulated_environment/generated_environment/component_functions.py"
+            }
+        },
+        "organizational_specifications": "modelling/organizational_specifications"
+    },
+    "training": {
+        "hyperparameters": "training/hyperparameters.json",
+        "joint_policy": "training/last_checkpoint",
+        "statistics": "training/statistics.json"
+    },
+    "analyzing": {
+        "hyperparameters": "analyzing/hyperparameters.json",
+        "statistics": "analyzing/statistics.json",
+        "figures_path": "analyzing/figures",
+        "post_training_trajectories_path": "analyzing/trajectories",
+        "inferred_organizational_specifications": "analyzing/inferred_organizational_specifications"
+    },
+    "transferring": {
+        "configuration": "transferring/configuration.json",
+        "last_checkpoint": "transferring/last_checkpoint"
+    }
+}
