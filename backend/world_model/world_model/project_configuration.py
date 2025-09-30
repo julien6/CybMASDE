@@ -53,22 +53,10 @@ class GeneratedEnvironment:
 
 
 @dataclass
-class SimulatedEnvironment:
-    """Pointer to a handcrafted PettingZoo/RLlib env or to a generated one."""
-    environment_path: Optional[str] = None
-    generated_environment: Optional[GeneratedEnvironment] = None
-
-
 class Modelling:
     """Phase 1: modeling."""
-    simulated_environment: SimulatedEnvironment
-    organizational_specifications: Union[str,
-                                         Dict[str, Any]]  # path/JSON/Python
-
-    def __init__(self, simulated_environment: SimulatedEnvironment,
-                 organizational_specifications: Union[str, Dict[str, Any]]):
-        self.simulated_environment = simulated_environment
-        self.organizational_specifications = organizational_specifications
+    environment_path: Optional[str] = None
+    generated_environment: Optional[GeneratedEnvironment] = None
 
 
 @dataclass
@@ -85,13 +73,18 @@ class Training:
     hyperparameters: Union[str, Dict[str, Any]]
     joint_policy: str
     statistics: Union[str, Dict[str, Any]]
+    organizational_specifications: Union[str,
+                                         Dict[str, Any]]  # path/JSON/Python
 
     def __init__(self, project_folder_path: str, hyperparameters: Union[str, Dict[str, Any]],
-                 statistics: Union[str, Dict[str, Any]], joint_policy: str):
+                 statistics: Union[str, Dict[str, Any]], joint_policy: str,
+                 organizational_specifications: Union[str, Dict[str, Any]]):
         self.hyperparameters = json.load(
             open(os.path.join(project_folder_path, hyperparameters), 'r'))
         self.statistics = statistics
         self.joint_policy = joint_policy
+        self.organizational_specifications = os.path.join(
+            project_folder_path, organizational_specifications)
 
 
 class Analyzing:
@@ -183,21 +176,14 @@ class Configuration:
             d["world_model"] = build_world_model(d["world_model"])
             return GeneratedEnvironment(**d)
 
-        def build_sim_env(d: Dict[str, Any]) -> SimulatedEnvironment:
-            d = dict(d)
-            # generated_environment est optionnel
-            if "generated_environment" in d and d["generated_environment"] is not None:
-                d["generated_environment"] = build_generated_env(
-                    d["generated_environment"])
-            return SimulatedEnvironment(**d)
-
         def build_common(d: Dict[str, Any]) -> Common:
             return Common(**d)
 
         def build_modelling(d: Dict[str, Any]) -> Modelling:
             d = dict(d)
-            d["simulated_environment"] = build_sim_env(
-                d["simulated_environment"])
+            if "generated_environment" in d and d["generated_environment"] is not None:
+                d["generated_environment"] = build_generated_env(
+                    d["generated_environment"])
             return Modelling(**d)
 
         def build_training(d: Dict[str, Any]) -> Training:
@@ -273,20 +259,3 @@ class Configuration:
         with open(dst, "w", encoding="utf-8") as f:
             json.dump(self.to_dict(dst=dst), f,
                       ensure_ascii=False, indent=indent)
-
-   # -------- Minimal validation (optional but handy) --------
-
-    def validate(self) -> None:
-        """Lightweight checks that required fields look sane."""
-        # example checks (extend as needed)
-        if self.transferring.deploy_mode not in ("remote", "direct"):
-            raise ValueError(
-                "transferring.deploy_mode must be 'remote' or 'direct'")
-        if not isinstance(self.transferring.trajectory_batch_size, int) or self.transferring.trajectory_batch_size <= 0:
-            raise ValueError(
-                "transferring.trajectory_batch_size must be a positive integer")
-        # Ensure at least one env source is provided
-        simenv = self.modelling.simulated_environment
-        if not simenv.environment_path and not simenv.generated_environment:
-            raise ValueError(
-                "modelling.simulated_environment must define either 'environment_path' or 'generated_environment'")

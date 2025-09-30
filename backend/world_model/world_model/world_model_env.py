@@ -32,6 +32,8 @@ class WorldModelEnv(MultiAgentEnv):
         self.agents = [f"agent_{i}" for i in range(
             0, initial_observation.shape[0])]
 
+        self.current_joint_obs = None
+
     def _load_jopm(self, jopm_path) -> JOPM:
         return JOPM.load(jopm_path)
 
@@ -71,18 +73,25 @@ class WorldModelEnv(MultiAgentEnv):
         return component_functions
 
     def reset(self):
-        return self.jopm.reset_internal_state(
+        self.current_joint_obs = self.jopm.reset_internal_state(
             batch_size=1, device=torch.device('cpu'))
+        return self.current_joint_obs
 
     def step(self, action_dict):
         agent_ids = sorted(action_dict.keys())
 
-        act_t = torch.cat([torch.tensor(action_dict[aid], dtype=torch.float32).unsqueeze(
-            0) for aid in agent_ids], dim=1)
+        act_t = torch.cat([torch.tensor([action_dict[aid]], dtype=torch.float32)
+                          for aid in agent_ids], dim=0).unsqueeze(0)
 
         observation_dict = self.current_joint_obs
-        obs_t = torch.cat([torch.tensor(observation_dict[aid], dtype=torch.float32).unsqueeze(
-            0) for aid in agent_ids], dim=1)
+        print("observation_dict: ", observation_dict)
+        if isinstance(observation_dict, dict):
+            obs_t = torch.cat([torch.tensor(observation_dict[aid],
+                                            dtype=torch.float32) for aid in agent_ids], dim=0).unsqueeze(0)
+        else:
+            obs_t = torch.cat([torch.tensor(observation_dict[int(aid.split("_")[1])],
+                                            dtype=torch.float32) for aid in agent_ids], dim=0).unsqueeze(0)
+        print("obs_t: ", obs_t)
 
         next_joint_obs = self.jopm.predict_next_joint_observation(obs_t, act_t)
 

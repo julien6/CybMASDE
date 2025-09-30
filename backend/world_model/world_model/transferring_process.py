@@ -116,7 +116,7 @@ class TransferringProcess(Process):
     def load_component_functions(self):
         spec = importlib.util.spec_from_file_location(
             "ComponentFunctions", os.path.join(
-                self.configuration.common.project_path, self.configuration.modelling.simulated_environment.generated_environment.component_functions_path))
+                self.configuration.common.project_path, self.configuration.modelling.generated_environment.component_functions_path))
 
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
@@ -128,7 +128,7 @@ class TransferringProcess(Process):
         else:
             raise ImportError(
                 "No ComponentFunctions class found in ", os.path.join(
-                    self.configuration.common.project_path, self.configuration.modelling.simulated_environment.generated_environment.component_functions_path))
+                    self.configuration.common.project_path, self.configuration.modelling.generated_environment.component_functions_path))
 
     def load_label_manager(self):
         spec = importlib.util.spec_from_file_location(
@@ -195,7 +195,7 @@ class TransferringProcess(Process):
         print("Joint histories saving process started.")
 
         traces_dir = os.path.join(self.configuration.common.project_path,
-                                  self.configuration.modelling.simulated_environment.generated_environment.world_model.used_traces_path)
+                                  self.configuration.modelling.generated_environment.world_model.used_traces_path)
         os.makedirs(traces_dir, exist_ok=True)
 
         existing_files = [f for f in os.listdir(traces_dir) if f.startswith(

@@ -1,5 +1,35 @@
 {
-    "algorithms": [
-        "mappo"
-    ]
+    "algorithms": {
+        "mappo": {
+            "algorithm": {
+                "use_gae": true,
+                "lambda": 1,
+                "kl_coeff": 0.2,
+                "batch_episode": 10,
+                "num_sgd_iter": 5,
+                "vf_loss_coeff": 1,
+                "lr": [
+                    0.0005,
+                    0.001
+                ],
+                "entropy_coeff": 0.01,
+                "clip_param": 0.3,
+                "vf_clip_param": 10,
+                "batch_mode": "truncate_episodes"
+            },
+            "model": {
+                "core_arch": "mlp",
+                "encode_layer": [
+                    "64-128",
+                    "128-256"
+                ]
+            }
+        }
+    },
+    "mean_threshold": 200,
+    "std_threshold": 50,
+    "window_size": 100,
+    "num_gpus": 0,
+    "num_workers": 1,
+    "checkpoint_freq": 10
 }

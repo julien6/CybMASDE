@@ -23,6 +23,8 @@ from world_model.project_configuration import JOPM, RDLM_conf, Configuration
 from multiprocessing import Process
 from marllib import marl
 from ray.tune.stopper import Stopper
+from ray import tune
+from mma_wrapper.organizational_model import organizational_model
 
 
 class MeanStdStopper(Stopper):
@@ -85,13 +87,13 @@ class MTAProcess(Process):
         signal.signal(signal.SIGINT, self._signal_handler)
 
         # Run each activity of the MTA process
-        # self.run_modelling_activity()
+        self.run_modelling_activity()
 
         # # Run refinement cycles
         # for i in range(self.configuration.max_refinement_cycle):
         #     print(
         #         f"Refinement cycle {i + 1}/{self.configuration.max_refinement_cycle}")
-        self.run_training_activity()
+        # self.run_training_activity()
         # self.run_analyzing_activity()
         print("Finished MTA process")
 
@@ -99,7 +101,7 @@ class MTAProcess(Process):
         """Load the handcrafted environment."""
         spec = importlib.util.spec_from_file_location(
             "CustomParallelEnv", os.path.join(
-                self.configuration.common.project_path, self.configuration.modelling.simulated_environment.environment_path))
+                self.configuration.common.project_path, self.configuration.modelling.environment_path))
 
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
@@ -130,7 +132,7 @@ class MTAProcess(Process):
                 "No ready-to-use simulated environment path provided, generating a new one with World Models...")
 
             # Check if traces and reward are provided
-            if not os.path.exists(os.path.join(self.configuration.common.project_path, self.configuration.modelling.simulated_environment.generated_environment.world_model.used_traces_path)):
+            if not os.path.exists(os.path.join(self.configuration.common.project_path, self.configuration.modelling.generated_environment.world_model.used_traces_path)):
                 raise ValueError(
                     "Traces path is not provided to generate the world model.")
 
@@ -151,25 +153,25 @@ class MTAProcess(Process):
             ##############################################################
 
             # Check if the world model hyperparameters are provided else use default ones
-            if os.path.exists(os.path.join(self.configuration.common.project_path, self.configuration.modelling.simulated_environment.generated_environment.world_model.jopm.autoencoder.hyperparameters)):
+            if os.path.exists(os.path.join(self.configuration.common.project_path, self.configuration.modelling.generated_environment.world_model.jopm.autoencoder.hyperparameters)):
                 self.autoencoder_hyperparameters = json.load(open(os.path.join(
-                    self.configuration.common.project_path, self.configuration.modelling.simulated_environment.generated_environment.world_model.jopm.autoencoder.hyperparameters)))
+                    self.configuration.common.project_path, self.configuration.modelling.generated_environment.world_model.jopm.autoencoder.hyperparameters)))
             else:
                 print(
                     "No Autoencoder hyperparameters research space provided, using default ones...")
                 self.autoencoder_hyperparameters = cybmasde_conf["autoencoder"]
 
-            if os.path.exists(os.path.join(self.configuration.common.project_path, self.configuration.modelling.simulated_environment.generated_environment.world_model.jopm.rdlm.hyperparameters)):
+            if os.path.exists(os.path.join(self.configuration.common.project_path, self.configuration.modelling.generated_environment.world_model.jopm.rdlm.hyperparameters)):
                 self.rdlm_hyperparameters = json.load(open(os.path.join(
-                    self.configuration.common.project_path, self.configuration.modelling.simulated_environment.generated_environment.world_model.jopm.rdlm.hyperparameters)))
+                    self.configuration.common.project_path, self.configuration.modelling.generated_environment.world_model.jopm.rdlm.hyperparameters)))
             else:
                 print(
                     "No RDLM hyperparameters research space provided, using default ones...")
                 self.rdlm_hyperparameters = cybmasde_conf["rdlm"]
 
-            # if os.path.exists(os.path.join(self.configuration.common.project_path, self.configuration.modelling.simulated_environment.generated_environment.world_model.jopm.initial_joint_observations)):
+            # if os.path.exists(os.path.join(self.configuration.common.project_path, self.configuration.modelling.generated_environment.world_model.jopm.initial_joint_observations)):
             #     self.initial_joint_observations = json.load(open(os.path.join(
-            #         self.configuration.common.project_path, self.configuration.modelling.simulated_environment.generated_environment.world_model.jopm.initial_joint_observations)))
+            #         self.configuration.common.project_path, self.configuration.modelling.generated_environment.world_model.jopm.initial_joint_observations)))
             # else:
             #     raise Exception(
             #         "No initial joint observation provided...")
@@ -186,7 +188,7 @@ class MTAProcess(Process):
         self.jopm = JOPM(self.autoencoder, self.rdlm,
                          self.initial_joint_observations)
         self.jopm.save(os.path.dirname(os.path.join(self.configuration.common.project_path,
-                       self.configuration.modelling.simulated_environment.generated_environment.world_model.jopm.initial_joint_observations)))
+                       self.configuration.modelling.generated_environment.world_model.jopm.initial_joint_observations)))
 
     def run_world_model_with_hpo(self):
         """Run the world model training with hyperparameter optimization (HPO)."""
@@ -246,9 +248,9 @@ class MTAProcess(Process):
         print("Running autoencoder training with hyperparameter optimization...")
 
         hp_space = self.autoencoder_hyperparameters
-        max_mse = self.configuration.modelling.simulated_environment.generated_environment.world_model.jopm.autoencoder.max_mean_square_error
+        max_mse = self.configuration.modelling.generated_environment.world_model.jopm.autoencoder.max_mean_square_error
         traces_path = os.path.join(self.configuration.common.project_path,
-                                   self.configuration.modelling.simulated_environment.generated_environment.world_model.used_traces_path)
+                                   self.configuration.modelling.generated_environment.world_model.used_traces_path)
 
         # joint_observations.shape = (nb_episode, nb_time_step, nb_agents, obs_dim)
         # joint_actions.shape = (nb_episode, nb_time_step, nb_agents, action_dim)
@@ -288,7 +290,7 @@ class MTAProcess(Process):
         # Mets à jour les hyperparamètres
         json.dump({
             k: [study.best_params[k], study.best_params[k]] for k in ["latent_dim", "hidden_dim", "n_layers", "activation", "lr", "batch_size", "kl_weight"]
-        }, open(os.path.join(self.configuration.common.project_path,  self.configuration.modelling.simulated_environment.generated_environment.world_model.jopm.autoencoder.hyperparameters), "w+"))
+        }, open(os.path.join(self.configuration.common.project_path,  self.configuration.modelling.generated_environment.world_model.jopm.autoencoder.hyperparameters), "w+"))
 
         # 1. Passe le modèle en mode évaluation
         self.autoencoder.eval()
@@ -304,7 +306,7 @@ class MTAProcess(Process):
 
         # 3. Crée le dossier compressed si besoin
         compressed_dir = os.path.join(self.configuration.common.project_path,
-                                      self.configuration.modelling.simulated_environment.generated_environment.world_model.used_traces_path, "compressed")
+                                      self.configuration.modelling.generated_environment.world_model.used_traces_path, "compressed")
         os.makedirs(compressed_dir, exist_ok=True)
 
         # Trouver le dernier X existant
@@ -345,20 +347,20 @@ class MTAProcess(Process):
         rdlm_hyperparameters = None
 
         # Charger les hyperparamètres RDLM
-        if os.path.exists(os.path.join(self.configuration.common.project_path, self.configuration.modelling.simulated_environment.generated_environment.world_model.jopm.rdlm.hyperparameters)):
+        if os.path.exists(os.path.join(self.configuration.common.project_path, self.configuration.modelling.generated_environment.world_model.jopm.rdlm.hyperparameters)):
             rdlm_hyperparameters = json.load(open(os.path.join(self.configuration.common.project_path,
-                                             self.configuration.modelling.simulated_environment.generated_environment.world_model.jopm.rdlm.hyperparameters)))
+                                             self.configuration.modelling.generated_environment.world_model.jopm.rdlm.hyperparameters)))
         else:
             print(
                 "No RDLM hyperparameters research space provided, using default ones...")
             rdlm_hyperparameters = cybmasde_conf["rdlm"]
 
-        max_mse = self.configuration.modelling.simulated_environment.generated_environment.world_model.jopm.rdlm.max_mean_square_error
+        max_mse = self.configuration.modelling.generated_environment.world_model.jopm.rdlm.max_mean_square_error
 
         # Charger les historiques compressés
         compressed_dir = os.path.join(
             self.configuration.common.project_path,
-            self.configuration.modelling.simulated_environment.generated_environment.world_model.used_traces_path,
+            self.configuration.modelling.generated_environment.world_model.used_traces_path,
             "compressed"
         )
 
@@ -393,7 +395,9 @@ class MTAProcess(Process):
         # (n_episodes, n_steps, latent_dim)
         latent_obs_episodes = np.array(latent_obs_episodes, dtype=np.float32)
         # (n_episodes, n_steps, action_space_n * n_agents)
+        # TODO: vérifier taille ici
         actions_episodes = np.array(actions_episodes, dtype=np.float32)
+        print("actions_episodes.shape: ", actions_episodes.shape)
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -411,7 +415,7 @@ class MTAProcess(Process):
 
         # Mets à jour les hyperparamètres
         json.dump({k: [v, v] for k, v in study.best_params.items()}, open(os.path.join(self.configuration.common.project_path,
-                  self.configuration.modelling.simulated_environment.generated_environment.world_model.jopm.rdlm.hyperparameters), "w+"))
+                  self.configuration.modelling.generated_environment.world_model.jopm.rdlm.hyperparameters), "w+"))
 
     def run_training_activity(self):
         """Run the training activity."""
@@ -424,6 +428,9 @@ class MTAProcess(Process):
             self.configuration.training.hyperparameters = cybmasde_conf[
                 "training_hyperparameters"]
 
+        organizational_specifications = organizational_model.from_dict(json.load(open(os.path.join(
+            self.configuration.training.organizational_specifications, "organizational_specifications.json"), "r")))
+
         best_result = None
         best_algorithm = None
         best_checkpoint_path = None
@@ -433,32 +440,34 @@ class MTAProcess(Process):
                 environment_name="cybmasde",
                 map_name="default",
                 force_coop=False,
-                organizational_model=self.configuration.modelling.organizational_specifications,
+                organizational_model=organizational_specifications,
                 jopm_path=os.path.join(self.configuration.common.project_path, os.path.dirname(
-                    self.configuration.modelling.simulated_environment.generated_environment.world_model.jopm.initial_joint_observations)),
+                    self.configuration.modelling.generated_environment.world_model.jopm.initial_joint_observations)),
                 component_functions_path=os.path.join(
-                    self.configuration.common.project_path, self.configuration.modelling.simulated_environment.generated_environment.component_functions_path),
+                    self.configuration.common.project_path, self.configuration.modelling.generated_environment.component_functions_path),
                 label_manager_path=os.path.join(
                     self.configuration.common.project_path, self.configuration.common.label_manager)
             )
 
             algo = marl.algos.__getattribute__(algorithm)(
-                hyperparam_source="common", **{k: v for k, v in self.configuration.training.hyperparameters["algorithms"][algorithm]["algorithm"].items(
+                hyperparam_source="common", **{k: tune.grid_search(v) if isinstance(v, list) else v for k, v in self.configuration.training.hyperparameters["algorithms"][algorithm]["algorithm"].items(
                 ) if k in list(self.load_algorithm_default_hp(algorithm).keys())})
 
             model = marl.build_model(
-                env, algo, self.configuration.training.hyperparameters[algorithm]["model"])
+                env, algo, {k: tune.grid_search(v) if isinstance(v, list) else v for k, v in self.configuration.training.hyperparameters["algorithms"][algorithm]["model"].items() if k in ["core_arch", "mixer_arch", "encode_layer"]})
 
             experiment_analysis: ExperimentAnalysis = algo.fit(
                 env,
                 model,
-                stop=MeanStdStopper(mean_threshold=self.configuration.training.configuration.mean_threshold,
-                                    std_threshold=self.configuration.training.configuration.std_threshold, window_size=self.configuration.training.configuration.window_size),
+                stop=MeanStdStopper(mean_threshold=self.configuration.training.hyperparameters["mean_threshold"],
+                                    std_threshold=self.configuration.training.hyperparameters[
+                                        "std_threshold"],
+                                    window_size=self.configuration.training.hyperparameters["window_size"]),
                 local_mode=False,
-                num_gpus=self.configuration.training.configuration.num_gpus,
-                num_workers=self.configuration.training.configuration.num_workers,
+                num_gpus=self.configuration.training.hyperparameters["num_gpus"],
+                num_workers=self.configuration.training.hyperparameters["num_workers"],
                 share_policy='all',
-                checkpoint_freq=self.configuration.training.configuration.checkpoint_freq,
+                checkpoint_freq=self.configuration.training.hyperparameters["checkpoint_freq"],
                 checkpoint_end=True)
 
             best_config = experiment_analysis.get_best_config(
@@ -473,20 +482,22 @@ class MTAProcess(Process):
                 best_checkpoint_path = best_trial.checkpoint.value
             self.configuration.training.hyperparameters["algorithms"][algorithm] = best_config
 
-        best_hp = copy.deepcopy(
-            self.configuration.training.hyperparameters["algorithms"][best_algorithm])
-        self.configuration.training.hyperparameters["algorithms"] = {}
-        self.configuration.training.hyperparameters["algorithms"][best_algorithm] = {
-        }
-        self.configuration.training.hyperparameters["algorithms"][best_algorithm]["algorithm"] = {
-            k: v for k, v in best_hp.itmes if k in list(self.load_algorithm_default_hp(best_algorithm).keys())}
-        self.configuration.training.hyperparameters["algorithms"][best_algorithm]["model"] = {
-            k: v for k, v in best_hp["model"]["model_arch_args"].items() if k in ["core_arch", "mixer_arch", "encode_layer"]}
-        self.configuration.training["best_checkpoint"] = best_checkpoint_path
+        # best_hp = copy.deepcopy(
+        #     self.configuration.training.hyperparameters["algorithms"][best_algorithm])
+        # self.configuration.training.hyperparameters["algorithms"] = {}
+        # self.configuration.training.hyperparameters["algorithms"][best_algorithm] = {
+        # }
+        # self.configuration.training.hyperparameters["algorithms"][best_algorithm]["algorithm"] = {
+        #     k: v for k, v in best_hp.itmes if k in list(self.load_algorithm_default_hp(best_algorithm).keys())}
+        # self.configuration.training.hyperparameters["algorithms"][best_algorithm]["model"] = {
+        #     k: v for k, v in best_hp["model"]["model_arch_args"].items() if k in ["core_arch", "mixer_arch", "encode_layer"]}
+        # self.configuration.training["best_checkpoint"] = best_checkpoint_path
+        pass
 
     def load_algorithm_default_hp(self, name: str) -> dict:
         """Load the algorithm with the best hyperparameters."""
-        rel_path = "algos/hyperparams/common/{}.yaml".format(name)
+        rel_path = "../../MARLlib/marllib/marl/algos/hyperparams/common/{}.yaml".format(
+            name)
 
         with open(os.path.join(os.path.dirname(__file__), rel_path), "r") as f:
             algo_config_dict = yaml.load(f, Loader=yaml.FullLoader)
@@ -502,7 +513,7 @@ class MTAProcess(Process):
         best_hp = self.configuration.training.hyperparameters["algorithms"][best_algo]
 
         env = marl.make_env(
-            environment_name="simulated_environment", map_name="default", force_coop=False, organizational_model=self.configuration.modelling.organizational_specifications)
+            environment_name="simulated_environment", map_name="default", force_coop=False, organizational_model=self.configuration.training.organizational_specifications)
 
         mappo = marl.algos.getattr()(
             hyperparam_source="common", **best_hp["algorithm"])
@@ -534,7 +545,7 @@ if __name__ == "__main__":
     def load_component_functions(configuration: Configuration, lbl_manager: label_manager) -> ComponentFunctions:
         spec = importlib.util.spec_from_file_location(
             "ComponentFunctions", os.path.join(
-                configuration.common.project_path, configuration.modelling.simulated_environment.generated_environment.component_functions_path))
+                configuration.common.project_path, configuration.modelling.generated_environment.component_functions_path))
 
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
@@ -546,7 +557,7 @@ if __name__ == "__main__":
         else:
             raise ImportError(
                 "No ComponentFunctions class found in ", os.path.join(
-                    configuration.common.project_path, configuration.modelling.simulated_environment.generated_environment.component_functions_path))
+                    configuration.common.project_path, configuration.modelling.generated_environment.component_functions_path))
         return component_functions
 
     def load_label_manager(configuration: Configuration) -> label_manager:
