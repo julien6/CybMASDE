@@ -79,8 +79,8 @@ class Training:
     def __init__(self, project_folder_path: str, hyperparameters: Union[str, Dict[str, Any]],
                  statistics: Union[str, Dict[str, Any]], joint_policy: str,
                  organizational_specifications: Union[str, Dict[str, Any]]):
-        self.hyperparameters = json.load(
-            open(os.path.join(project_folder_path, hyperparameters), 'r'))
+        self.hyperparameters = os.path.join(
+            project_folder_path, hyperparameters)
         self.statistics = statistics
         self.joint_policy = joint_policy
         self.organizational_specifications = os.path.join(

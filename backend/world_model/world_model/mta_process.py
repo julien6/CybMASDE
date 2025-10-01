@@ -13,7 +13,7 @@ import yaml
 
 from typing import List
 from mma_wrapper.label_manager import label_manager
-from copy import copy
+from copy import copy, deepcopy
 from ray.tune.analysis.experiment_analysis import ExperimentAnalysis
 from pettingzoo.utils.env import ParallelEnv
 from world_model.rdlm_utils import rdlm_objective, RDLM
@@ -36,7 +36,6 @@ class MeanStdStopper(Stopper):
 
     def __call__(self, trial_id, result):
         rewards = result.get("hist_stats", {}).get("episode_reward", None)
-        print("========>>> ", rewards)
 
         if rewards is not None:
             self.episode_rewards.extend(rewards)
@@ -53,6 +52,9 @@ class MeanStdStopper(Stopper):
                         f"Early stopping : average >= {self.mean_threshold} and standard deviation <= {self.std_threshold}")
                     return True  # Stop this trial
         return False  # Continue
+
+    def stop_all(self):
+        return False
 
 
 if not os.path.exists(os.path.join(os.path.expanduser("~"), ".cybmasde", "configuration.json")):
@@ -418,19 +420,21 @@ class MTAProcess(Process):
         print("Running training activity...")
 
         # Check if hyperparameters intervals are provided, else use default ones
-        if not self.configuration.training.hyperparameters or self.configuration.training.hyperparameters == {}:
+        training_hyperparameters = json.load(
+            open(self.configuration.training.hyperparameters, "r"))
+        if not self.configuration.training.hyperparameters or training_hyperparameters == {}:
             print(
                 "No training hyperparameters research space provided, using default ones...")
-            self.configuration.training.hyperparameters = cybmasde_conf[
+            training_hyperparameters = cybmasde_conf[
                 "training_hyperparameters"]
 
         organizational_specifications = organizational_model.from_dict(json.load(open(os.path.join(
             self.configuration.training.organizational_specifications, "organizational_specifications.json"), "r")))
 
-        best_result = None
+        best_result = float('-inf')
         best_algorithm = None
         best_checkpoint_path = None
-        for algorithm in self.configuration.training.hyperparameters["algorithms"]:
+        for algorithm in training_hyperparameters["algorithms"]:
 
             env = marl.make_env(
                 environment_name="cybmasde",
@@ -446,49 +450,55 @@ class MTAProcess(Process):
             )
 
             algo = marl.algos.__getattribute__(algorithm)(
-                hyperparam_source="common", **{k: tune.grid_search(v) if isinstance(v, list) else v for k, v in self.configuration.training.hyperparameters["algorithms"][algorithm]["algorithm"].items(
+                hyperparam_source="common", **{k: tune.grid_search(v) if isinstance(v, list) else v for k, v in training_hyperparameters["algorithms"][algorithm]["algorithm"].items(
                 ) if k in list(self.load_algorithm_default_hp(algorithm).keys())})
 
             model = marl.build_model(
-                env, algo, {k: tune.grid_search(v) if isinstance(v, list) else v for k, v in self.configuration.training.hyperparameters["algorithms"][algorithm]["model"].items() if k in ["core_arch", "mixer_arch", "encode_layer"]})
+                env, algo, {k: tune.grid_search(v) if isinstance(v, list) else v for k, v in training_hyperparameters["algorithms"][algorithm]["model"].items() if k in ["core_arch", "mixer_arch", "encode_layer"]})
 
             experiment_analysis: ExperimentAnalysis = algo.fit(
                 env,
                 model,
-                stop=MeanStdStopper(mean_threshold=self.configuration.training.hyperparameters["mean_threshold"],
-                                    std_threshold=self.configuration.training.hyperparameters[
+                stop=MeanStdStopper(mean_threshold=training_hyperparameters["mean_threshold"],
+                                    std_threshold=training_hyperparameters[
                                         "std_threshold"],
-                                    window_size=self.configuration.training.hyperparameters["window_size"]),
+                                    window_size=training_hyperparameters["window_size"]),
                 local_mode=False,
-                num_gpus=self.configuration.training.hyperparameters["num_gpus"],
-                num_workers=self.configuration.training.hyperparameters["num_workers"],
+                num_gpus=training_hyperparameters["num_gpus"],
+                num_workers=training_hyperparameters["num_workers"],
                 share_policy='all',
-                checkpoint_freq=self.configuration.training.hyperparameters["checkpoint_freq"],
+                checkpoint_freq=training_hyperparameters["checkpoint_freq"],
                 checkpoint_end=True)
 
             best_config = experiment_analysis.get_best_config(
                 metric="episode_reward_mean", mode="max")
-            print("Best hyperparameters found with algorithm {}: {}".format(
-                algorithm, best_config))
+            print(f"Best hyperparameters found with algorithm {algorithm}")
+            print("\tmodel: ", {k: v for k, v in best_config["model"]["custom_model_config"]["model_arch_args"].items(
+            ) if k in ["core_arch", "mixer_arch", "encode_layer"]})
+            print("\talgorithm: ", {k: v for k, v in best_config.items() if k in list(
+                self.load_algorithm_default_hp(algorithm).keys())})
+
             best_trial = experiment_analysis.get_best_trial(
                 metric="episode_reward_mean", mode="max")
-            if best_result is None or best_trial.best_result > best_result:
-                best_result = best_trial.metric_analysis["episode_reward_mean"]["max"]
+            result = best_trial.metric_analysis["episode_reward_mean"]["max"]
+            if best_result is None or result > best_result:
+                best_result = result
                 best_algorithm = algorithm
                 best_checkpoint_path = best_trial.checkpoint.value
-            self.configuration.training.hyperparameters["algorithms"][algorithm] = best_config
+            training_hyperparameters["algorithms"][algorithm] = {
+                "algorithm": {k: v for k, v in best_config.items() if k in list(
+                    self.load_algorithm_default_hp(algorithm).keys())},
+                "model": {k: v for k, v in best_config["model"]["custom_model_config"]["model_arch_args"].items(
+                ) if k in ["core_arch", "mixer_arch", "encode_layer"]}
+            }
 
-        # best_hp = copy.deepcopy(
-        #     self.configuration.training.hyperparameters["algorithms"][best_algorithm])
-        # self.configuration.training.hyperparameters["algorithms"] = {}
-        # self.configuration.training.hyperparameters["algorithms"][best_algorithm] = {
-        # }
-        # self.configuration.training.hyperparameters["algorithms"][best_algorithm]["algorithm"] = {
-        #     k: v for k, v in best_hp.itmes if k in list(self.load_algorithm_default_hp(best_algorithm).keys())}
-        # self.configuration.training.hyperparameters["algorithms"][best_algorithm]["model"] = {
-        #     k: v for k, v in best_hp["model"]["model_arch_args"].items() if k in ["core_arch", "mixer_arch", "encode_layer"]}
-        # self.configuration.training["best_checkpoint"] = best_checkpoint_path
-        pass
+        best_hp = deepcopy(
+            training_hyperparameters["algorithms"][best_algorithm])
+        training_hyperparameters["algorithms"] = {}
+        training_hyperparameters["algorithms"][best_algorithm] = best_hp
+
+        json.dump(training_hyperparameters, open(os.path.join(
+            self.configuration.common.project_path, self.configuration.training.hyperparameters), "w"))
 
     def load_algorithm_default_hp(self, name: str) -> dict:
         """Load the algorithm with the best hyperparameters."""
