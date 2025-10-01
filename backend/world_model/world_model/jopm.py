@@ -11,8 +11,6 @@ class JOPM(nn.Module):
     def __init__(self, autoencoder: VAE, rdlm: RDLM, initial_joint_observations: torch.Tensor):
         super().__init__()
         self.autoencoder = autoencoder
-        self.encoder = autoencoder.encoder
-        self.decoder = autoencoder.decoder
         self.rdlm = rdlm
         self.initial_joint_observations = initial_joint_observations
 
@@ -75,7 +73,7 @@ class JOPM(nn.Module):
             # Mode historique complet
             z_hist = []
             for t in range(history_obs.shape[1]):
-                z = self.encoder(history_obs[:, t, :])
+                z, _ = self.autoencoder.encode(history_obs[:, t, :])
                 z_hist.append(z.unsqueeze(1))
             z_hist = torch.cat(z_hist, dim=1)  # (batch, hist_len, latent_dim)
 
@@ -83,14 +81,14 @@ class JOPM(nn.Module):
             for t in range(z_hist.shape[1]):
                 _, rchs = self.rdlm(
                     z_hist[:, t, :], history_act[:, t, :], rchs)
-            z_t = self.encoder(obs_t)
+            z_t, _ = self.autoencoder.encode(obs_t)
         else:
             # Mode transition par transition, on utilise l'état interne du RDLM
-            z_t = self.encoder(obs_t)
+            z_t, _ = self.autoencoder.encode(obs_t)
             rchs = None  # RDLM utilisera son état interne
 
         # Utilisation du forward du RDLM (qui gère l'état interne si besoin)
         z_tp1, _ = self.rdlm(z_t, act_t, rchs)
 
-        obs_pred_tp1 = self.decoder(z_tp1)
+        obs_pred_tp1 = self.autoencoder.decode(z_tp1)
         return obs_pred_tp1

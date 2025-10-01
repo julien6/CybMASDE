@@ -36,6 +36,7 @@ class MeanStdStopper(Stopper):
 
     def __call__(self, trial_id, result):
         rewards = result.get("hist_stats", {}).get("episode_reward", None)
+        print("========>>> ", rewards)
 
         if rewards is not None:
             self.episode_rewards.extend(rewards)
@@ -87,13 +88,13 @@ class MTAProcess(Process):
         signal.signal(signal.SIGINT, self._signal_handler)
 
         # Run each activity of the MTA process
-        self.run_modelling_activity()
+        # self.run_modelling_activity()
 
         # # Run refinement cycles
         # for i in range(self.configuration.max_refinement_cycle):
         #     print(
         #         f"Refinement cycle {i + 1}/{self.configuration.max_refinement_cycle}")
-        # self.run_training_activity()
+        self.run_training_activity()
         # self.run_analyzing_activity()
         print("Finished MTA process")
 
@@ -178,7 +179,9 @@ class MTAProcess(Process):
 
             # Run the world model training with hyperparameter optimization (HPO)
             print("Running world model hyperparameter optimization...")
-            self.run_world_model_with_hpo()
+            self.run_autoencoder_with_hpo()
+
+            self.run_rdlm_with_hpo()
 
             # Assemble the reward function, world model (and optionally the rendering function) into the simulated environment
             print("Assembling the simulated environment...")
@@ -190,14 +193,6 @@ class MTAProcess(Process):
         self.jopm.save(os.path.dirname(os.path.join(self.configuration.common.project_path,
                        self.configuration.modelling.generated_environment.world_model.jopm.initial_joint_observations)))
 
-    def run_world_model_with_hpo(self):
-        """Run the world model training with hyperparameter optimization (HPO)."""
-        print("Running world model training with hyperparameter optimization...")
-
-        self.run_autoencoder_with_hpo()
-
-        self.run_rdlm_with_hpo()
-
     def load_traces(self, traces_path):
         """
         Charge toutes les traces à partir des fichiers de trajectoires dans traces_path.
@@ -205,8 +200,9 @@ class MTAProcess(Process):
         """
         joint_observations = []
         joint_actions = []
+
         # for each episode
-        for fname in os.listdir(traces_path):
+        for fname in sorted(os.listdir(traces_path)):
             joint_observations_ep = []
             joint_actions_ep = []
             if fname.startswith("joint_history_") and fname.endswith(".json"):
@@ -369,6 +365,8 @@ class MTAProcess(Process):
 
         compressed_files = sorted([f for f in os.listdir(compressed_dir) if f.startswith(
             "compressed_joint_history_") and f.endswith(".json")])
+        print(
+            f"Found {len(compressed_files)} compressed trace files.", compressed_files)
 
         latent_obs_episodes = []
         actions_episodes = []
@@ -395,9 +393,7 @@ class MTAProcess(Process):
         # (n_episodes, n_steps, latent_dim)
         latent_obs_episodes = np.array(latent_obs_episodes, dtype=np.float32)
         # (n_episodes, n_steps, action_space_n * n_agents)
-        # TODO: vérifier taille ici
         actions_episodes = np.array(actions_episodes, dtype=np.float32)
-        print("actions_episodes.shape: ", actions_episodes.shape)
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

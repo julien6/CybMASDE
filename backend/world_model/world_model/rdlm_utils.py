@@ -96,6 +96,7 @@ class RDLM(nn.Module):
         # print("rchs_tminus1.shape: ", rchs_tminus1.shape)
         # print("z_t.shape: ", z_t.shape)
         # print("a_t.shape: ", a_t.shape)
+
         x = torch.cat([rchs_tminus1, z_t, a_t], dim=-
                       1).unsqueeze(1)  # (batch, 1, input_dim)
 

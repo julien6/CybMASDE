@@ -78,20 +78,25 @@ class WorldModelEnv(MultiAgentEnv):
         return self.current_joint_obs
 
     def step(self, action_dict):
+
+        def one_hot_encode_action(a: int):
+            one_hot = [
+                0] * self.component_functions.label_manager.action_space.n
+            one_hot[int(a)] = 1
+            return one_hot
+
         agent_ids = sorted(action_dict.keys())
 
-        act_t = torch.cat([torch.tensor([action_dict[aid]], dtype=torch.float32)
-                          for aid in agent_ids], dim=0).unsqueeze(0)
+        act_t = torch.cat([torch.tensor([one_hot_encode_action(action_dict[aid])], dtype=torch.float32)
+                          for aid in agent_ids], dim=0).flatten().unsqueeze(0)
 
         observation_dict = self.current_joint_obs
-        print("observation_dict: ", observation_dict)
         if isinstance(observation_dict, dict):
             obs_t = torch.cat([torch.tensor(observation_dict[aid],
                                             dtype=torch.float32) for aid in agent_ids], dim=0).unsqueeze(0)
         else:
             obs_t = torch.cat([torch.tensor(observation_dict[int(aid.split("_")[1])],
                                             dtype=torch.float32) for aid in agent_ids], dim=0).unsqueeze(0)
-        print("obs_t: ", obs_t)
 
         next_joint_obs = self.jopm.predict_next_joint_observation(obs_t, act_t)
 
@@ -99,23 +104,28 @@ class WorldModelEnv(MultiAgentEnv):
         obs_dim_per_agent = next_joint_obs.shape[-1] // len(agent_ids)
         for i, aid in enumerate(agent_ids):
             next_observation_dict[aid] = next_joint_obs[0, i *
-                                                        obs_dim_per_agent:(i+1)*obs_dim_per_agent].cpu().numpy()
+                                                        obs_dim_per_agent:(i+1)*obs_dim_per_agent].detach().cpu().numpy()
+
+        if not isinstance(observation_dict, dict):
+            observation_dict = {}
+            for i, aid in enumerate(agent_ids):
+                observation_dict[aid] = obs_t[0, i *
+                                              obs_dim_per_agent:(i+1)*obs_dim_per_agent].detach().cpu().numpy()
 
         # Use component_functions for reward, done, and render
-        reward = self.component_functions.reward_fn(
+        rews = self.component_functions.reward_fn(
             observation_dict, action_dict, next_observation_dict)
-        rewards = {aid: reward for aid in agent_ids}
+        rewards = {aid: rews[aid] for aid in agent_ids}
         infos = {aid: {} for aid in agent_ids}
         self.current_joint_obs = next_observation_dict
 
+        ds = {aid: False for aid in agent_ids}
         if hasattr(self.component_functions, "done_fn"):
-            done = self.component_functions.done_fn(
+            ds = self.component_functions.done_fn(
                 observation_dict, action_dict, next_observation_dict)
-        else:
-            done = False
 
-        dones = {aid: done for aid in agent_ids}
-        dones["__all__"] = done
+        dones = {aid: ds[aid] for aid in agent_ids}
+        dones["__all__"] = any(ds.values())
 
         return next_observation_dict, rewards, dones, infos
 
