@@ -10,6 +10,7 @@ import logging
 import torch
 import optuna
 import yaml
+import shutil
 
 from typing import List
 from mma_wrapper.label_manager import label_manager
@@ -25,28 +26,35 @@ from marllib import marl
 from ray.tune.stopper import Stopper
 from ray import tune
 from mma_wrapper.organizational_model import organizational_model
+from distutils.dir_util import copy_tree
+from mma_wrapper.label_manager import label_manager
+from mma_wrapper.organizational_model import deontic_specification, organizational_model, structural_specifications, functional_specifications, deontic_specifications, time_constraint_type
+from mma_wrapper.organizational_specification_logic import role_logic, goal_factory, role_factory, goal_logic
+from mma_wrapper.utils import label, observation, action, trajectory
 
 
 class MeanStdStopper(Stopper):
-    def __init__(self, mean_threshold, std_threshold, window_size=100):
+    def __init__(self, mean_threshold, std_threshold, window_size=100, max_timesteps_total=1e7):
         self.mean_threshold = mean_threshold
         self.std_threshold = std_threshold
         self.window_size = window_size
         self.episode_rewards = []
+        self.max_timesteps_total = max_timesteps_total
 
     def __call__(self, trial_id, result):
+        if result.get("timesteps_total", 0) > self.max_timesteps_total:
+            print(
+                f"Trial {trial_id} exceeded max timesteps {self.max_timesteps_total}. Stopping.")
+            return True  # Stop this trial if it exceeds max timesteps
         rewards = result.get("hist_stats", {}).get("episode_reward", None)
-
         if rewards is not None:
             self.episode_rewards.extend(rewards)
             if len(self.episode_rewards) >= self.window_size:
                 self.episode_rewards = self.episode_rewards[-self.window_size:]
                 mean = np.mean(self.episode_rewards)
                 std = np.std(self.episode_rewards)
-                print(
-                    f"Average over {len(self.episode_rewards)} episodes : {mean:.2f}")
-                print(
-                    f"Standard deviation over {len(self.episode_rewards)} episodes : {std:.2f}")
+                # print(f"Average over {len(self.episode_rewards)} episodes : {mean:.2f}")
+                #  print(f"Standard deviation over {len(self.episode_rewards)} episodes : {std:.2f}")
                 if mean >= self.mean_threshold and std <= self.std_threshold:
                     print(
                         f"Early stopping : average >= {self.mean_threshold} and standard deviation <= {self.std_threshold}")
@@ -96,8 +104,8 @@ class MTAProcess(Process):
         # for i in range(self.configuration.max_refinement_cycle):
         #     print(
         #         f"Refinement cycle {i + 1}/{self.configuration.max_refinement_cycle}")
-        self.run_training_activity()
-        # self.run_analyzing_activity()
+        # self.run_training_activity()
+        self.run_analyzing_activity()
         print("Finished MTA process")
 
     def load_handcrafted_environment(self):
@@ -462,7 +470,8 @@ class MTAProcess(Process):
                 stop=MeanStdStopper(mean_threshold=training_hyperparameters["mean_threshold"],
                                     std_threshold=training_hyperparameters[
                                         "std_threshold"],
-                                    window_size=training_hyperparameters["window_size"]),
+                                    window_size=training_hyperparameters["window_size"],
+                                    max_timesteps_total=training_hyperparameters["max_timesteps_total"]),
                 local_mode=False,
                 num_gpus=training_hyperparameters["num_gpus"],
                 num_workers=training_hyperparameters["num_workers"],
@@ -494,11 +503,44 @@ class MTAProcess(Process):
 
         best_hp = deepcopy(
             training_hyperparameters["algorithms"][best_algorithm])
+        training_hyperparameters = {}
         training_hyperparameters["algorithms"] = {}
         training_hyperparameters["algorithms"][best_algorithm] = best_hp
 
         json.dump(training_hyperparameters, open(os.path.join(
-            self.configuration.common.project_path, self.configuration.training.hyperparameters), "w"))
+            self.configuration.common.project_path, self.configuration.training.hyperparameters), "w"), indent=4)
+
+        # save the model parameters
+        json.dump(training_hyperparameters, open(os.path.join(
+            self.configuration.common.project_path, self.configuration.training.joint_policy, "model_config.json"), "w"), indent=4)
+
+        # Remove all folders except the one containing the best checkpoint
+        checkpoint_parent_dir = os.path.dirname(
+            os.path.dirname(best_checkpoint_path))
+        checkpoint_dir = os.path.dirname(best_checkpoint_path)
+        for item in os.listdir(checkpoint_parent_dir):
+            item_path = os.path.join(checkpoint_parent_dir, item)
+            # Only remove directories, and skip the checkpoint_dir
+            if os.path.isdir(item_path) and item_path != checkpoint_dir:
+                try:
+                    shutil.rmtree(item_path)
+                except Exception as e:
+                    logger.warning(f"Could not remove {item_path}: {e}")
+
+        checkpoint_path_src = os.path.dirname(
+            os.path.dirname(best_checkpoint_path))
+        checkpoint_path_dest = os.path.join(
+            self.configuration.common.project_path, self.configuration.training.joint_policy, "model")
+        try:
+            shutil.rmtree(checkpoint_path_dest)
+        except Exception as e:
+            logger.warning(f"Could not remove {checkpoint_path_dest}: {e}")
+
+        os.makedirs(checkpoint_path_dest, exist_ok=True)
+        copy_tree(checkpoint_path_src, checkpoint_path_dest)
+        print("Joint policy saved in ", checkpoint_path_dest)
+
+        shutil.rmtree(os.path.dirname(os.path.dirname(checkpoint_parent_dir)))
 
     def load_algorithm_default_hp(self, name: str) -> dict:
         """Load the algorithm with the best hyperparameters."""
@@ -514,36 +556,139 @@ class MTAProcess(Process):
         """Run the analyzing activity."""
         print("Running analyzing activity...")
 
-        best_algo = list(
-            self.configuration.training.hyperparameters["algorithms"].keys())[0]
-        best_hp = self.configuration.training.hyperparameters["algorithms"][best_algo]
+        best_hp = json.load(open(os.path.join(
+            self.configuration.common.project_path, self.configuration.training.joint_policy, "model_config.json"), "r"))
+
+        algorithm = list(best_hp["algorithms"].keys())[0]
+
+        organizational_specifications = organizational_model.from_dict(json.load(open(os.path.join(
+            self.configuration.training.organizational_specifications, "organizational_specifications.json"), "r")))
 
         env = marl.make_env(
-            environment_name="simulated_environment", map_name="default", force_coop=False, organizational_model=self.configuration.training.organizational_specifications)
+            environment_name="cybmasde",
+            map_name="default",
+            force_coop=False,
+            organizational_model=organizational_specifications,
+            jopm_path=os.path.join(self.configuration.common.project_path, os.path.dirname(
+                self.configuration.modelling.generated_environment.world_model.jopm.initial_joint_observations)),
+            component_functions_path=os.path.join(
+                self.configuration.common.project_path, self.configuration.modelling.generated_environment.component_functions_path),
+            label_manager_path=os.path.join(
+                self.configuration.common.project_path, self.configuration.common.label_manager)
+        )
 
-        mappo = marl.algos.getattr()(
-            hyperparam_source="common", **best_hp["algorithm"])
+        algo = marl.algos.__getattribute__(algorithm)(
+            hyperparam_source="common", **best_hp["algorithms"][algorithm]["algorithm"])
 
         model = marl.build_model(
-            env, mappo, best_hp["model"])
+            env, algo, best_hp["algorithms"][algorithm]["model"])
+
+        params_path = os.path.join(self.configuration.common.project_path,
+                                   self.configuration.training.joint_policy, "model/params.json")
+
+        checkpoint_name = [f for f in os.listdir(os.path.join(
+            self.configuration.common.project_path, self.configuration.training.joint_policy, "model")) if f.startswith("checkpoint_")][0]
+
+        model_path = os.path.join(self.configuration.common.project_path, self.configuration.training.joint_policy,
+                                  "model", checkpoint_name, f"checkpoint-{int(checkpoint_name.split('_')[1])}")
+
+        print("params_path:", params_path)
+        print("model_path:", model_path)
 
         # TODO: Add HPO for TEMM
-        mappo.render(env, model,
-                     restore_path={
-                         'params_path': os.path.join(self.configuration.training["best_checkpoint"], "../params.json"),
-                         'model_path': self.configuration.training["best_checkpoint"],
-                         'render': True if self.configuration.modelling.simulated_environment.rendering_function is (not None or "") else False,
-                         #  'record_env': True,
-                         'render_env': True
-                     },
-                     enable_temm=True,
-                     local_mode=True,
-                     share_policy="group",
-                     stop_timesteps=1,
-                     timesteps_total=1,
-                     checkpoint_freq=10000,
-                     stop_iters=1,
-                     checkpoint_end=False)
+        algo.render(env, model,
+                    restore_path={
+                        'params_path': params_path,
+                        'model_path': model_path,
+                        # self.check_method_impemented(self.componentFunctions.render_fn, [None, None, None]),
+                        'render': False,
+                        #  'record_env': True,
+                        'render_env': True
+                    },
+                    enable_temm=True,
+                    local_mode=True,
+                    share_policy="group",
+                    stop_timesteps=1,
+                    timesteps_total=1,
+                    checkpoint_freq=10000,
+                    stop_iters=1,
+                    checkpoint_end=False)
+
+        # Remove old analysis results if any
+        shutil.rmtree(os.path.join(self.configuration.common.
+                                   project_path, self.configuration.analyzing.post_training_trajectories_path), ignore_errors=True)
+        shutil.rmtree(os.path.join(self.configuration.common.
+                                   project_path, self.configuration.analyzing.figures_path), ignore_errors=True)
+        shutil.rmtree(os.path.join(self.configuration.common.
+                                   project_path, self.configuration.analyzing.post_training_trajectories_path), ignore_errors=True)
+
+        # Copy the figures to the project folder
+        copy_tree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "analysis_results", "figures"), os.path.join(
+            self.configuration.common.project_path, self.configuration.analyzing.figures_path))
+
+        # Copy the trajectories to the project folder
+        copy_tree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "analysis_results", "trajectories"), os.path.join(self.configuration.common.
+                                                                                                                             project_path, self.configuration.analyzing.post_training_trajectories_path))
+
+        # Copy the inferred organizational specifications to the project folder
+        copy_tree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "analysis_results", "inferred_organizational_specifications"),
+                  os.path.join(self.configuration.common.project_path, self.configuration.analyzing.inferred_organizational_specifications))
+
+        inferred_roles_summary = organizational_model.from_dict(json.load(open(os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "analysis_results", "inferred_organizational_specifications", "inferred_roles_summary.json"), "r")))
+        inferred_goals_summary = organizational_model.from_dict(json.load(open(os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "analysis_results", "inferred_organizational_specifications", "inferred_goals_summary.json"), "r")))
+
+        # Delete the temporary analysis_results folder
+        shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
+            __file__)), "analysis_results"), ignore_errors=True)
+        shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
+            __file__)), "exp_results"), ignore_errors=True)
+
+    # def generate_organizational_model(self, inferred_roles_summary, inferred_goals_summary):
+    #     """Generate the organizational model from the inferred roles and goals summaries."""
+
+    #     inferred_roles = {}
+    #     for inferred_role_name in inferred_roles_summary:
+    #         # print("Inferred role:", inferred_role_name, " with rules:", inferred_roles_summary[inferred_role_name]["rules"])
+    #         if len(inferred_roles_summary[inferred_role_name]["rules"]) > 0:
+    #             inferred_roles[inferred_role_name] = inferred_roles_summary[inferred_role_name]["rules"]
+
+    #     inferred_goals = {}
+    #     for inferred_goal_name in inferred_goals_summary:
+    #         # print("Inferred goal:", inferred_goal_name, " with observations:", inferred_goals_summary[inferred_goal_name]["observations"])
+    #         if len(inferred_goals_summary[inferred_goal_name]["observations"]) > 0:
+    #             inferred_goals[inferred_goal_name] = inferred_goals_summary[inferred_goal_name]["rules"]
+
+    #     label_mngr = self.componentFunctions.label_manager()
+
+    #     def primary_fun(trajectory: trajectory, observation: label, agent_name: str, label_manager: label_manager) -> label:
+    #         chosen_action =
+    #         return
+
+    #     organizational_model = organizational_model(
+    #         structural_specifications(
+    #             roles={
+    #                 "role_primary": role_logic(label_manager=label_mngr).registrer_script_rule(primary_fun),
+    #                 "role_secondary": role_logic(label_manager=label_mngr).registrer_script_rule(primary_fun)},
+    #             role_inheritance_relations={}, root_groups={}),
+    #         functional_specifications=functional_specifications(
+    #             goals={}, social_scheme={}, mission_preferences=[]),
+    #         deontic_specifications=deontic_specifications(permissions=[], obligations=[
+    #             deontic_specification(
+    #                 "role_primary", ["agent_0"], [], time_constraint_type.ANY),
+    #             deontic_specification(
+    #                 "role_secondary", ["agent_1"], [], time_constraint_type.ANY)
+    #         ]))
+
+    #     # Save the generated organizational model
+    #     org_model_path = os.path.join(self.configuration.common.project_path,
+    #                                   self.configuration.analyzing.inferred_organizational_specifications, "organizational_specifications.json")
+    #     os.makedirs(os.path.dirname(org_model_path), exist_ok=True)
+    #     json.dump(org_model.to_dict(), open(org_model_path, "w"), indent=4)
+    #     print("Generated organizational model saved to:", org_model_path)
+
+    #     return org_model
 
 
 if __name__ == "__main__":

@@ -10,6 +10,17 @@ from mma_wrapper.organizational_specification_logic import goal_logic, role_logi
 from ray.rllib.env.multi_agent_env import MultiAgentEnv
 
 
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super(NumpyEncoder, self).default(obj)
+
+
 class RLlibMMA_wrapper(MultiAgentEnv):
 
     temm_enabled = False
@@ -140,7 +151,7 @@ class RLlibMMA_wrapper(MultiAgentEnv):
         if len(self.histories[list(_last_observations.keys())[0]]) > 0:
             if self.temm_enabled:
                 json.dump(self.histories, open(os.path.join(
-                    self.analysis_folder, "trajectories", f"trajectories_{self.episode_number}.json"), "w+"))
+                    self.analysis_folder, "trajectories", f"trajectories_{self.episode_number}.json"), "w+"), cls=NumpyEncoder)
                 self.episode_number += 1
 
             for agent, obs in _last_observations.items():
