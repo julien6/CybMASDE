@@ -7,6 +7,7 @@ from typing import Dict, List, Any, Callable
 def select_near_centroid_observation_trajectories(
     clusters: Dict[int, List[Any]],
     centroids: Dict[int, Any],
+    observation_cluster_agents: Dict[int, List[str]],
     inclusion_radius: float,
     distance_fn: Callable[[Any, Any], float] = None
 ) -> Dict[int, List[Any]]:
@@ -15,7 +16,7 @@ def select_near_centroid_observation_trajectories(
     for cluster_id, trajectories in clusters.items():
         trajectories = np.array(trajectories)
         selected = select_near_centroid_trajectories(
-            selected, cluster_id, trajectories, centroids, inclusion_radius, distance_fn=distance_fn)
+            selected, cluster_id, trajectories, centroids, observation_cluster_agents, inclusion_radius, distance_fn=distance_fn)
 
     return selected
 
@@ -23,6 +24,7 @@ def select_near_centroid_observation_trajectories(
 def select_near_centroid_full_trajectories(
     clusters: Dict[int, List[Any]],
     centroids: Dict[int, Any],
+    full_cluster_agents: Dict[int, List[str]],
     inclusion_radius: float,
     distance_fn: Callable[[Any, Any], float] = None
 ) -> Dict[int, List[Any]]:
@@ -50,7 +52,7 @@ def select_near_centroid_full_trajectories(
             (obs, np.eye(num_actions)[act])) for obs, act in traj]) for traj in trajectories])
 
         selected = select_near_centroid_trajectories(
-            selected, cluster_id, encoded_action_trajectories, centroids, inclusion_radius, distance_fn=distance_fn, raw_trajectories=trajectories)
+            selected, cluster_id, encoded_action_trajectories, centroids, full_cluster_agents, inclusion_radius, distance_fn=distance_fn, raw_trajectories=trajectories)
 
     return selected
 
@@ -60,6 +62,7 @@ def select_near_centroid_trajectories(
     cluster_id: Any,
     trajectories: List[List[Any]],
     centroids: Dict[int, Any],
+    cluster_agents: Dict[int, List[str]],
     inclusion_radius: float,
     distance_fn: Callable[[Any, Any], float] = None,
     raw_trajectories=None
@@ -81,7 +84,7 @@ def select_near_centroid_trajectories(
         trajectories = raw_trajectories
 
     selected_trajectories = [
-        traj for traj, dist in zip(trajectories, distances)
+        (traj, cluster_agents[cluster_id][index]) for index, (traj, dist) in enumerate(zip(trajectories, distances))
         if np.all(dist <= inclusion_radius * max_dist)
     ]
     selected[cluster_id] = selected_trajectories

@@ -20,25 +20,24 @@ def extract_roles_from_trajectories(
     inferred_roles = {}
 
     for cluster_id, trajectories in selected_trajectories.items():
-        rule_counter = defaultdict(lambda: {"count": 0, "obs_sum": None})
-
-        for traj in trajectories:
-            for obs, act in traj:
-                key = int(act)
-                if rule_counter[key]["obs_sum"] is None:
-                    rule_counter[key]["obs_sum"] = np.array(obs)
-                else:
-                    rule_counter[key]["obs_sum"] += obs
-                rule_counter[key]["count"] += 1
-
-        total = sum([v["count"] for v in rule_counter.values()])
+        rule_counter = {}
+        agents = set()
         rules = []
 
-        for act, data in rule_counter.items():
-            avg_obs = data["obs_sum"] / data["count"]
-            weight = data["count"] / total if total > 0 else 0.0
-            rules.append({"observation": avg_obs.tolist(),
-                         "action": act, "weight": weight})
+        for traj, agent_name in trajectories:
+            agents.add(agent_name)
+            for obs, act in traj:
+                rule_counter.setdefault(str(obs), {}).setdefault(
+                    str(act), {}).setdefault(agent_name, 0)
+                rule_counter[str(obs)][str(act)][agent_name] += 1
+
+        for traj, agent_name in trajectories:
+            for obs, act in traj:
+                total = sum([rule_counter[str(obs)][str(act)][agent]
+                            for agent in agents])
+                total = 1.0 if total == 0 else total
+                rules.append({"observation": obs.tolist(),
+                             "action": act, "weight": rule_counter[str(obs)][str(act)][agent_name] / total})
 
         inferred_roles[cluster_id] = {
             "rules": rules,

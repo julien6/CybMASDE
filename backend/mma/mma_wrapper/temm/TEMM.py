@@ -4,7 +4,7 @@ import os
 from typing import List, Dict
 
 from mma_wrapper.temm.io_utils import load_trajectories, export_to_json
-from mma_wrapper.temm.preprocessing import extract_full_trajectories, extract_action_trajectories, extract_observation_trajectories
+from mma_wrapper.temm.preprocessing import extract_full_trajectories, extract_action_trajectories, extract_observation_trajectories, get_agents
 from mma_wrapper.temm.clustering import cluster_trajectories_from_action, cluster_trajectories_from_observation, cluster_full_trajectories
 from mma_wrapper.temm.visualization import (
     generate_actions_dendrogram,
@@ -47,26 +47,26 @@ class TEMM:
         """
         print("1. Loading trajectories...")
         raw_episodes = load_trajectories(self.analysis_results_path)
+        agents = get_agents(raw_episodes)
         full_trajectories = extract_full_trajectories(raw_episodes)
-        action_trajectories = list(
-            extract_action_trajectories(raw_episodes).values())
-        observation_trajectories = list(
-            extract_observation_trajectories(raw_episodes).values())
+        action_trajectories = extract_action_trajectories(raw_episodes)
+        observation_trajectories = extract_observation_trajectories(
+            raw_episodes)
 
         print("2. Clustering trajectories...")
-        action_clusters, linkage_matrix = cluster_trajectories_from_action(
-            action_trajectories, distance_method_action)
-        observation_clusters, linkage_matrix = cluster_trajectories_from_observation(
-            observation_trajectories, distance_method_obs)
-        full_clusters, linkage_matrix = cluster_full_trajectories(
-            full_trajectories, distance_method_full)
+        action_clusters, linkage_matrix, action_cluster_agents = cluster_trajectories_from_action(
+            action_trajectories, distance_method_action, agents)
+        observation_clusters, linkage_matrix, observation_cluster_agents = cluster_trajectories_from_observation(
+            observation_trajectories, distance_method_obs, agents)
+        full_clusters, linkage_matrix, full_cluster_agents = cluster_full_trajectories(
+            full_trajectories, distance_method_full, agents)
 
         print("3. Generating visualizations...")
-        generate_actions_dendrogram(action_trajectories, save_path=os.path.join(
+        generate_actions_dendrogram(action_trajectories, agents, save_path=os.path.join(
             self.analysis_results_path, "figures", "actions_dendrogram.png"))
-        generate_observations_dendrogram(observation_trajectories, save_path=os.path.join(
+        generate_observations_dendrogram(observation_trajectories, agents, save_path=os.path.join(
             self.analysis_results_path, "figures", "observations_dendrogram.png"))
-        generate_dendrogram(full_trajectories, save_path=os.path.join(
+        generate_dendrogram(full_trajectories, agents, save_path=os.path.join(
             self.analysis_results_path, "figures", "full_dendrogram.png"))
         visualize_action_pca(action_trajectories, save_path=os.path.join(
             self.analysis_results_path, "figures", "action_pca.png"))
@@ -91,9 +91,9 @@ class TEMM:
 
         print("5. Selecting near-centroid trajectories...")
         selected_for_roles = select_near_centroid_full_trajectories(
-            full_clusters, full_centroids, inclusion_radius)
+            full_clusters, full_centroids, full_cluster_agents, inclusion_radius)
         selected_for_goals = select_near_centroid_observation_trajectories(
-            observation_clusters, observation_centroids, inclusion_radius)
+            observation_clusters, observation_centroids, observation_cluster_agents, inclusion_radius)
 
         print("6. Extracting roles and goals...")
         inferred_roles = extract_roles_from_trajectories(selected_for_roles)

@@ -29,13 +29,13 @@ def compute_sof(
     total_count = 0
 
     num_actions = max(np.concatenate(
-        [[a for _, a in traj] for _, trajectories in full_clusters.items() for traj in trajectories])) + 1
+        [[a for _, a in traj] for _, trajectories in full_clusters.items() for traj, _ in trajectories])) + 1
 
     for cluster_id, trajectories in full_clusters.items():
         centroid = centroids[cluster_id]
 
         encoded_action_trajectories = np.array([np.concatenate([np.concatenate(
-            (obs, np.eye(num_actions)[act])) for obs, act in traj]) for traj in trajectories])
+            (obs, np.eye(num_actions)[act])) for obs, act in traj]) for traj, _ in trajectories])
 
         cluster_dist = compute_average_distance(
             encoded_action_trajectories, centroid)
@@ -66,7 +66,7 @@ def compute_fof(
     for cluster_id, trajectories in observation_clusters.items():
         centroid_traj = observation_centroids[cluster_id]
 
-        for traj in trajectories:
+        for traj, _ in trajectories:
             total_dist += np.linalg.norm(traj - centroid_traj)
             total_count += 1
 

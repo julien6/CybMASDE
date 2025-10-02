@@ -40,7 +40,7 @@ def compute_distance_matrix(sequences: List, method: str, num_actions: int = Non
     return dist_matrix
 
 
-def cluster_trajectories_from_action(action_trajectories: List[List[int]], distance_method: str, num_actions: int = None) -> Tuple[Dict[int, List[int]], Any]:
+def cluster_trajectories_from_action(action_trajectories: List[List[int]], distance_method: str, agents: List[str], num_actions: int = None) -> Tuple[Dict[int, List[int]], Any]:
     """Cluster trajectories based on action sequences."""
     if num_actions is None:
         num_actions = max(np.concatenate(action_trajectories)) + 1
@@ -49,12 +49,14 @@ def cluster_trajectories_from_action(action_trajectories: List[List[int]], dista
     linkage_matrix = linkage(dist_matrix, method="average")
     labels = fcluster(linkage_matrix, t=1.0, criterion='distance')
     clusters: Dict[int, List[int]] = {}
+    cluster_agents: Dict[int, List[str]] = {}
     for idx, label in enumerate(labels):
         clusters.setdefault(label, []).append(action_trajectories[idx])
-    return clusters, linkage_matrix
+        cluster_agents.setdefault(label, []).append(agents[idx % len(agents)])
+    return clusters, linkage_matrix, cluster_agents
 
 
-def cluster_trajectories_from_observation(observation_trajectories: List[List[np.ndarray]], distance_method: str) -> Tuple[Dict[int, List[int]], Any]:
+def cluster_trajectories_from_observation(observation_trajectories: List[List[np.ndarray]], distance_method: str, agents: List[str]) -> Tuple[Dict[int, List[int]], Any]:
     """Cluster trajectories based on observation sequences."""
     n = len(observation_trajectories)
     vectors = [np.concatenate(seq) for seq in observation_trajectories]
@@ -69,12 +71,14 @@ def cluster_trajectories_from_observation(observation_trajectories: List[List[np
     linkage_matrix = linkage(dist_matrix, method="average")
     labels = fcluster(linkage_matrix, t=1.0, criterion='distance')
     clusters: Dict[int, List[int]] = {}
+    cluster_agents: Dict[int, List[str]] = {}
     for idx, label in enumerate(labels):
         clusters.setdefault(label, []).append(observation_trajectories[idx])
-    return clusters, linkage_matrix
+        cluster_agents.setdefault(label, []).append(agents[idx % len(agents)])
+    return clusters, linkage_matrix, cluster_agents
 
 
-def cluster_full_trajectories(full_trajectories: List[List[Tuple[np.ndarray, int]]], distance_method: str) -> Tuple[Dict[int, List[int]], Any]:
+def cluster_full_trajectories(full_trajectories: List[List[Tuple[np.ndarray, int]]], distance_method: str, agents: List[str]) -> Tuple[Dict[int, List[int]], Any]:
     """Cluster trajectories based on full (obs, action) sequences."""
 
     num_actions = max(np.concatenate(
@@ -93,6 +97,8 @@ def cluster_full_trajectories(full_trajectories: List[List[Tuple[np.ndarray, int
     linkage_matrix = linkage(dist_matrix, method="average")
     labels = fcluster(linkage_matrix, t=1.0, criterion='distance')
     clusters: Dict[int, List[int]] = {}
+    cluster_agents: Dict[int, List[str]] = {}
     for idx, label in enumerate(labels):
         clusters.setdefault(label, []).append(full_trajectories[idx])
-    return clusters, linkage_matrix
+        cluster_agents.setdefault(label, []).append(agents[idx % len(agents)])
+    return clusters, linkage_matrix, cluster_agents

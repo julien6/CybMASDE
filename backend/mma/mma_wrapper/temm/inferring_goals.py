@@ -22,10 +22,12 @@ def extract_goals_from_trajectories(
 
     for cluster_id, trajectories in selected_trajectories.items():
         all_obs = []
+        all_agents = []
 
         # Flatten all observations from all trajectories
-        for traj in trajectories:
+        for traj, agent_name in trajectories:
             all_obs.extend(traj)
+            all_agents.append(agent_name)
 
         if not all_obs:
             continue
@@ -40,9 +42,9 @@ def extract_goals_from_trajectories(
         weights = 1 / (1 + distances)  # Avoid division by zero
 
         weighted_obs = []
-        for obs, w in zip(all_obs_array, weights):
+        for agent_index, (obs, w) in enumerate(zip(all_obs_array, weights)):
             weighted_obs.append(
-                {"observation": obs.tolist(), "weight": float(w)})
+                {"observation": obs.tolist(), "weight": float(w), "agent": all_agents[agent_index]})
 
         goals[cluster_id] = {
             "observations": weighted_obs,

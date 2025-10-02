@@ -592,9 +592,6 @@ class MTAProcess(Process):
         model_path = os.path.join(self.configuration.common.project_path, self.configuration.training.joint_policy,
                                   "model", checkpoint_name, f"checkpoint-{int(checkpoint_name.split('_')[1])}")
 
-        print("params_path:", params_path)
-        print("model_path:", model_path)
-
         # TODO: Add HPO for TEMM
         algo.render(env, model,
                     restore_path={

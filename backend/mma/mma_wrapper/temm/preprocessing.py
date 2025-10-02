@@ -4,6 +4,20 @@ import numpy as np
 from typing import List, Dict, Tuple, Any
 
 
+def get_agents(raw_episodes: List[Dict[str, List[List[Any]]]]) -> List[str]:
+    """
+    Extract the list of unique agent names from raw episodes.
+    Args:
+        raw_episodes: List of dictionaries mapping agent names to their sequences of (obs, act) pairs.
+    Returns:
+        List of unique agent names.
+    """
+    agents = set()
+    for episode in raw_episodes:
+        agents.update(episode.keys())
+    return list(agents)
+
+
 def extract_full_trajectories(raw_episodes: List[Dict[str, List[List[Any]]]]) -> List[List[Tuple[np.ndarray, int]]]:
     """
     Transform raw episodes into full trajectories (observation, action) per agent.
@@ -32,12 +46,10 @@ def extract_action_trajectories(raw_episodes: List[Dict[str, List[List[Any]]]]) 
     Returns:
         Dictionary mapping each agent name to a list of actions.
     """
-    action_trajectories = {}
+    action_trajectories = []
     for episode in raw_episodes:
         for agent, transitions in episode.items():
-            if agent not in action_trajectories:
-                action_trajectories[agent] = []
-            action_trajectories[agent].extend(
+            action_trajectories.append(
                 [act for obs, act in transitions])
     return action_trajectories
 
@@ -52,11 +64,9 @@ def extract_observation_trajectories(raw_episodes: List[Dict[str, List[List[Any]
     Returns:
         Dictionary mapping each agent name to a list of observations (as numpy arrays).
     """
-    observation_trajectories = {}
+    observation_trajectories = []
     for episode in raw_episodes:
         for agent, transitions in episode.items():
-            if agent not in observation_trajectories:
-                observation_trajectories[agent] = []
-            observation_trajectories[agent].extend(
+            observation_trajectories.append(
                 [np.array(obs) for obs, act in transitions])
     return observation_trajectories

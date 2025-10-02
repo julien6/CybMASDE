@@ -42,21 +42,21 @@ def plot_pca(data: List[np.ndarray], title: str, save_path: str):
 
 # Wrappers for specific use cases
 
-def generate_actions_dendrogram(action_trajectories: List[np.ndarray], save_path="actions_dendrogram.png"):
-    clusters, linkage_matrix = cluster_trajectories_from_action(
-        action_trajectories, "cosine")
+def generate_actions_dendrogram(action_trajectories: List[np.ndarray], agents: List[str], save_path="actions_dendrogram.png"):
+    clusters, linkage_matrix, cluster_agents = cluster_trajectories_from_action(
+        action_trajectories, "cosine", agents)
     return plot_dendrogram(linkage_matrix, "Dendrogram - Action Trajectories", save_path)
 
 
-def generate_observations_dendrogram(observation_trajectories: List[np.ndarray], save_path="observations_dendrogram.png"):
-    clusters, linkage_matrix = cluster_trajectories_from_observation(
-        observation_trajectories, "cosine")
+def generate_observations_dendrogram(observation_trajectories: List[np.ndarray], agents: List[str], save_path="observations_dendrogram.png"):
+    clusters, linkage_matrix, cluster_agents = cluster_trajectories_from_observation(
+        observation_trajectories, "cosine", agents)
     return plot_dendrogram(linkage_matrix, "Dendrogram - Observation Trajectories", save_path)
 
 
-def generate_dendrogram(full_trajectories: List[np.ndarray], save_path="full_dendrogram.png"):
-    clusters, linkage_matrix = cluster_full_trajectories(
-        full_trajectories, "cosine")
+def generate_dendrogram(full_trajectories: List[np.ndarray], agents: List[str], save_path="full_dendrogram.png"):
+    clusters, linkage_matrix, cluster_agents = cluster_full_trajectories(
+        full_trajectories, "cosine", agents)
     return plot_dendrogram(linkage_matrix, "Dendrogram - Full Trajectories", save_path)
 
 
@@ -77,13 +77,15 @@ def visualize_observation_pca(data: List[np.ndarray], save_path="observation_pca
 
 def visualize_transition_pca(data: List[np.ndarray], save_path="transition_pca.png"):
     nb_actions = max([a for seq in data for _, a in seq]) + 1
-    data = [np.concatenate((o, np.eye(nb_actions)[a])) for seq in data for o, a in seq]
+    data = [np.concatenate((o, np.eye(nb_actions)[a]))
+            for seq in data for o, a in seq]
     return plot_pca(data, "PCA - Transitions (1 point = 1 transition)", save_path)
 
 
 def visualize_action_trajectory(data: List[np.ndarray], save_path="action_trajectory_pca.png"):
     nb_actions = max([a for seq in data for a in seq]) + 1
-    data = [np.concatenate([np.eye(nb_actions)[a] for a in seq]) for seq in data]
+    data = [np.concatenate([np.eye(nb_actions)[a]
+                           for a in seq]) for seq in data]
     return plot_pca(data, "PCA - Action Trajectories (1 point = 1 trajectory)", save_path)
 
 
@@ -94,5 +96,6 @@ def visualize_observation_trajectory(data: List[np.ndarray], save_path="observat
 
 def visualize_trajectory(data: List[np.ndarray], save_path="full_trajectory_pca.png"):
     nb_actions = max([a for seq in data for o, a in seq]) + 1
-    data = [np.concatenate([np.concatenate((o, np.eye(nb_actions)[a])) for o, a in seq]) for seq in data]
+    data = [np.concatenate([np.concatenate((o, np.eye(nb_actions)[a]))
+                           for o, a in seq]) for seq in data]
     return plot_pca(data, "PCA - Full Trajectories (1 point = 1 trajectory)", save_path)
