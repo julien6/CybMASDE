@@ -94,10 +94,21 @@ def handle_lambda(source: str) -> str:
 
 
 def load_function(function_data: Any) -> Tuple[Callable, bool]:
+    source_file_path = function_data.get('source_file', None)
     if not 'module_name' in function_data:
         raise Exception("Module should be given")
     module_name = function_data['module_name']
-    module = importlib.import_module(module_name)
+
+    if source_file_path is not None:
+        # Load module from source_file_path
+        spec = importlib.util.spec_from_file_location(
+            module_name, source_file_path)
+        module = importlib.util.module_from_spec(spec)
+        # print("Loading module: ", module)
+        spec.loader.exec_module(module)
+    else:
+        module = importlib.import_module(module_name)
+
     if 'source' in function_data:
         source = handle_lambda(function_data['source'])
         match = re.search(
@@ -115,6 +126,11 @@ def load_function(function_data: Any) -> Tuple[Callable, bool]:
 
 
 def dump_function(function: Callable, save_source: bool = False, function_name=None, function_source=None):
+
+    source_file = inspect.getsourcefile(function)
+    if source_file is not None:
+        source_file = os.path.abspath(source_file)
+
     if save_source:
         try:
             source = textwrap.dedent(inspect.getsource(function))
@@ -123,9 +139,9 @@ def dump_function(function: Callable, save_source: bool = False, function_name=N
         # check the function's source is a lambda function
         source = handle_lambda(source)
 
-        return {'function_name': function.__name__, 'module_name': function.__module__, 'source': source}
+        return {'source_file': source_file, 'function_name': function.__name__, 'module_name': function.__module__, 'source': source}
     else:
-        return {'function_name': function.__name__, 'module_name': function.__module__}
+        return {'source_file': source_file, 'function_name': function.__name__, 'module_name': function.__module__}
 
 
 def draw_networkx_edge_labels(

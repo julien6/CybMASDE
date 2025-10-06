@@ -1,5 +1,6 @@
 import importlib
 import inspect
+import os
 import re
 import gym
 
@@ -122,13 +123,19 @@ class label_manager:
     def to_dict(self, save_source=False) -> Dict:
         module_name = self.__class__.__module__
         class_name = self.__class__.__name__
+        source_file = inspect.getsourcefile(self.__class__)
+        if source_file is not None:
+            source_file = os.path.abspath(source_file)
+
         if save_source:
             return {
+                "source_file": source_file,
                 "module_name": module_name,
                 "class_name": class_name,
                 "source": inspect.getsource(self)
             }
         return {
+            "source_file": source_file,
             "module_name": module_name,
             "class_name": class_name
         }
@@ -136,11 +143,22 @@ class label_manager:
     @staticmethod
     def from_dict(d: Dict) -> 'label_manager':
 
+        source_file_path = d.get('source_file', None)
+
         if not 'module_name' in d:
             raise Exception("Module should be given")
 
         module_name = d['module_name']
-        module = importlib.import_module(module_name)
+
+        # Load the source file before importing the module
+        if source_file_path:
+            import importlib.util
+            spec = importlib.util.spec_from_file_location(
+                module_name, source_file_path)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+        else:
+            module = importlib.import_module(module_name)
 
         if 'source' in d:
             match = re.search(
@@ -154,4 +172,3 @@ class label_manager:
             function_name = d['class_name']
             _lbl_mngr_class = getattr(module, function_name)
         return _lbl_mngr_class()
-

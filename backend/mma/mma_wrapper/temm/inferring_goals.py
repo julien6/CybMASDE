@@ -5,7 +5,7 @@ from typing import List, Dict, Any
 
 
 def extract_goals_from_trajectories(
-    selected_trajectories: Dict[int, List[List[np.ndarray]]]
+    selected_trajectories: Dict[int, List[List[np.ndarray]]], min_obs_weight: float = 0.
 ) -> Dict[int, Dict[str, Any]]:
     """
     Extract abstract goals from a set of selected observation trajectories near the centroid.
@@ -14,6 +14,7 @@ def extract_goals_from_trajectories(
 
     Args:
         selected_trajectories: Mapping from cluster_id to list of observation trajectories.
+        min_obs_weight: Minimum threshold for an observation to be considered a goal.
 
     Returns:
         Dictionary mapping each cluster_id to a list of goal observations with their weight.
@@ -21,63 +22,36 @@ def extract_goals_from_trajectories(
     goals = {}
 
     for cluster_id, trajectories in selected_trajectories.items():
-        all_obs = []
-        all_agents = []
+        observations_counter = {}
+        agents_owner = {}
+        observations = {}
+        total = 0
+        total_valid = 0
 
         # Flatten all observations from all trajectories
         for traj, agent_name in trajectories:
-            all_obs.extend(traj)
-            all_agents.append(agent_name)
+            for obs in traj:
+                observations_counter.setdefault(
+                    str(obs.tolist()), {}).setdefault(agent_name, 0)
+                observations_counter[str(obs.tolist())][agent_name] += 1
+                total += 1
 
-        if not all_obs:
-            continue
+        for obs, data in observations_counter.items():
+            total_obs = sum(data.values())
+            weight = float(total_obs / (total if total != 0 else 1))
+            if weight > min_obs_weight:
+                observations.setdefault(obs, {}).setdefault("agents_owner", sorted([(agent_name, count) for agent_name, count in observations_counter[obs]
+                                                                                    .items()], key=lambda x: x[1], reverse=True))
+                observations[obs]["weight"] = weight
 
-        all_obs_array = np.array(all_obs)  # shape: (num_samples, obs_dim)
-        variances = np.var(all_obs_array, axis=0)
-        avg_variance = np.mean(variances)
-
-        # Compute weight for each observation = inverse of distance to mean / variance
-        centroid = np.mean(all_obs_array, axis=0)
-        distances = np.linalg.norm(all_obs_array - centroid, axis=1)
-        weights = 1 / (1 + distances)  # Avoid division by zero
-
-        weighted_obs = []
-        for agent_index, (obs, w) in enumerate(zip(all_obs_array, weights)):
-            weighted_obs.append(
-                {"observation": obs.tolist(), "weight": float(w), "agent": all_agents[agent_index]})
+                agents_owner = {agent_name: agents_owner.get(
+                    agent_name, 0) + count for agent_name, count in observations[obs]["agents_owner"]}
+                total_valid += 1
 
         goals[cluster_id] = {
-            "observations": weighted_obs,
-            "avg_variance": float(avg_variance),
-            "support": len(all_obs_array)
+            "observations": observations,
+            "agents_owner": {agent_name: count / sum(agents_owner.values()) for agent_name, count in agents_owner.items()},
+            "support": total_valid
         }
 
     return goals
-
-
-def summarize_goals(
-    goals: Dict[int, Dict[str, Any]],
-    min_goal_weight: float = 0.5
-) -> Dict[int, Dict[str, Any]]:
-    """
-    Summarize inferred goals by filtering observations with weights above a threshold.
-
-    Args:
-        goals: Dictionary of goals extracted from observation trajectories.
-        min_goal_weight: Threshold above which goal observations are kept.
-
-    Returns:
-        Filtered dictionary of goals with representative observations.
-    """
-    summarized = {}
-
-    for cluster_id, goal_data in goals.items():
-        filtered = [g for g in goal_data["observations"]
-                    if g["weight"] >= min_goal_weight]
-        summarized[cluster_id] = {
-            "observations": filtered,
-            "avg_variance": goal_data["avg_variance"],
-            "support": goal_data["support"]
-        }
-
-    return summarized

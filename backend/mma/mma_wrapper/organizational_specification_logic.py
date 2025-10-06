@@ -139,14 +139,16 @@ class role_logic(os_logic):
             # dealing with pattern-based trajectory rules
             patternified_trajectory_str = ",".join([f'{_obs},{_act}' for _obs, _act in self.label_manager.label_trajectory(
                 trajectory=trajectory)])
-            observation_label = self.label_manager.label_observation(observation)
+            observation_label = self.label_manager.label_observation(
+                observation)
             for _pattern_trajectory_str, _observation_label in self.pattern_rules.keys():
                 if trajectory_pattern(_pattern_trajectory_str).match(patternified_trajectory_str) and trajectory_pattern(_observation_label).match(observation_label):
                     if merge_mode == 'substractive':
-                        weighted_actions = list(set(weighted_actions) & set([(self.label_manager.unlabel_action(act_label)[0], weight) for act_label, weight in self.pattern_rules[(_pattern_trajectory_str, _observation_label)]]))
+                        weighted_actions = list(set(weighted_actions) & set([(self.label_manager.unlabel_action(act_label)[
+                                                0], weight) for act_label, weight in self.pattern_rules[(_pattern_trajectory_str, _observation_label)]]))
                     else:
                         weighted_actions.extend([(self.label_manager.unlabel_action(act_label)[0], weight) for act_label, weight in
-                            self.pattern_rules[(_pattern_trajectory_str, _observation_label)]])
+                                                 self.pattern_rules[(_pattern_trajectory_str, _observation_label)]])
 
         # dealing with script-based trajectory rules
         for _script_rule in self.script_rules:
@@ -154,7 +156,8 @@ class role_logic(os_logic):
                 weighted_actions = list(set(weighted_actions) & set(
                     _script_rule[0](trajectory, observation, agent_name, self.label_manager)))
             else:
-                next_weighted_actions = _script_rule[0](trajectory, observation, agent_name, self.label_manager)
+                next_weighted_actions = _script_rule[0](
+                    trajectory, observation, agent_name, self.label_manager)
                 if isinstance(next_weighted_actions, int):
                     next_weighted_actions = [(next_weighted_actions, 1)]
                 weighted_actions.extend(next_weighted_actions)
@@ -264,7 +267,8 @@ class goal_logic(os_logic):
 
     def __init__(self,
                  pattern_rules: Dict[trajectory_pattern_str, float] = None,
-                 function_rules: List[Callable[[trajectory, str, label_manager], float]] = None,
+                 function_rules: List[Callable[[
+                     trajectory, str, label_manager], float]] = None,
                  label_manager: label_manager = None,
                  reward_reshape_standard: float = 100):
         manager = label_manager
@@ -407,7 +411,8 @@ class goal_factory:
 
     def __init__(self,
                  pattern_rules: Dict[trajectory_pattern_str, float] = None,
-                 function_rules: List[Callable[[trajectory, str, label_manager], float]] = None,
+                 function_rules: List[Callable[[
+                     trajectory, str, label_manager], float]] = None,
                  label_manager: label_manager = None,
                  reward_reshape_standard: float = 100):
         manager = label_manager

@@ -11,8 +11,9 @@ import torch
 import optuna
 import yaml
 import shutil
+import importlib.util
 
-from typing import List
+from typing import Dict, List
 from mma_wrapper.label_manager import label_manager
 from copy import copy, deepcopy
 from ray.tune.analysis.experiment_analysis import ExperimentAnalysis
@@ -631,10 +632,10 @@ class MTAProcess(Process):
         copy_tree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "analysis_results", "inferred_organizational_specifications"),
                   os.path.join(self.configuration.common.project_path, self.configuration.analyzing.inferred_organizational_specifications))
 
-        inferred_roles_summary = organizational_model.from_dict(json.load(open(os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "analysis_results", "inferred_organizational_specifications", "inferred_roles_summary.json"), "r")))
-        inferred_goals_summary = organizational_model.from_dict(json.load(open(os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "analysis_results", "inferred_organizational_specifications", "inferred_goals_summary.json"), "r")))
+        inferred_roles_summary = json.load(open(
+            "/home/julien/Documents/CybMASDE/backend/world_model/world_model/inferred_organizational_specifications/inferred_roles_summary.json", "r"))
+        inferred_goals_summary = json.load(open(
+            "/home/julien/Documents/CybMASDE/backend/world_model/world_model/inferred_organizational_specifications/inferred_goals_summary.json", "r"))
 
         # Delete the temporary analysis_results folder
         shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
@@ -642,50 +643,152 @@ class MTAProcess(Process):
         shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
             __file__)), "exp_results"), ignore_errors=True)
 
-    # def generate_organizational_model(self, inferred_roles_summary, inferred_goals_summary):
-    #     """Generate the organizational model from the inferred roles and goals summaries."""
+        self.generate_organizational_model(
+            inferred_roles_summary, inferred_goals_summary)
 
-    #     inferred_roles = {}
-    #     for inferred_role_name in inferred_roles_summary:
-    #         # print("Inferred role:", inferred_role_name, " with rules:", inferred_roles_summary[inferred_role_name]["rules"])
-    #         if len(inferred_roles_summary[inferred_role_name]["rules"]) > 0:
-    #             inferred_roles[inferred_role_name] = inferred_roles_summary[inferred_role_name]["rules"]
+    def generate_organizational_model(self, inferred_roles_summary, inferred_goals_summary):
+        """Generate the organizational model from the inferred roles and goals summaries."""
 
-    #     inferred_goals = {}
-    #     for inferred_goal_name in inferred_goals_summary:
-    #         # print("Inferred goal:", inferred_goal_name, " with observations:", inferred_goals_summary[inferred_goal_name]["observations"])
-    #         if len(inferred_goals_summary[inferred_goal_name]["observations"]) > 0:
-    #             inferred_goals[inferred_goal_name] = inferred_goals_summary[inferred_goal_name]["rules"]
+        inferred_roles = {}
+        for inferred_role_name in inferred_roles_summary:
+            if len(inferred_roles_summary[inferred_role_name]["rules"]) > 0:
+                inferred_roles[inferred_role_name] = inferred_roles_summary[inferred_role_name]["rules"]
 
-    #     label_mngr = self.componentFunctions.label_manager()
+        inferred_goals = {}
+        for inferred_goal_name in inferred_goals_summary:
+            # print("Inferred goal:", inferred_goal_name, " with observations:", inferred_goals_summary[inferred_goal_name]["observations"])
+            if len(inferred_goals_summary[inferred_goal_name]["observations"]) > 0:
+                inferred_goals[inferred_goal_name] = inferred_goals_summary[inferred_goal_name]["observations"]
 
-    #     def primary_fun(trajectory: trajectory, observation: label, agent_name: str, label_manager: label_manager) -> label:
-    #         chosen_action =
-    #         return
+        label_mngr = self.componentFunctions.label_manager
 
-    #     organizational_model = organizational_model(
-    #         structural_specifications(
-    #             roles={
-    #                 "role_primary": role_logic(label_manager=label_mngr).registrer_script_rule(primary_fun),
-    #                 "role_secondary": role_logic(label_manager=label_mngr).registrer_script_rule(primary_fun)},
-    #             role_inheritance_relations={}, root_groups={}),
-    #         functional_specifications=functional_specifications(
-    #             goals={}, social_scheme={}, mission_preferences=[]),
-    #         deontic_specifications=deontic_specifications(permissions=[], obligations=[
-    #             deontic_specification(
-    #                 "role_primary", ["agent_0"], [], time_constraint_type.ANY),
-    #             deontic_specification(
-    #                 "role_secondary", ["agent_1"], [], time_constraint_type.ANY)
-    #         ]))
+        def get_agent_to_role(inferred_roles_summary) -> Dict[str, str]:
+            agent_to_role = {}
+            for role_name, role_data in inferred_roles_summary.items():
+                for agent_name, weight in role_data["agents_owner"].items():
+                    if agent_name not in agent_to_role or weight > inferred_roles_summary[agent_to_role[agent_name]]["agents_owner"].get(agent_name, 0):
+                        agent_to_role[agent_name] = role_name
+            return agent_to_role
 
-    #     # Save the generated organizational model
-    #     org_model_path = os.path.join(self.configuration.common.project_path,
-    #                                   self.configuration.analyzing.inferred_organizational_specifications, "organizational_specifications.json")
-    #     os.makedirs(os.path.dirname(org_model_path), exist_ok=True)
-    #     json.dump(org_model.to_dict(), open(org_model_path, "w"), indent=4)
-    #     print("Generated organizational model saved to:", org_model_path)
+        def get_agent_to_goal(inferred_goals_summary) -> Dict[str, str]:
+            agent_to_goal = {}
+            for goal_name, goal_data in inferred_goals_summary.items():
+                for agent_name, weight in goal_data["agents_owner"].items():
+                    if agent_name not in agent_to_goal or weight > inferred_goals_summary[agent_to_goal[agent_name]]["agents_owner"].get(agent_name, 0):
+                        agent_to_goal[agent_name] = goal_name
+            return agent_to_goal
 
-    #     return org_model
+        agent_to_role = get_agent_to_role(inferred_roles_summary)
+        agent_to_goal = get_agent_to_goal(inferred_goals_summary)
+
+        organizational_specification_functions_path = os.path.join(
+            self.configuration.common.project_path, self.configuration.analyzing.inferred_organizational_specifications, "organizational_specification_functions.py")
+
+        # generate a python file containing all functions for each role and each goal
+        self.generate_organizational_specification_functions_script(
+            organizational_specification_functions_path, inferred_roles, inferred_goals, agent_to_role, agent_to_goal)
+
+        # Import role_to_function and goal_to_function
+        spec = importlib.util.spec_from_file_location(
+            "organizational_specification_functions", organizational_specification_functions_path)
+        org_spec_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(org_spec_module)
+        role_to_function = getattr(org_spec_module, "role_to_function", {})
+        goal_to_function = getattr(org_spec_module, "goal_to_function", {})
+
+        om = organizational_model(
+
+            structural_specifications(
+                roles={role_name: role_logic(label_manager=label_mngr).registrer_script_rule(
+                    func) for role_name, func in role_to_function.items()},
+                role_inheritance_relations={}, root_groups={}),
+
+            functional_specifications=functional_specifications(
+                goals={goal_name: goal_logic(label_manager=label_mngr).registrer_script_rule(
+                    func) for goal_name, func in goal_to_function.items()},
+                social_scheme={}, mission_preferences=[]),
+
+            deontic_specifications=deontic_specifications(permissions=[], obligations=[
+                deontic_specification(role, [agent], [agent_to_goal[agent]], time_constraint_type.ANY) for agent, role in agent_to_role.items()
+            ]))
+
+        # # Save the generated organizational model
+        org_model_path = os.path.join(self.configuration.common.project_path,
+                                      self.configuration.analyzing.inferred_organizational_specifications, "organizational_specifications.json")
+        os.makedirs(os.path.dirname(org_model_path), exist_ok=True)
+        json.dump(om.to_dict(), open(org_model_path, "w"), indent=4)
+        print("Generated organizational model saved to:", org_model_path)
+
+        return om
+
+    def generate_organizational_specification_functions_script(self, path, inferred_roles, inferred_goals, agent_to_role, agent_to_goal):
+        """Generate a Python script containing functions for organizational specifications."""
+        print("Generating organizational specification functions script at:", path)
+        role_to_function = {}
+        goal_to_function = {}
+        template = """import random
+
+from mma_wrapper.label_manager import label_manager
+from mma_wrapper.utils import label, trajectory
+
+# ============ organizational_specs_script.py =============
+
+role_to_function = {}
+goal_to_function = {}
+
+"""
+
+        for role_name in inferred_roles:
+            role_function_name = f"role_{role_name}"
+            rules = inferred_roles[role_name]
+            json_rules = json.dumps(rules, indent=4)
+            # Format json_rules with 4 spaces indentation for each line
+            json_rules_indented = "\n".join(
+                [("    " if index > 0 else "") + line for index,
+                 line in enumerate(json_rules.splitlines())]
+            )
+
+            template += f"""def function_for_{role_function_name}(trajectory: trajectory, observation: label, agent_name: str, label_manager: label_manager) -> label:
+    # Inferred rules for role {role_name}
+
+    rules = {json_rules_indented}
+
+    # Sample actions based on their weights
+    actions = sorted([(act, weight) for act, weight in rules.get(str(observation.tolist()), {{
+                     "0": {{"weight": 1}}}}).items()], key=lambda x: x[1]["weight"], reverse=True)
+    actions = [act for act, weight in rules.get(str(observation.tolist()), {{
+                                                "0": {{"weight": 1}}}}).items() if random.random() < weight]
+    return actions[0] if actions else None
+
+role_to_function["{role_name}"] = function_for_{role_function_name}
+
+
+"""
+
+        for goal_name in inferred_goals:
+            goal_function_name = f"goal_{goal_name}"
+            observations = inferred_goals[goal_name]
+            json_observations = json.dumps(observations, indent=4)
+            json_observations_indented = "\n".join(
+                [("    " if index > 0 else "") + line for index,
+                 line in enumerate(json_observations.splitlines())]
+            )
+
+            template += f"""def function_for_{goal_function_name}(trajectory: trajectory, observation: label, agent_name: str, label_manager: label_manager) -> label:
+    # Inferred observations for goal {goal_function_name}
+
+    observations = {json_observations_indented}
+
+    # Sample actions based on their weights
+    return observations.get(str(observation.tolist()), 0)
+
+goal_to_function["{goal_name}"] = function_for_{goal_function_name}
+
+
+"""
+        f = open(path, "w")
+        f.write(template)
+        f.close()
 
 
 if __name__ == "__main__":
