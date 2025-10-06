@@ -27,7 +27,6 @@ from marllib import marl
 from ray.tune.stopper import Stopper
 from ray import tune
 from mma_wrapper.organizational_model import organizational_model
-from distutils.dir_util import copy_tree
 from mma_wrapper.label_manager import label_manager
 from mma_wrapper.organizational_model import deontic_specification, organizational_model, structural_specifications, functional_specifications, deontic_specifications, time_constraint_type
 from mma_wrapper.organizational_specification_logic import role_logic, goal_factory, role_factory, goal_logic
@@ -68,7 +67,7 @@ class MeanStdStopper(Stopper):
 
 if not os.path.exists(os.path.join(os.path.expanduser("~"), ".cybmasde", "configuration.json")):
     json.dump({}, open(os.path.join(os.path.expanduser(
-        "~"), ".cybmasde", "configuration.json"), "w+"))
+        "~"), ".cybmasde", "configuration.json"), "w+"), indent=4)
 
 cybmasde_conf = json.load(
     open(os.path.join(os.path.expanduser("~"), ".cybmasde", "configuration.json")))
@@ -99,14 +98,40 @@ class MTAProcess(Process):
         signal.signal(signal.SIGINT, self._signal_handler)
 
         # Run each activity of the MTA process
-        # self.run_modelling_activity()
+        self.run_modelling_activity()
 
         # # Run refinement cycles
-        # for i in range(self.configuration.max_refinement_cycle):
-        #     print(
-        #         f"Refinement cycle {i + 1}/{self.configuration.max_refinement_cycle}")
-        # self.run_training_activity()
-        self.run_analyzing_activity()
+        for i in range(self.configuration.refining.max_refinement_cycles):
+            print(
+                f"\n\n{'='*30}\nRefinement cycle {i + 1}/{self.configuration.refining.max_refinement_cycles}\n{'='*30}\n\n")
+            self.run_training_activity()
+            self.run_analyzing_activity()
+            if self.configuration.refining.max_refinement_cycles > 1 and i < self.configuration.refining.max_refinement_cycles - 1:
+
+                shutil.copy(os.path.join(self.configuration.common.project_path, self.configuration.analyzing.inferred_organizational_specifications, "organizational_specifications.json"),
+                            os.path.join(self.configuration.common.project_path, self.configuration.training.organizational_specifications, "organizational_specifications.json"))
+                shutil.copy(os.path.join(self.configuration.common.project_path, self.configuration.analyzing.inferred_organizational_specifications, "organizational_specification_functions.py"),
+                            os.path.join(self.configuration.common.project_path, self.configuration.training.organizational_specifications, "organizational_specification_functions.py"))
+
+                with open(os.path.join(self.configuration.common.project_path, self.configuration.training.organizational_specifications, "organizational_specifications.json"), "r+") as f:
+                    content = f.read()
+                    content = content.replace(
+                        "/analyzing/inferred_organizational_specifications/", "/training/organizational_specifications/")
+                    f.seek(0)
+                    f.truncate()
+                    f.write(content)
+                    f.close()
+
+                print(
+                    "\n\nCopied the inferred organizational specifications to the training folder for the next refinement cycle:\n\n", os.path.join(self.configuration.common.project_path, self.configuration.training.organizational_specifications, "organizational_specification_functions.py"), "\n")
+                if not self.configuration.refining.auto_continue_refinement:
+                    print(
+                        "Please take a look at the inferred organizational specifications and modify them for next refinement cycle or keep them as they are if you are satisfied with the current results.\n")
+                    continue_refinement = input(
+                        "Continue to the next refinement cycle? (Y/N): ").strip()
+                    if continue_refinement.lower() == "n" or continue_refinement.lower() == "no":
+                        break
+
         print("Finished MTA process")
 
     def load_handcrafted_environment(self):
@@ -180,13 +205,6 @@ class MTAProcess(Process):
                 print(
                     "No RDLM hyperparameters research space provided, using default ones...")
                 self.rdlm_hyperparameters = cybmasde_conf["rdlm"]
-
-            # if os.path.exists(os.path.join(self.configuration.common.project_path, self.configuration.modelling.generated_environment.world_model.jopm.initial_joint_observations)):
-            #     self.initial_joint_observations = json.load(open(os.path.join(
-            #         self.configuration.common.project_path, self.configuration.modelling.generated_environment.world_model.jopm.initial_joint_observations)))
-            # else:
-            #     raise Exception(
-            #         "No initial joint observation provided...")
 
             # Run the world model training with hyperparameter optimization (HPO)
             print("Running world model hyperparameter optimization...")
@@ -297,7 +315,7 @@ class MTAProcess(Process):
         # Mets à jour les hyperparamètres
         json.dump({
             k: [study.best_params[k], study.best_params[k]] for k in ["latent_dim", "hidden_dim", "n_layers", "activation", "lr", "batch_size", "kl_weight"]
-        }, open(os.path.join(self.configuration.common.project_path,  self.configuration.modelling.generated_environment.world_model.jopm.autoencoder.hyperparameters), "w+"))
+        }, open(os.path.join(self.configuration.common.project_path,  self.configuration.modelling.generated_environment.world_model.jopm.autoencoder.hyperparameters), "w+"), indent=4)
 
         # 1. Passe le modèle en mode évaluation
         self.autoencoder.eval()
@@ -422,7 +440,7 @@ class MTAProcess(Process):
 
         # Mets à jour les hyperparamètres
         json.dump({k: [v, v] for k, v in study.best_params.items()}, open(os.path.join(self.configuration.common.project_path,
-                  self.configuration.modelling.generated_environment.world_model.jopm.rdlm.hyperparameters), "w+"))
+                  self.configuration.modelling.generated_environment.world_model.jopm.rdlm.hyperparameters), "w+"), indent=4)
 
     def run_training_activity(self):
         """Run the training activity."""
@@ -504,7 +522,6 @@ class MTAProcess(Process):
 
         best_hp = deepcopy(
             training_hyperparameters["algorithms"][best_algorithm])
-        training_hyperparameters = {}
         training_hyperparameters["algorithms"] = {}
         training_hyperparameters["algorithms"][best_algorithm] = best_hp
 
@@ -537,11 +554,36 @@ class MTAProcess(Process):
         except Exception as e:
             logger.warning(f"Could not remove {checkpoint_path_dest}: {e}")
 
-        os.makedirs(checkpoint_path_dest, exist_ok=True)
-        copy_tree(checkpoint_path_src, checkpoint_path_dest)
+        self.copy_folder(checkpoint_path_src, checkpoint_path_dest)
         print("Joint policy saved in ", checkpoint_path_dest)
 
-        shutil.rmtree(os.path.dirname(os.path.dirname(checkpoint_parent_dir)))
+        # Nettoyer le répertoire temporaire seulement après la copie réussie
+        try:
+            shutil.rmtree(os.path.dirname(
+                os.path.dirname(checkpoint_parent_dir)))
+        except Exception as e:
+            logger.warning(f"Could not remove temporary directory: {e}")
+
+    def copy_folder(self, src, dest):
+        os.makedirs(dest, exist_ok=True)
+
+        # Vérifier que le répertoire source existe avant de copier
+        if os.path.exists(src):
+            for item in os.listdir(src):
+                src_item = os.path.join(src, item)
+                dest_item = os.path.join(dest, item)
+
+                if os.path.isdir(src_item):
+                    # Copier récursivement les dossiers
+                    shutil.copytree(src_item, dest_item, dirs_exist_ok=True)
+                else:
+                    # Copier les fichiers
+                    shutil.copy2(src_item, dest_item)
+        else:
+            logger.error(
+                f"Source checkpoint directory does not exist: {src}")
+            raise FileNotFoundError(
+                f"Source checkpoint directory not found: {src}")
 
     def load_algorithm_default_hp(self, name: str) -> dict:
         """Load the algorithm with the best hyperparameters."""
@@ -593,7 +635,6 @@ class MTAProcess(Process):
         model_path = os.path.join(self.configuration.common.project_path, self.configuration.training.joint_policy,
                                   "model", checkpoint_name, f"checkpoint-{int(checkpoint_name.split('_')[1])}")
 
-        # TODO: Add HPO for TEMM
         algo.render(env, model,
                     restore_path={
                         'params_path': params_path,
@@ -609,6 +650,7 @@ class MTAProcess(Process):
                     stop_timesteps=1,
                     timesteps_total=1,
                     checkpoint_freq=10000,
+                    num_gpus=0,
                     stop_iters=1,
                     checkpoint_end=False)
 
@@ -621,21 +663,21 @@ class MTAProcess(Process):
                                    project_path, self.configuration.analyzing.post_training_trajectories_path), ignore_errors=True)
 
         # Copy the figures to the project folder
-        copy_tree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "analysis_results", "figures"), os.path.join(
+        self.copy_folder(os.path.join(os.path.dirname(os.path.abspath(__file__)), "analysis_results", "figures"), os.path.join(
             self.configuration.common.project_path, self.configuration.analyzing.figures_path))
 
         # Copy the trajectories to the project folder
-        copy_tree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "analysis_results", "trajectories"), os.path.join(self.configuration.common.
-                                                                                                                             project_path, self.configuration.analyzing.post_training_trajectories_path))
+        self.copy_folder(os.path.join(os.path.dirname(os.path.abspath(__file__)), "analysis_results", "trajectories"), os.path.join(self.configuration.common.
+                                                                                                                                    project_path, self.configuration.analyzing.post_training_trajectories_path))
 
         # Copy the inferred organizational specifications to the project folder
-        copy_tree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "analysis_results", "inferred_organizational_specifications"),
-                  os.path.join(self.configuration.common.project_path, self.configuration.analyzing.inferred_organizational_specifications))
+        self.copy_folder(os.path.join(os.path.dirname(os.path.abspath(__file__)), "analysis_results", "inferred_organizational_specifications"),
+                         os.path.join(self.configuration.common.project_path, self.configuration.analyzing.inferred_organizational_specifications))
 
         inferred_roles_summary = json.load(open(
-            "/home/julien/Documents/CybMASDE/backend/world_model/world_model/inferred_organizational_specifications/inferred_roles_summary.json", "r"))
+            "/home/soulej/Documents/CybMASDE/backend/world_model/world_model/inferred_organizational_specifications/inferred_roles_summary.json", "r"))
         inferred_goals_summary = json.load(open(
-            "/home/julien/Documents/CybMASDE/backend/world_model/world_model/inferred_organizational_specifications/inferred_goals_summary.json", "r"))
+            "/home/soulej/Documents/CybMASDE/backend/world_model/world_model/inferred_organizational_specifications/inferred_goals_summary.json", "r"))
 
         # Delete the temporary analysis_results folder
         shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
@@ -728,8 +770,24 @@ class MTAProcess(Process):
         goal_to_function = {}
         template = """import random
 
-from mma_wrapper.label_manager import label_manager
-from mma_wrapper.utils import label, trajectory
+import importlib
+import inspect
+import os
+import random
+import gym
+import numpy as np
+
+from typing import Dict, List, Tuple, Union, Any
+import re
+
+observation = Union[int, np.ndarray]
+action = Union[int, np.ndarray]
+label = str
+pattern_trajectory = str
+trajectory = List[Tuple[observation, action]]
+labeled_trajectory = Union[List[Tuple[label, label]], List[label], str]
+trajectory_pattern_str = str
+trajectory_str = str
 
 # ============ organizational_specs_script.py =============
 
@@ -748,17 +806,17 @@ goal_to_function = {}
                  line in enumerate(json_rules.splitlines())]
             )
 
-            template += f"""def function_for_{role_function_name}(trajectory: trajectory, observation: label, agent_name: str, label_manager: label_manager) -> label:
+            template += f"""def function_for_{role_function_name}(trajectory: trajectory, observation: label, agent_name: str, label_manager: Any) -> label:
     # Inferred rules for role {role_name}
 
     rules = {json_rules_indented}
 
     # Sample actions based on their weights
-    actions = sorted([(act, weight) for act, weight in rules.get(str(observation.tolist()), {{
-                     "0": {{"weight": 1}}}}).items()], key=lambda x: x[1]["weight"], reverse=True)
-    actions = [act for act, weight in rules.get(str(observation.tolist()), {{
-                                                "0": {{"weight": 1}}}}).items() if random.random() < weight]
-    return actions[0] if actions else None
+    actions = sorted([(act, data["weight"]) for act, data in rules.get(str(observation), {{
+                     "0": {{"weight": 1}}}}).items()], key=lambda x: x[1], reverse=True)
+    actions = sorted([(act, float(weight / random.random()))
+                     for (act, weight) in actions], key=lambda x: x[1])
+    return int(actions[0][0])
 
 role_to_function["{role_name}"] = function_for_{role_function_name}
 
@@ -774,13 +832,13 @@ role_to_function["{role_name}"] = function_for_{role_function_name}
                  line in enumerate(json_observations.splitlines())]
             )
 
-            template += f"""def function_for_{goal_function_name}(trajectory: trajectory, observation: label, agent_name: str, label_manager: label_manager) -> label:
+            template += f"""def function_for_{goal_function_name}(trajectory: trajectory, observation: label, agent_name: str, label_manager: Any) -> label:
     # Inferred observations for goal {goal_function_name}
 
     observations = {json_observations_indented}
 
-    # Sample actions based on their weights
-    return observations.get(str(observation.tolist()), 0)
+    # Return reward correction based on their weights
+    return observations.get(str(observation), {{"weight": 0}}).get("weight", 0)
 
 goal_to_function["{goal_name}"] = function_for_{goal_function_name}
 

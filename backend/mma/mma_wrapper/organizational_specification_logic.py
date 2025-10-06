@@ -158,7 +158,7 @@ class role_logic(os_logic):
             else:
                 next_weighted_actions = _script_rule[0](
                     trajectory, observation, agent_name, self.label_manager)
-                if isinstance(next_weighted_actions, int):
+                if isinstance(next_weighted_actions, int) or isinstance(next_weighted_actions, float):
                     next_weighted_actions = [(next_weighted_actions, 1)]
                 weighted_actions.extend(next_weighted_actions)
 

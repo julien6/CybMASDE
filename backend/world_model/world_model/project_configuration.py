@@ -87,6 +87,16 @@ class Training:
             project_folder_path, organizational_specifications)
 
 
+class Refining:
+    """Phase 3.5: transfer learning configuration.  Optional."""
+    max_refinement_cycles: int
+    auto_continue_refinement: bool = False
+
+    def __init__(self, max_refinement_cycles: int = 1, auto_continue_refinement: bool = False):
+        self.max_refinement_cycles = max_refinement_cycles
+        self.auto_continue_refinement = auto_continue_refinement
+
+
 class Analyzing:
     """Phase 3: post-training analysis and outputs."""
     hyperparameters: Union[str, Dict[str, Any]]
@@ -143,6 +153,7 @@ class Configuration:
     training: Training
     analyzing: Analyzing
     transferring: Transferring
+    refining: Refining
 
     # -------- Helper methods --------
 
@@ -195,12 +206,16 @@ class Configuration:
         def build_transferring(d: Dict[str, Any]) -> Transferring:
             return Transferring(project_folder_path, **d)
 
+        def build_refining(d: Dict[str, Any]) -> Refining:
+            return Refining(**d)
+
         return cls(
             common=build_common(data["common"]),
             modelling=build_modelling(data["modelling"]),
             training=build_training(data["training"]),
             analyzing=build_analyzing(data["analyzing"]),
             transferring=build_transferring(data["transferring"]),
+            refining=build_refining(data["refining"]),
         )
 
     def serialize_configuration(self) -> dict:
