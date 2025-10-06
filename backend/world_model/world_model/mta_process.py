@@ -674,10 +674,14 @@ class MTAProcess(Process):
         self.copy_folder(os.path.join(os.path.dirname(os.path.abspath(__file__)), "analysis_results", "inferred_organizational_specifications"),
                          os.path.join(self.configuration.common.project_path, self.configuration.analyzing.inferred_organizational_specifications))
 
-        inferred_roles_summary = json.load(open(
-            "/home/soulej/Documents/CybMASDE/backend/world_model/world_model/inferred_organizational_specifications/inferred_roles_summary.json", "r"))
-        inferred_goals_summary = json.load(open(
-            "/home/soulej/Documents/CybMASDE/backend/world_model/world_model/inferred_organizational_specifications/inferred_goals_summary.json", "r"))
+        # inferred_roles_summary = json.load(open(
+        #     "/home/julien/Documents/CybMASDE/backend/world_model/world_model/inferred_organizational_specifications/inferred_roles_summary.json", "r"))
+        inferred_roles_summary = json.load(open(os.path.join(self.configuration.common.project_path,
+                                           self.configuration.analyzing.inferred_organizational_specifications, "inferred_roles_summary.json"), "r"))
+        # inferred_goals_summary = json.load(open(
+        #     "/home/julien/Documents/CybMASDE/backend/world_model/world_model/inferred_organizational_specifications/inferred_goals_summary.json", "r"))
+        inferred_goals_summary = json.load(open(os.path.join(self.configuration.common.project_path,
+                                           self.configuration.analyzing.inferred_organizational_specifications, "inferred_goals_summary.json"), "r"))
 
         # Delete the temporary analysis_results folder
         shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
