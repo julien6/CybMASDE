@@ -16,7 +16,6 @@ from . import component_functions
 from . import project_configuration
 from . import jopm
 from . import mta_process
-from . import random_joint_policy
 from . import rdlm_utils
 from . import transferring_process
 from . import vae_utils
@@ -30,7 +29,6 @@ __all__ = [
     "project_configuration",
     "jopm",
     "mta_process",
-    "random_joint_policy",
     "rdlm_utils",
     "transferring_process",
     "vae_utils"

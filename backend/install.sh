@@ -63,4 +63,10 @@ pip install -e .
 
 cd ..
 
+cd world_models
+
+pip install -e .
+
+cd ..
+
 pip install -r requirements.txt

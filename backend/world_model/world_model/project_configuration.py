@@ -128,10 +128,9 @@ class Transferring:
     trajectory_batch_size: int
     deploy_mode: DeployMode
     environment_api: str
-    last_checkpoint: str
     max_nb_iteration: int
 
-    def __init__(self, project_folder_path: str, configuration: str, last_checkpoint: str):
+    def __init__(self, project_folder_path: str, configuration: str):
         configuration = json.load(
             open(os.path.join(project_folder_path, configuration), 'r'))
         self.trajectory_retrieve_frequency = configuration["trajectory_retrieve_frequency"]
@@ -140,7 +139,6 @@ class Transferring:
         self.environment_api = configuration["environment_api"]
         self.max_nb_iteration = configuration.get(
             "max_nb_iteration", 1000)
-        self.last_checkpoint = last_checkpoint
 
 # ---------- Root structure ----------
 

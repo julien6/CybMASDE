@@ -112,7 +112,6 @@ if __name__ == '__main__':
 
     project.load(os.path.join(
         os.path.expanduser("~"), "Documents", "new_test"))
-    print(project.configuration.common.project_name)
 
     try:
         project.run()

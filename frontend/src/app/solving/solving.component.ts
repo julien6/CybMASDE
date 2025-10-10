@@ -67,7 +67,7 @@ export class SolvingComponent implements OnInit {
           },
           {
             name: 'Multi-Agent PPO (MAPPO)',
-            completed: false,
+            completed: true,
             description: "An extension of PPO designed for multi-agent setups. \n\n Pros: Stabilizes policy updates, performs well in various scenarios. \n\n Cons: Requires careful hyperparameter tuning, high computational cost."
           }
         ]
@@ -160,6 +160,9 @@ export class SolvingComponent implements OnInit {
       'goalText': { 'fullName': 'Goal Text (alpha)', 'content': '' },
       'goalModel': { 'fullName': 'Reward Function Model', 'content': '' },
       'goalStates': { 'fullName': 'Goal States', 'content': '' }
+    },
+    "stoppingInput": {
+      'stopModel': { 'fullName': 'Stopping Criteria', 'content': '' },
     },
     "constraintInput": {
       'constraintText': { 'fullName': 'Constraint Text (alpha)', 'content': '' },

@@ -1,5 +1,6 @@
 import os
 import json
+import subprocess
 
 from world_model.project import Project
 from flask import Flask, Response, request, request, jsonify
@@ -128,19 +129,28 @@ def save_project():
 def save_and_run():
     """Save the project as a new folder and run it."""
     try:
-        path = request.args.get('path')
-        configuration = request.get_json()
+        # path = request.args.get('path')
+        # configuration = request.get_json()
 
-        if not configuration or not path:
-            return Response(
-                '{"error": "No JSON data provided"}', status=400, mimetype="application/json"
-            )
+        # if not configuration or not path:
+        #     return Response(
+        #         '{"error": "No JSON data provided"}', status=400, mimetype="application/json"
+        #     )
 
-        global current_project
-        current_project.from_dict(configuration)
-        current_project.save(filePath=path)
+        # global current_project
+        # current_project.from_dict(configuration)
+        # current_project.save(filePath=path)
 
-        current_project.run()
+        # current_project.run()
+
+        # Save the project as before
+        # global current_project
+        # current_project.from_dict(configuration)
+        # current_project.save(filePath=path)
+
+        # Launch a new terminal and execute bash code
+        bash_command = f"/home/soulej/Documents/CybMASDE/backend/api_server/run_project.sh"
+        subprocess.Popen(['gnome-terminal', '--', 'bash', '-c', bash_command])
 
         # Here you would typically trigger the run of the project
         # For now, we just return a success response

@@ -42,7 +42,8 @@
     <div *ngIf="selectedEnvironmentInput=='environmentApi'">
       <mat-form-field>
         <mat-label>Environment control API</mat-label>
-        <input matInput [(ngModel)]="modelingInput['environmentInput']['environmentApi']['content']" />
+        <!-- <input matInput [(ngModel)]="modelingInput['environmentInput']['environmentApi']['content']" /> -->
+        <input matInput [ngModel]="'http://127.0.0.1:5001'" />
       </mat-form-field>
       <div class="apiForm">
         <mat-icon matTooltip="A compliant environment API to control explorer agents." aria-hidden="false"
@@ -258,30 +259,9 @@
         </mat-expansion-panel-header>
 
         <ul>
-          <li>If users already have a custom <mat-chip>Observation Transition Function Model</mat-chip>, it can be
+          <li>If users already have a custom <mat-chip>History-based Stop Function Model</mat-chip>, it can be
             taken as an input.</li>
-          <li>Else, it generates a environment observation transition function based on traces (compliant with
-            <mat-chip color="accent" matTooltip="A set of compliant environment traces"
-              (click)="openLink('https://www.google.com')" class="clickable-chip">CybMASDE traces format</mat-chip>)
-            of agents interacting with the real/emulated environments.
-            <ul>
-              <li>If users already have a representative set of <mat-chip>Environment Traces</mat-chip>, then it can
-                be taken as an input.</li>
-              <li>Else, agents can be deployed on the environment to generates traces for a sufficient period.
-                <ul>
-                  <li>If users can adapt their emulated/real environment to the <mat-chip color="accent"
-                      matTooltip="A proposed API for monitoring the deployment, updating, removal of agents and interacting externally with them"
-                      (click)="openLink('https://www.google.com')" class="clickable-chip">CybMASDE Monitoring
-                      API</mat-chip>, then the root <mat-chip>Environment API URL</mat-chip> can be taken as an input.
-                  </li>
-                  <li>Else, compliant <mat-chip color="accent"
-                      matTooltip="Agents designed to explore their environment and collect traces when deployed in an environment"
-                      (click)="openLink('https://www.google.com')" class="clickable-chip">Exploratory
-                      Agents</mat-chip> can be designed and deployed manually to collect traces to be retrieved
-                    afterward.</li>
-                </ul>
-              </li>
-            </ul>
+          <li>Else, the episode will end if it goes beyond configured max steps.
           </li>
         </ul>
 
@@ -290,9 +270,9 @@
 
 
     <mat-form-field>
-      <mat-label>Constraint input</mat-label>
-      <mat-select [(ngModel)]="selectedConstraintInput">
-        <mat-option *ngFor="let option of modelingInput['constraintInput'] | keyvalue" [value]="option.key">
+      <mat-label>Stopping function input</mat-label>
+      <mat-select [(ngModel)]="selectedStoppingInput">
+        <mat-option *ngFor="let option of modelingInput['stoppingInput'] | keyvalue" [value]="option.key">
           {{ $any(option.value)['fullName'] }}
         </mat-option>
       </mat-select>
@@ -300,18 +280,18 @@
 
 
 
-    <div *ngIf="selectedConstraintInput=='constraintText'">
+    <div *ngIf="selectedStoppingInput=='stopModel'">
       <mat-accordion multi>
         <mat-expansion-panel [expanded]="true">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              {{modelingInput['constraintInput']['constraintText']['fullName']}}
-              <mat-icon matTooltip="A textual description of the constraints (alpha)" aria-hidden="false"
+              {{modelingInput['stoppingInput']['stopModel']['fullName']}}
+              <mat-icon matTooltip="A Python description of the constraints (alpha)" aria-hidden="false"
                 aria-label="Help icon" fontIcon="help"></mat-icon>
             </mat-panel-title>
 
             <div>
-              <input type="file" #fileInput (change)="onFileSelected($event, 'constraintInput', 'constraintText')"
+              <input type="file" #fileInput (change)="onFileSelected($event, 'stoppingInput', 'stopModel')"
                 style="display: none;">
               <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
             </div>
@@ -319,45 +299,14 @@
           </mat-expansion-panel-header>
 
           <ngx-monaco-editor [options]="editorOptions"
-            [(ngModel)]="modelingInput['constraintInput']['constraintText']['content']"></ngx-monaco-editor>
+            [(ngModel)]="modelingInput['stoppingInput']['stopModel']['content']"></ngx-monaco-editor>
 
         </mat-expansion-panel>
       </mat-accordion>
 
       <button mat-raised-button class="proceed-button" color="primary"
-        (click)="uploadFile('constraintInput', 'constraintText')"
-        [disabled]="modelingInput['constraintInput']['constraintText']['content']==''">Proceeed to
-        Constraint Model Reconstruction</button>
-    </div>
-
-
-    <div *ngIf="selectedConstraintInput=='constraintModel'">
-      <mat-accordion multi>
-        <mat-expansion-panel [expanded]="true">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              {{modelingInput['constraintInput']['constraintModel']['fullName']}}
-              <mat-icon matTooltip="A compliant Constraint Model" aria-hidden="false" aria-label="Help icon"
-                fontIcon="help"></mat-icon>
-            </mat-panel-title>
-
-            <div>
-              <input type="file" #fileInput (change)="onFileSelected($event, 'constraintInput', 'constraintModel')"
-                style="display: none;">
-              <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
-            </div>
-
-          </mat-expansion-panel-header>
-
-          <ngx-monaco-editor [options]="editorOptions"
-            [(ngModel)]="modelingInput['constraintInput']['constraintModel']['content']"></ngx-monaco-editor>
-
-        </mat-expansion-panel>
-      </mat-accordion>
-
-      <button mat-raised-button class="proceed-button" color="primary"
-        (click)="uploadFile('constraintInput', 'constraintModel')"
-        [disabled]="modelingInput['constraintInput']['constraintModel']['content']==''">Proceeed to
+        (click)="uploadFile('stoppingInput', 'stopModel')"
+        [disabled]="modelingInput['stoppingInput']['stopModel']['content']==''">Proceeed to
         Constraint Model Reconstruction</button>
     </div>
 
@@ -373,19 +322,9 @@
         </mat-expansion-panel-header>
 
         <ul>
-          <li>If users already have a custom <mat-chip>Joint-Observation Prediction Model (JOPM)</mat-chip>, it can be
+          <li>If users already have a custom <mat-chip>History-based Render Function Model</mat-chip>, it can be
             taken as an input.</li>
-          <li>Else, it generates a environment observation transition function based on traces (compliant with
-            <mat-chip color="accent" matTooltip="A set of compliant environment traces"
-              (click)="openLink('https://www.google.com')" class="clickable-chip">CybMASDE traces format</mat-chip>)
-            of agents interacting with the real/emulated environments.
-            <ul>
-              <li>If users already have a representative set of <mat-chip>Environment Traces</mat-chip>, then it can
-                be taken as an input.</li>
-              <li>Else, deployed agents in the environment will be used to generate traces for a sufficient period of
-                time.
-              </li>
-            </ul>
+          <li>Else, observations will not be rendred graphically.
           </li>
         </ul>
 
@@ -395,28 +334,26 @@
 
 
     <mat-form-field>
-      <mat-label>Constraint input</mat-label>
-      <mat-select [(ngModel)]="selectedConstraintInput">
-        <mat-option *ngFor="let option of modelingInput['constraintInput'] | keyvalue" [value]="option.key">
+      <mat-label>History-based Render Function Model</mat-label>
+      <mat-select [(ngModel)]="selectedRenderingInput">
+        <mat-option *ngFor="let option of modelingInput['renderingInput'] | keyvalue" [value]="option.key">
           {{ $any(option.value)['fullName'] }}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
-
-
-    <div *ngIf="selectedConstraintInput=='constraintText'">
+    <div *ngIf="selectedRenderingInput=='renderModel'">
       <mat-accordion multi>
         <mat-expansion-panel [expanded]="true">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              {{modelingInput['constraintInput']['constraintText']['fullName']}}
-              <mat-icon matTooltip="A textual description of the constraints (alpha)" aria-hidden="false"
+              {{modelingInput['renderingInput']['renderModel']['fullName']}}
+              <mat-icon matTooltip="A Python description of the constraints (alpha)" aria-hidden="false"
                 aria-label="Help icon" fontIcon="help"></mat-icon>
             </mat-panel-title>
 
             <div>
-              <input type="file" #fileInput (change)="onFileSelected($event, 'constraintInput', 'constraintText')"
+              <input type="file" #fileInput (change)="onFileSelected($event, 'renderingInput', 'renderModel')"
                 style="display: none;">
               <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
             </div>
@@ -424,45 +361,14 @@
           </mat-expansion-panel-header>
 
           <ngx-monaco-editor [options]="editorOptions"
-            [(ngModel)]="modelingInput['constraintInput']['constraintText']['content']"></ngx-monaco-editor>
+            [(ngModel)]="modelingInput['renderingInput']['renderModel']['content']"></ngx-monaco-editor>
 
         </mat-expansion-panel>
       </mat-accordion>
 
       <button mat-raised-button class="proceed-button" color="primary"
-        (click)="uploadFile('constraintInput', 'constraintText')"
-        [disabled]="modelingInput['constraintInput']['constraintText']['content']==''">Proceeed to
-        Constraint Model Reconstruction</button>
-    </div>
-
-
-    <div *ngIf="selectedConstraintInput=='constraintModel'">
-      <mat-accordion multi>
-        <mat-expansion-panel [expanded]="true">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              {{modelingInput['constraintInput']['constraintModel']['fullName']}}
-              <mat-icon matTooltip="A compliant Constraint Model" aria-hidden="false" aria-label="Help icon"
-                fontIcon="help"></mat-icon>
-            </mat-panel-title>
-
-            <div>
-              <input type="file" #fileInput (change)="onFileSelected($event, 'constraintInput', 'constraintModel')"
-                style="display: none;">
-              <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
-            </div>
-
-          </mat-expansion-panel-header>
-
-          <ngx-monaco-editor [options]="editorOptions"
-            [(ngModel)]="modelingInput['constraintInput']['constraintModel']['content']"></ngx-monaco-editor>
-
-        </mat-expansion-panel>
-      </mat-accordion>
-
-      <button mat-raised-button class="proceed-button" color="primary"
-        (click)="uploadFile('constraintInput', 'constraintModel')"
-        [disabled]="modelingInput['constraintInput']['constraintModel']['content']==''">Proceeed to
+        (click)="uploadFile('renderingInput', 'renderModel')"
+        [disabled]="modelingInput['renderingInput']['renderModel']['content']==''">Proceeed to
         Constraint Model Reconstruction</button>
     </div>
 

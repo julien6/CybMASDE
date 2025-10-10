@@ -12,6 +12,7 @@ import optuna
 import yaml
 import shutil
 import importlib.util
+import ray
 
 from typing import Dict, List
 from mma_wrapper.label_manager import label_manager
@@ -44,7 +45,7 @@ class MeanStdStopper(Stopper):
     def __call__(self, trial_id, result):
         if result.get("timesteps_total", 0) > self.max_timesteps_total:
             print(
-                f"Trial {trial_id} exceeded max timesteps {self.max_timesteps_total}. Stopping.")
+                f"[MTA] Trial {trial_id} exceeded max timesteps {self.max_timesteps_total}. Stopping.")
             return True  # Stop this trial if it exceeds max timesteps
         rewards = result.get("hist_stats", {}).get("episode_reward", None)
         if rewards is not None:
@@ -53,11 +54,11 @@ class MeanStdStopper(Stopper):
                 self.episode_rewards = self.episode_rewards[-self.window_size:]
                 mean = np.mean(self.episode_rewards)
                 std = np.std(self.episode_rewards)
-                # print(f"Average over {len(self.episode_rewards)} episodes : {mean:.2f}")
-                #  print(f"Standard deviation over {len(self.episode_rewards)} episodes : {std:.2f}")
+                # print(f"[MTA] Average over {len(self.episode_rewards)} episodes : {mean:.2f}")
+                #  print(f"[MTA] Standard deviation over {len(self.episode_rewards)} episodes : {std:.2f}")
                 if mean >= self.mean_threshold and std <= self.std_threshold:
                     print(
-                        f"Early stopping : average >= {self.mean_threshold} and standard deviation <= {self.std_threshold}")
+                        f"[MTA] Early stopping : average >= {self.mean_threshold} and standard deviation <= {self.std_threshold}")
                     return True  # Stop this trial
         return False  # Continue
 
@@ -66,6 +67,7 @@ class MeanStdStopper(Stopper):
 
 
 if not os.path.exists(os.path.join(os.path.expanduser("~"), ".cybmasde", "configuration.json")):
+    os.mkdir(os.path.join(os.path.expanduser("~"), ".cybmasde"))
     json.dump({}, open(os.path.join(os.path.expanduser(
         "~"), ".cybmasde", "configuration.json"), "w+"), indent=4)
 
@@ -79,31 +81,92 @@ logging.basicConfig(level=logging.INFO)
 
 class MTAProcess(Process):
 
-    def __init__(self, configuration: Configuration, componentFunctions: ComponentFunctions):
+    def __init__(self, configuration: Configuration, componentFunctions: ComponentFunctions, transferring_pid: int = None):
         super().__init__()
         self.configuration = configuration
         self.componentFunctions = componentFunctions
+        self.transferring_pid = transferring_pid
+        self.continue_refinement = None
 
     def _signal_handler(self, signum, frame):
-        print(f"Received signal {signum}, stopping MTAProcess...")
+        print(f"[MTA] Received signal {signum}, stopping MTAProcess...")
+        # Try to shutdown Ray cleanly so child workers do not remain
+        try:
+            ray.shutdown()
+            print("[MTA] Ray shutdown called from signal handler")
+        except Exception as e:
+            logger.warning(
+                f"[MTA] Failed to shutdown Ray in signal handler: {e}")
+        # exit the process
         sys.exit(0)
+
+    def _signal_handler(self, signum, frame):
+        
+        if signum == signal.SIGUSR1:
+            self.continue_refinement = True
+
+        if signum == signal.SIGUSR2:
+            self.continue_refinement = False
 
     def run(self):
         """Run the MTA process."""
-        print("Running MTA process with configuration:", self.configuration)
+
+        # Ensure stdout/stderr are line-buffered to make prints from this
+        # child process appear reliably when run from a parent process.
+        try:
+            # Python 3.7+ supports reconfigure on text streams
+            sys.stdout.reconfigure(line_buffering=True)
+            sys.stderr.reconfigure(line_buffering=True)
+        except Exception:
+            try:
+                # Fallback: reopen file descriptors with line buffering
+                fd_out = os.fdopen(sys.stdout.fileno(), 'w', buffering=1)
+                fd_err = os.fdopen(sys.stderr.fileno(), 'w', buffering=1)
+                sys.stdout = fd_out
+                sys.stderr = fd_err
+            except Exception:
+                # If this fails, continue without crashing; prints may be buffered.
+                pass
+
+        # Ensure prints are flushed in this child process so logs appear
+        # immediately when the MTA process is started from a parent process
+        # (we override builtins.print only inside the child process).
+        try:
+            import builtins as _builtins
+            _old_print = _builtins.print
+
+            def _print(*args, **kwargs):
+                kwargs.setdefault('flush', True)
+                _old_print(*args, **kwargs)
+
+            _builtins.print = _print
+        except Exception:
+            # If we cannot override print, keep going — prints may still be buffered.
+            pass
+
+        print("")
+        print("[MTA]", "="*30)
+        print("[MTA] Starting MTA process...")
+        print("[MTA]", "="*30)
+        print("")
+
+        print("[MTA] Running MTA process with configuration:", self.configuration)
 
         # Installer le handler SIGTERM
         signal.signal(signal.SIGTERM, self._signal_handler)
         # Optionnel, pour Ctrl-C aussi
         signal.signal(signal.SIGINT, self._signal_handler)
 
-        # Run each activity of the MTA process
+        signal.signal(signal.SIGUSR1, self._signal_handler)
+        signal.signal(signal.SIGUSR2, self._signal_handler)
+
+        # # Run each activity of the MTA process
         self.run_modelling_activity()
 
-        # # Run refinement cycles
+        # Run refinement cycles
         for i in range(self.configuration.refining.max_refinement_cycles):
             print(
-                f"\n\n{'='*30}\nRefinement cycle {i + 1}/{self.configuration.refining.max_refinement_cycles}\n{'='*30}\n\n")
+                f"\n\n[MTA] {'='*30}\n[MTA] Refinement cycle {i + 1}/{self.configuration.refining.max_refinement_cycles}\n[MTA] {'='*30}\n\n")
             self.run_training_activity()
             self.run_analyzing_activity()
             if self.configuration.refining.max_refinement_cycles > 1 and i < self.configuration.refining.max_refinement_cycles - 1:
@@ -123,16 +186,37 @@ class MTAProcess(Process):
                     f.close()
 
                 print(
-                    "\n\nCopied the inferred organizational specifications to the training folder for the next refinement cycle:\n\n", os.path.join(self.configuration.common.project_path, self.configuration.training.organizational_specifications, "organizational_specification_functions.py"), "\n")
+                    "\n\n[MTA] Copied the inferred organizational specifications to the training folder for the next refinement cycle:\n\n", os.path.join(self.configuration.common.project_path, self.configuration.training.organizational_specifications, "organizational_specification_functions.py"), "\n")
                 if not self.configuration.refining.auto_continue_refinement:
                     print(
-                        "Please take a look at the inferred organizational specifications and modify them for next refinement cycle or keep them as they are if you are satisfied with the current results.\n")
-                    continue_refinement = input(
-                        "Continue to the next refinement cycle? (Y/N): ").strip()
-                    if continue_refinement.lower() == "n" or continue_refinement.lower() == "no":
+                        "[MTA] Please take a look at the inferred organizational specifications and modify them for next refinement cycle or keep them as they are if you are satisfied with the current results.\n")
+
+                    try:
+                        os.kill(self.transferring_pid, signal.SIGUSR1)
+                    except Exception as e:
+                        print(f"[MTA] Failed to send SIGUSR1 to {self.transferring_pid}: {e}")
+
+                    while self.continue_refinement is None:
+                        time.sleep(1)
+                    if not self.continue_refinement:
+                        print("[MTA] Stopping MTA process as per user request.")
                         break
 
-        print("Finished MTA process")
+        # Ensure Ray is shutdown when the process finishes normally
+
+        print("")
+        print("[MTA]", "="*30)
+        print("[MTA] MTA finished, loading the newly trained joint policy...")
+        print("[MTA]", "="*30)
+        print("")
+
+        try:
+            ray.shutdown()
+            # print("[MTA] Ray shutdown called at process end")
+        except Exception as e:
+            logger.warning(f"[MTA] Failed to shutdown Ray at process end: {e}")
+
+        # print("[MTA] Finished MTA process")
 
     def load_handcrafted_environment(self):
         """Load the handcrafted environment."""
@@ -155,18 +239,23 @@ class MTAProcess(Process):
         try:
             function(*arguments)
         except NotImplementedError:
-            print(f"Method {function.__name__} is not implemented.")
+            print(f"[MTA] Method {function.__name__} is not implemented.")
             return False
         except Exception as e:
             return True
 
     def run_modelling_activity(self):
         """Run the modelling activity."""
-        print("Running modelling activity...")
+
+        print("")
+        print("[MTA]", "-"*30)
+        print("[MTA] MODELLING activity started...")
+        print("[MTA]", "-"*30)
+        print("")
 
         if not self.load_handcrafted_environment():
             print(
-                "No ready-to-use simulated environment path provided, generating a new one with World Models...")
+                "[MTA] No ready-to-use simulated environment path provided, generating a new one with World Models...")
 
             # Check if traces and reward are provided
             if not os.path.exists(os.path.join(self.configuration.common.project_path, self.configuration.modelling.generated_environment.world_model.used_traces_path)):
@@ -195,7 +284,7 @@ class MTAProcess(Process):
                     self.configuration.common.project_path, self.configuration.modelling.generated_environment.world_model.jopm.autoencoder.hyperparameters)))
             else:
                 print(
-                    "No Autoencoder hyperparameters research space provided, using default ones...")
+                    "[MTA] No Autoencoder hyperparameters research space provided, using default ones...")
                 self.autoencoder_hyperparameters = cybmasde_conf["autoencoder"]
 
             if os.path.exists(os.path.join(self.configuration.common.project_path, self.configuration.modelling.generated_environment.world_model.jopm.rdlm.hyperparameters)):
@@ -203,18 +292,24 @@ class MTAProcess(Process):
                     self.configuration.common.project_path, self.configuration.modelling.generated_environment.world_model.jopm.rdlm.hyperparameters)))
             else:
                 print(
-                    "No RDLM hyperparameters research space provided, using default ones...")
+                    "[MTA] No RDLM hyperparameters research space provided, using default ones...")
                 self.rdlm_hyperparameters = cybmasde_conf["rdlm"]
 
             # Run the world model training with hyperparameter optimization (HPO)
-            print("Running world model hyperparameter optimization...")
+            print("[MTA] Running world model hyperparameter optimization...")
             self.run_autoencoder_with_hpo()
 
             self.run_rdlm_with_hpo()
 
             # Assemble the reward function, world model (and optionally the rendering function) into the simulated environment
-            print("Assembling the simulated environment...")
+            print("[MTA] Assembling the simulated environment...")
             self.assemble_simulated_environment()
+
+        print("")
+        print("[MTA]", "-"*30)
+        print("[MTA] MODELLING activity ended.")
+        print("[MTA]", "-"*30)
+        print("")
 
     def assemble_simulated_environment(self):
         self.jopm = JOPM(self.autoencoder, self.rdlm,
@@ -261,16 +356,16 @@ class MTAProcess(Process):
 
         for history in joint_histories:
             for (joint_observation, joint_action) in history:
-                print("joint_observation:", joint_observation)
+                print("[MTA] joint_observation:", joint_observation)
                 joint_observations.append(joint_observation.flatten())
 
-        print("Joint observations shape:",
+        print("[MTA] Joint observations shape:",
               np.array(joint_observations).shape)
         return joint_observations
 
     def run_autoencoder_with_hpo(self):
         """Run the autoencoder training with hyperparameter optimization (HPO)."""
-        print("Running autoencoder training with hyperparameter optimization...")
+        print("[MTA] Running autoencoder training with hyperparameter optimization...")
 
         hp_space = self.autoencoder_hyperparameters
         max_mse = self.configuration.modelling.generated_environment.world_model.jopm.autoencoder.max_mean_square_error
@@ -305,8 +400,8 @@ class MTAProcess(Process):
         # Ajuste n_trials selon tes ressources
         study.optimize(optuna_objective, n_trials=30)
 
-        print("Best hyperparameters:", study.best_params)
-        print("Best validation MSE:", study.best_value)
+        print("[MTA] Best hyperparameters:", study.best_params)
+        print("[MTA] Best validation MSE:", study.best_value)
 
         # Recharge le meilleur modèle
         self.autoencoder = VAE(input_dim=input_dim, **{k: study.best_params[k] for k in [
@@ -332,6 +427,9 @@ class MTAProcess(Process):
         # 3. Crée le dossier compressed si besoin
         compressed_dir = os.path.join(self.configuration.common.project_path,
                                       self.configuration.modelling.generated_environment.world_model.used_traces_path, "compressed")
+        if os.path.exists(compressed_dir):
+            shutil.rmtree(compressed_dir)
+
         os.makedirs(compressed_dir, exist_ok=True)
 
         # Trouver le dernier X existant
@@ -367,7 +465,7 @@ class MTAProcess(Process):
 
     def run_rdlm_with_hpo(self):
         """Run the RLDM (RNN+MLP) training with hyperparameter optimization (HPO)."""
-        print("Running RLDM training with hyperparameter optimization...")
+        print("[MTA] Running RLDM training with hyperparameter optimization...")
 
         rdlm_hyperparameters = None
 
@@ -377,7 +475,7 @@ class MTAProcess(Process):
                                              self.configuration.modelling.generated_environment.world_model.jopm.rdlm.hyperparameters)))
         else:
             print(
-                "No RDLM hyperparameters research space provided, using default ones...")
+                "[MTA] No RDLM hyperparameters research space provided, using default ones...")
             rdlm_hyperparameters = cybmasde_conf["rdlm"]
 
         max_mse = self.configuration.modelling.generated_environment.world_model.jopm.rdlm.max_mean_square_error
@@ -395,7 +493,7 @@ class MTAProcess(Process):
         compressed_files = sorted([f for f in os.listdir(compressed_dir) if f.startswith(
             "compressed_joint_history_") and f.endswith(".json")])
         print(
-            f"Found {len(compressed_files)} compressed trace files.", compressed_files)
+            f"[MTA] Found {len(compressed_files)} compressed trace files.", compressed_files)
 
         latent_obs_episodes = []
         actions_episodes = []
@@ -431,7 +529,7 @@ class MTAProcess(Process):
 
         study = optuna.create_study(direction="minimize")
         study.optimize(optuna_objective, n_trials=30)
-        print("Best RDLM hyperparameters:", study.best_params)
+        print("[MTA] Best RDLM hyperparameters:", study.best_params)
 
         # Recharge le meilleur modèle
         self.rdlm = RDLM(latent_joint_observation_dim=latent_obs_episodes.shape[2],
@@ -444,14 +542,19 @@ class MTAProcess(Process):
 
     def run_training_activity(self):
         """Run the training activity."""
-        print("Running training activity...")
+
+        print("")
+        print("[MTA]", "-"*30)
+        print("[MTA] TRAINING activity started...")
+        print("[MTA]", "-"*30)
+        print("")
 
         # Check if hyperparameters intervals are provided, else use default ones
         training_hyperparameters = json.load(
             open(self.configuration.training.hyperparameters, "r"))
         if not self.configuration.training.hyperparameters or training_hyperparameters == {}:
             print(
-                "No training hyperparameters research space provided, using default ones...")
+                "[MTA] No training hyperparameters research space provided, using default ones...")
             training_hyperparameters = cybmasde_conf[
                 "training_hyperparameters"]
 
@@ -500,10 +603,11 @@ class MTAProcess(Process):
 
             best_config = experiment_analysis.get_best_config(
                 metric="episode_reward_mean", mode="max")
-            print(f"Best hyperparameters found with algorithm {algorithm}")
-            print("\tmodel: ", {k: v for k, v in best_config["model"]["custom_model_config"]["model_arch_args"].items(
+            print(
+                f"[MTA] Best hyperparameters found with algorithm {algorithm}")
+            print("[MTA] \tmodel: ", {k: v for k, v in best_config["model"]["custom_model_config"]["model_arch_args"].items(
             ) if k in ["core_arch", "mixer_arch", "encode_layer"]})
-            print("\talgorithm: ", {k: v for k, v in best_config.items() if k in list(
+            print("[MTA] \talgorithm: ", {k: v for k, v in best_config.items() if k in list(
                 self.load_algorithm_default_hp(algorithm).keys())})
 
             best_trial = experiment_analysis.get_best_trial(
@@ -555,7 +659,7 @@ class MTAProcess(Process):
             logger.warning(f"Could not remove {checkpoint_path_dest}: {e}")
 
         self.copy_folder(checkpoint_path_src, checkpoint_path_dest)
-        print("Joint policy saved in ", checkpoint_path_dest)
+        print("[MTA] Joint policy saved in ", checkpoint_path_dest)
 
         # Nettoyer le répertoire temporaire seulement après la copie réussie
         try:
@@ -563,6 +667,12 @@ class MTAProcess(Process):
                 os.path.dirname(checkpoint_parent_dir)))
         except Exception as e:
             logger.warning(f"Could not remove temporary directory: {e}")
+
+        print("")
+        print("[MTA]", "-"*30)
+        print("[MTA] TRAINING activity ended.")
+        print("[MTA]", "-"*30)
+        print("")
 
     def copy_folder(self, src, dest):
         os.makedirs(dest, exist_ok=True)
@@ -597,7 +707,12 @@ class MTAProcess(Process):
 
     def run_analyzing_activity(self):
         """Run the analyzing activity."""
-        print("Running analyzing activity...")
+
+        print("")
+        print("[MTA]", "-"*30)
+        print("[MTA] ANALYZING activity started...")
+        print("[MTA]", "-"*30)
+        print("")
 
         best_hp = json.load(open(os.path.join(
             self.configuration.common.project_path, self.configuration.training.joint_policy, "model_config.json"), "r"))
@@ -692,6 +807,12 @@ class MTAProcess(Process):
         self.generate_organizational_model(
             inferred_roles_summary, inferred_goals_summary)
 
+        print("")
+        print("[MTA]", "-"*30)
+        print("[MTA] ANALYZING activity ended.")
+        print("[MTA]", "-"*30)
+        print("")
+
     def generate_organizational_model(self, inferred_roles_summary, inferred_goals_summary):
         """Generate the organizational model from the inferred roles and goals summaries."""
 
@@ -702,7 +823,7 @@ class MTAProcess(Process):
 
         inferred_goals = {}
         for inferred_goal_name in inferred_goals_summary:
-            # print("Inferred goal:", inferred_goal_name, " with observations:", inferred_goals_summary[inferred_goal_name]["observations"])
+            # print("[MTA] Inferred goal:", inferred_goal_name, " with observations:", inferred_goals_summary[inferred_goal_name]["observations"])
             if len(inferred_goals_summary[inferred_goal_name]["observations"]) > 0:
                 inferred_goals[inferred_goal_name] = inferred_goals_summary[inferred_goal_name]["observations"]
 
@@ -763,13 +884,13 @@ class MTAProcess(Process):
                                       self.configuration.analyzing.inferred_organizational_specifications, "organizational_specifications.json")
         os.makedirs(os.path.dirname(org_model_path), exist_ok=True)
         json.dump(om.to_dict(), open(org_model_path, "w"), indent=4)
-        print("Generated organizational model saved to:", org_model_path)
+        print("[MTA] Generated organizational model saved to:", org_model_path)
 
         return om
 
     def generate_organizational_specification_functions_script(self, path, inferred_roles, inferred_goals, agent_to_role, agent_to_goal):
         """Generate a Python script containing functions for organizational specifications."""
-        print("Generating organizational specification functions script at:", path)
+        print("[MTA] Generating organizational specification functions script at:", path)
         role_to_function = {}
         goal_to_function = {}
         template = """import random

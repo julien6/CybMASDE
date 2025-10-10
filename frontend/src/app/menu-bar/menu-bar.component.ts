@@ -33,6 +33,14 @@ export class MenuBarComponent {
 
   }
 
+  runProject() {
+    this.http.post(this.rootUrl + 'save-and-run', {}).subscribe(data => {
+      // Handle successful response
+    }, error => {
+      console.error('Erreur lors de l\'exécution du projet', error);
+    });
+  }
+
   savedFilePath: string | null = null;
 
   async saveProjectAs() {

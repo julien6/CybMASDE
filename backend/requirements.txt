@@ -4,3 +4,4 @@ pyinstaller
 optuna
 gymnasium
 pettingzoo
+psutil
