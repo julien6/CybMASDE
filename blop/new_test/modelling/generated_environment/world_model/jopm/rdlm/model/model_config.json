@@ -1,0 +1,1 @@
+{"rchs_dim": 50, "latent_joint_observation_dim": 32, "onehot_joint_action_dim": 12, "rnn_hidden_dim": 152, "rnn_type": "GRU", "rnn_layers": 2, "rnn_activation": "None", "mlp_layers": 3, "mlp_hidden_dim": 149, "mlp_activation": "elu"}

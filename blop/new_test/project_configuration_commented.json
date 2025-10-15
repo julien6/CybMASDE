@@ -1,0 +1,53 @@
+{
+  "common": {
+    "project_name": "new_test", // {"name" : "Nom du projet", "description": "Le nom du projet", "type": "string", "editable": true}
+    "project_description": "Project description", // {"name" : "Description du projet", "description": "La description du projet", "type": "string", "editable": true}
+    "label_manager": "label_manager.py", // {"name" : "Gestionnaire de label", "description": "Le contenu fichier Python contenant la classe LabelManager implémentée", "type": "file", "editable": true}
+    "project_path": "/home/soulej/Documents/new_test" // {"name" : "Chemin du projet", "description": "Le chemin absolu du dossier du projet", "type": "string", "editable": false}
+  },
+  "modelling": { // {"name" : "Modélisation", "description": "Les paramètres de l'activité de modélisation", "type": "group", "editable": false}
+    "environment_path": "modelling/handcrafted_environment.py", // {"name" : "Environnement", "description": "Le contenu fichier Python contenant la classe CustomParallelEnv implémentée", "type": "file", "editable": true}
+    "generated_environment": { // {"name" : "Environnement généré", "description": "Les paramètres de l'environnement généré", "type": "group", "editable": false}
+      "world_model": { // {"name" : "Modèle du monde", "description": "Les paramètres du modèle du monde", "type": "group", "editable": false}
+        "jopm": { // {"name" : "Joint-Observation Prediction Model", "description": "Les paramètres du Joint-Observation Prediction Model", "type": "group", "editable": false}
+          "autoencoder": { // {"name" : "Autoencodeur", "description": "Les paramètres de l'autoencodeur", "type": "group", "editable": false}
+            "statistics": "modelling/generated_environment/world_model/jopm/autoencoder/statistics.json", // {"name" : "Statistiques", "description": "Le contenu du fichier JSON contenant les statistiques de l'autoencodeur", "type": "file", "editable": false}
+            "model": "modelling/generated_environment/world_model/jopm/autoencoder/model", // {"name" : "Modèle", "description": "Le chemin du dossier contenant le modèle de l'autoencodeur", "type": "string", "editable": true}
+            "hyperparameters": "modelling/generated_environment/world_model/jopm/autoencoder/hyperparameters.json", // {"name" : "Hyperparamètres", "description": "Le contenu du fichier JSON contenant les hyperparamètres de l'autoencodeur", "type": "file", "editable": true}
+            "max_mean_square_error": "inf" // {"name" : "Erreur quadratique moyenne maximale", "description": "La valeur maximale de l'erreur quadratique moyenne tolérée pour l'entraînement de l'autoencodeur", "type": "string", "editable": true}
+          },
+          "rdlm": { // {"name" : "Recurrent Dynamics Latent Model", "description": "Les paramètres du Recurrent Dynamics Latent Model", "type": "group", "editable": false}
+            "statistics": "modelling/generated_environment/world_model/jopm/rdlm/statistics.json", // {"name" : "Statistiques", "description": "Le contenu du fichier JSON contenant les statistiques du RDL model", "type": "file", "editable": false}
+            "model": "modelling/generated_environment/world_model/jopm/rdlm/model", // {"name" : "Modèle", "description": "Le chemin du dossier contenant le modèle du RDL model", "type": "string", "editable": true}
+            "hyperparameters": "modelling/generated_environment/world_model/jopm/rdlm/hyperparameters.json", // {"name" : "Hyperparamètres", "description": "Le contenu du fichier JSON contenant les hyperparamètres du RDL model", "type": "file", "editable": true}
+            "max_mean_square_error": "inf" // {"name" : "Erreur quadratique moyenne maximale", "description": "La valeur maximale de l'erreur quadratique moyenne tolérée pour l'entraînement du RDLM", "type": "string", "editable": true}
+          },
+          "initial_joint_observations": "modelling/generated_environment/world_model/jopm/initial_joint_observations.pth" // {"name" : "Observations conjointes initiales", "description": "Le chemin du fichier contenant les observations conjointes initiales", "type": "string", "editable": true}
+        },
+        "statistics": "modelling/generated_environment/world_model/statistics.json", // {"name" : "Statistiques", "description": "Le contenu du fichier JSON contenant les statistiques du modèle du monde", "type": "file", "editable": false}
+        "used_traces_path": "modelling/generated_environment/world_model/traces" // {"name" : "Traces utilisées", "description": "Le chemin du dossier contenant les traces utilisées pour entraîner le modèle du monde", "type": "string", "editable": true}
+      },
+      "component_functions_path": "modelling/generated_environment/component_functions.py" // {"name" : "Fonctions de composantes", "description": "Le contenu fichier Python contenant les fonctions de composantes implémentées dans la classe 'ComponentFunctions'", "type": "file", "editable": true}
+    }
+  },
+  "training": { // {"name" : "Entraînement", "description": "Les paramètres de l'activité d'entraînement", "type": "group", "editable": false}
+    "hyperparameters": "training/hyperparameters.json", // {"name" : "Hyperparamètres", "description": "Le contenu du fichier JSON contenant les hyperparamètres de l'entraînement", "type": "file", "editable": true}
+    "organizational_specifications": "training/organizational_specifications", // {"name" : "Spécifications organisationnelles", "description": "Le chemin du dossier contenant les spécifications organisationnelles implémenté dans 'organizational_specifications.json'", "type": "string", "editable": true}
+    "joint_policy": "training/joint_policy", // {"name" : "Politique conjointe", "description": "Le chemin du dossier contenant la politique conjointe", "type": "string", "editable": true}
+    "statistics": "training/statistics.json" // {"name" : "Statistiques", "description": "Le contenu du fichier JSON contenant les statistiques de l'entraînement", "type": "file", "editable": false}
+  },
+  "analyzing": { // {"name" : "Analyse", "description": "Les paramètres de l'activité d'analyse", "type": "group", "editable": false}
+    "hyperparameters": "analyzing/hyperparameters.json", // {"name" : "Hyperparamètres", "description": "Le contenu du fichier JSON contenant les hyperparamètres de l'analyse", "type": "file", "editable": true}
+    "statistics": "analyzing/statistics.json", // {"name" : "Statistiques", "description": "Le contenu du fichier JSON contenant les statistiques de l'analyse", "type": "file", "editable": false}
+    "figures_path": "analyzing/figures", // {"name" : "Figures", "description": "Le chemin du dossier contenant les figures de l'analyse", "type": "string", "editable": true}
+    "post_training_trajectories_path": "analyzing/trajectories", // {"name" : "Trajectoires post-entraînement", "description": "Le chemin du dossier contenant les trajectoires post-entraînement", "type": "string", "editable": true}
+    "inferred_organizational_specifications": "analyzing/inferred_organizational_specifications" // {"name" : "Spécifications organisationnelles inférées", "description": "Le chemin du dossier contenant les spécifications organisationnelles inférées", "type": "string", "editable": true}
+  },
+  "transferring": { // {"name" : "Transfert", "description": "Les paramètres de l'activité de transfert", "type": "group", "editable": false}
+    "configuration": "transferring/configuration.json" // {"name" : "Configuration", "description": "Le contenu du fichier JSON contenant la configuration du transfert", "type": "file", "editable": true}
+  },
+  "refining": { // {"name" : "Raffinement", "description": "Les paramètres de l'activité de raffinement", "type": "group", "editable": false}
+    "max_refinement_cycles": 2, // {"name" : "Cycles de raffinement maximum", "description": "Le nombre maximum de cycles de raffinement autorisés", "type": "integer", "editable": true}
+    "auto_continue_refinement": false // {"name" : "Raffinement automatique", "description": "Indique si le raffinement doit se poursuivre automatiquement jusqu'à atteindre le nombre maximum de cycles de raffinement", "type": "boolean", "editable": true}
+  }
+}

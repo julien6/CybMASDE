@@ -1,0 +1,38 @@
+{
+    "rchs_dim": [
+        50,
+        50
+    ],
+    "rnn_type": [
+        "GRU",
+        "GRU"
+    ],
+    "rnn_hidden_dim": [
+        152,
+        152
+    ],
+    "rnn_layers": [
+        2,
+        2
+    ],
+    "rnn_activation": [
+        "None",
+        "None"
+    ],
+    "learning_rate": [
+        0.002881626168985456,
+        0.002881626168985456
+    ],
+    "mlp_layers": [
+        3,
+        3
+    ],
+    "mlp_hidden_dim": [
+        149,
+        149
+    ],
+    "mlp_activation": [
+        "elu",
+        "elu"
+    ]
+}

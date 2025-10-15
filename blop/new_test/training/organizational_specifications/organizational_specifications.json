@@ -1,0 +1,167 @@
+{
+    "structural_specifications": {
+        "roles": {
+            "3": {
+                "label_manager": {
+                    "source_file": "/home/soulej/Documents/new_test/label_manager.py",
+                    "module_name": "label_manager",
+                    "class_name": "label_manager"
+                },
+                "pattern_rules": {},
+                "reward_reshape_standard": 100,
+                "script_rules": [
+                    {
+                        "source_file": "/home/soulej/Documents/new_test/training/organizational_specifications/organizational_specification_functions.py",
+                        "function_name": "function_for_role_3",
+                        "module_name": "organizational_specification_functions"
+                    }
+                ]
+            },
+            "1": {
+                "label_manager": {
+                    "source_file": "/home/soulej/Documents/new_test/label_manager.py",
+                    "module_name": "label_manager",
+                    "class_name": "label_manager"
+                },
+                "pattern_rules": {},
+                "reward_reshape_standard": 100,
+                "script_rules": [
+                    {
+                        "source_file": "/home/soulej/Documents/new_test/training/organizational_specifications/organizational_specification_functions.py",
+                        "function_name": "function_for_role_1",
+                        "module_name": "organizational_specification_functions"
+                    }
+                ]
+            },
+            "2": {
+                "label_manager": {
+                    "source_file": "/home/soulej/Documents/new_test/label_manager.py",
+                    "module_name": "label_manager",
+                    "class_name": "label_manager"
+                },
+                "pattern_rules": {},
+                "reward_reshape_standard": 100,
+                "script_rules": [
+                    {
+                        "source_file": "/home/soulej/Documents/new_test/training/organizational_specifications/organizational_specification_functions.py",
+                        "function_name": "function_for_role_2",
+                        "module_name": "organizational_specification_functions"
+                    }
+                ]
+            },
+            "4": {
+                "label_manager": {
+                    "source_file": "/home/soulej/Documents/new_test/label_manager.py",
+                    "module_name": "label_manager",
+                    "class_name": "label_manager"
+                },
+                "pattern_rules": {},
+                "reward_reshape_standard": 100,
+                "script_rules": [
+                    {
+                        "source_file": "/home/soulej/Documents/new_test/training/organizational_specifications/organizational_specification_functions.py",
+                        "function_name": "function_for_role_4",
+                        "module_name": "organizational_specification_functions"
+                    }
+                ]
+            }
+        },
+        "role_inheritance_relations": {},
+        "root_groups": {}
+    },
+    "functional_specifications": {
+        "goals": {
+            "3": {
+                "label_manager": {
+                    "source_file": "/home/soulej/Documents/new_test/label_manager.py",
+                    "module_name": "label_manager",
+                    "class_name": "label_manager"
+                },
+                "pattern_rules": {},
+                "reward_reshape_standard": 100,
+                "script_rules": [
+                    {
+                        "source_file": "/home/soulej/Documents/new_test/training/organizational_specifications/organizational_specification_functions.py",
+                        "function_name": "function_for_goal_3",
+                        "module_name": "organizational_specification_functions"
+                    }
+                ]
+            },
+            "1": {
+                "label_manager": {
+                    "source_file": "/home/soulej/Documents/new_test/label_manager.py",
+                    "module_name": "label_manager",
+                    "class_name": "label_manager"
+                },
+                "pattern_rules": {},
+                "reward_reshape_standard": 100,
+                "script_rules": [
+                    {
+                        "source_file": "/home/soulej/Documents/new_test/training/organizational_specifications/organizational_specification_functions.py",
+                        "function_name": "function_for_goal_1",
+                        "module_name": "organizational_specification_functions"
+                    }
+                ]
+            },
+            "2": {
+                "label_manager": {
+                    "source_file": "/home/soulej/Documents/new_test/label_manager.py",
+                    "module_name": "label_manager",
+                    "class_name": "label_manager"
+                },
+                "pattern_rules": {},
+                "reward_reshape_standard": 100,
+                "script_rules": [
+                    {
+                        "source_file": "/home/soulej/Documents/new_test/training/organizational_specifications/organizational_specification_functions.py",
+                        "function_name": "function_for_goal_2",
+                        "module_name": "organizational_specification_functions"
+                    }
+                ]
+            },
+            "4": {
+                "label_manager": {
+                    "source_file": "/home/soulej/Documents/new_test/label_manager.py",
+                    "module_name": "label_manager",
+                    "class_name": "label_manager"
+                },
+                "pattern_rules": {},
+                "reward_reshape_standard": 100,
+                "script_rules": [
+                    {
+                        "source_file": "/home/soulej/Documents/new_test/training/organizational_specifications/organizational_specification_functions.py",
+                        "function_name": "function_for_goal_4",
+                        "module_name": "organizational_specification_functions"
+                    }
+                ]
+            }
+        },
+        "social_scheme": {},
+        "mission_preferences": []
+    },
+    "deontic_specifications": {
+        "permissions": [],
+        "obligations": [
+            {
+                "role": "3",
+                "agents": [
+                    "agent_1"
+                ],
+                "missions": [
+                    "3"
+                ],
+                "time_constraint": "ANY"
+            },
+            {
+                "role": "1",
+                "agents": [
+                    "agent_0"
+                ],
+                "missions": [
+                    "1"
+                ],
+                "time_constraint": "ANY"
+            }
+        ]
+    }
+}
