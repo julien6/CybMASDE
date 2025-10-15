@@ -7,12 +7,16 @@
   </mat-toolbar>
 
   <mat-menu #fileMenu="matMenu">
-    <button mat-menu-item (click)="openProject()">Open</button>
-    <button mat-menu-item (click)="saveProjectAs()" [disabled]="!this.onWork">Save As...</button>
-    <button mat-menu-item (click)="saveProject()" [disabled]="!this.onWork && !this.saved">Save</button>
-    <button mat-menu-item (click)="createNewProject()">New Project</button>
-    <button mat-menu-item (click)="runProject()">Run Project</button>
-    <button mat-menu-item (click)="closeApp()">Close</button>
+    <button mat-menu-item (click)="this.openProject()">Open</button>
+    <button mat-menu-item (click)="this.configEditorService.saveProjectAsDialog()"
+      [disabled]="!this.configEditorService.isOnWork">Save
+      As...</button>
+    <button mat-menu-item (click)="this.configEditorService.saveProject()"
+      [disabled]="!this.configEditorService.isOnWork && !this.configEditorService.isSaved">Save</button>
+    <button mat-menu-item (click)="this.configEditorService.newProject()">New Project</button>
+    <button mat-menu-item (click)="this.configEditorService.saveAndRun()"
+      [disabled]="!this.configEditorService.isOnWork">Run Project</button>
+    <button mat-menu-item (click)="this.closeApp()">Close</button>
   </mat-menu>
 
   <!-- Input file caché pour sélectionner un fichier JSON -->
@@ -36,6 +40,6 @@
   </mat-menu>
 </div>
 
-<app-home *ngIf="!onWork"></app-home>
+<app-home *ngIf="!this.configEditorService.isOnWork"></app-home>
 
-<app-phases *ngIf="onWork"></app-phases>
+<app-activities *ngIf="this.configEditorService.isOnWork"></app-activities>

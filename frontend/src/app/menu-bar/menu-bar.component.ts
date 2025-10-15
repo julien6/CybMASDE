@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { ElectronService } from '../electron.service';
 import { AboutDialogComponent } from '../about-dialog/about-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { ConfigEditorService } from '../config-editor.service';
 
 @Component({
   selector: 'app-menu-bar',
@@ -14,69 +15,24 @@ export class MenuBarComponent {
   @ViewChild('fileInput', { static: false })
   fileInput!: ElementRef;
 
-  constructor(private http: HttpClient, private electronService: ElectronService, private cdr: ChangeDetectorRef, private dialog: MatDialog) { }
+  constructor(public configEditorService: ConfigEditorService, private cdr: ChangeDetectorRef, private dialog: MatDialog) {
+    this.configEditorService.config$.subscribe(config => {
+      if (config !== null) {
+        // Do something with the config
+      }
+    });
+  }
 
   ngOnInit() {
   }
 
-  rootUrl = "http://127.0.0.1:5001/";
-  onWork = false;
-  saved = false;
-
-  createNewProject() {
-
-    this.http.get(this.rootUrl + 'new-project').subscribe(data => {
-      this.onWork = true;
-    }, error => {
-      console.error('Erreur lors du chargement des projets récents', error);
-    });
-
-  }
-
-  runProject() {
-    this.http.post(this.rootUrl + 'save-and-run', {}).subscribe(data => {
-      // Handle successful response
-    }, error => {
-      console.error('Erreur lors de l\'exécution du projet', error);
-    });
-  }
-
-  savedFilePath: string | null = null;
-
-  async saveProjectAs() {
-    this.savedFilePath = await this.electronService.saveFile();
-    if (this.savedFilePath) {
-      this.http.get(this.rootUrl + 'save-project-as?path=' + this.savedFilePath).subscribe(data => {
-        // console.log(data);
-        this.onWork = true;
-        this.saved = true;
-      }, error => {
-        console.error('Error while loading non saved project', error);
-      });
-
-    } else {
-      console.log('Sauvegarde annulée');
-    }
-  }
-
-  saveProject() {
-
-    this.http.get(this.rootUrl + 'save-project').subscribe(data => {
-    }, error => {
-      console.error('Error while saving project', error);
-    });
-
-  }
-
   openProject() {
-    // Ouvre le sélecteur de fichiers via Electron
-    window["electron"].openFileDialog();
-
-    // Récupère le chemin du fichier sélectionné
-    window["electron"].onFileSelected((path: string) => {
-      console.log('Fichier sélectionné :', path);
-      this.onWork = true;
+    this.configEditorService.openProjectDialog().then((config) => {
+      // Handle the loaded project configuration
+      console.log('Loaded project configuration:', config);
       this.cdr.detectChanges();
+    }).catch((error) => {
+      console.error('Error while loading project:', error);
     });
   }
 

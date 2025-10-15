@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SolvingComponent } from './solving.component';
+import { CommonComponent } from './common.component';
 
-describe('SolvingComponent', () => {
-  let component: SolvingComponent;
-  let fixture: ComponentFixture<SolvingComponent>;
+describe('CommonComponent', () => {
+  let component: CommonComponent;
+  let fixture: ComponentFixture<CommonComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SolvingComponent]
+      imports: [CommonComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
-    fixture = TestBed.createComponent(SolvingComponent);
+    fixture = TestBed.createComponent(CommonComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

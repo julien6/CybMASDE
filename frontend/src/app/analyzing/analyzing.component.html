@@ -1,47 +1,130 @@
-<mat-card appearance="outlined">
-  <mat-stepper [linear]="false" #stepper>
+<div class="section">
+  <h3>Analyzing Configuration</h3>
 
-    <mat-step label="Input">
-      <mat-card appearance="outlined">
-        <mat-card-content>Trained Joint-policy model</mat-card-content>
-      </mat-card>
-      <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
-      <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
-      <mat-icon matTooltip="A compliant trained joint-policy (.pth)" aria-hidden="false" aria-label="Help icon"
-        fontIcon="help"></mat-icon>
+  <!-- ============================== -->
+  <!-- 1. Hyperparameters -->
+  <!-- ============================== -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Hyperparameters</mat-panel-title>
+      <mat-panel-description>Parameters for Auto-TEMM or TEMM analysis</mat-panel-description>
+    </mat-expansion-panel-header>
 
-      <mat-card appearance="outlined">
-        <mat-card-content>Analysis approaches to include</mat-card-content>
-      </mat-card>
-      <section class="example-section">
-        <span class="example-list-section">
-          <mat-checkbox class="example-margin" [checked]="true">
-            TEMM
-          </mat-checkbox>
-          <mat-checkbox class="example-margin" [checked]="gosiaEnabled">
-            Auto-TEMM
-          </mat-checkbox>
-        </span>
-      </section>
+    <div class="field-row">
+      <label>Hyperparameters JSON</label>
+      <button mat-icon-button
+        matTooltip="JSON file defining analysis hyperparameters (e.g., window size, clustering parameters)">
+        <mat-icon>help</mat-icon>
+      </button>
+      <button mat-raised-button color="primary" (click)="openFileContent('hyperparameters')">
+        Load JSON file
+      </button>
+      <button mat-raised-button color="accent" (click)="saveJson('hyperparameters')">
+        Save JSON
+      </button>
+    </div>
 
-    </mat-step>
+    <ngx-monaco-editor [options]="jsonEditorOptions" [(ngModel)]="hyperparametersJson"
+      (ngModelChange)="onJsonChange('hyperparameters', $event)">
+    </ngx-monaco-editor>
+  </mat-expansion-panel>
 
-    <mat-step label="Running">
-      <mat-card appearance="outlined">
-        <mat-card-content>Running analyzing</mat-card-content>
-      </mat-card>
-      <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="runningOutput"></ngx-monaco-editor>
-    </mat-step>
+  <!-- ============================== -->
+  <!-- 2. Statistics -->
+  <!-- ============================== -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Statistics</mat-panel-title>
+      <mat-panel-description>Computed metrics from analysis runs</mat-panel-description>
+    </mat-expansion-panel-header>
 
-    <mat-step label="Ouput">
-      <button mat-raised-button color="primary">Get enriched MOISE+MARL model</button>
-      <button mat-raised-button color="primary">Get textual description of MOISE+MARL model (alpha)</button>
-      <mat-card appearance="outlined">
-        <mat-card-content>Enriched MOISE+MARL overview</mat-card-content>
-      </mat-card>
-      <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="analyzingOutput"></ngx-monaco-editor>
-    </mat-step>
+    <div class="field-row">
+      <label>Statistics JSON</label>
+      <button mat-icon-button
+        matTooltip="File containing quantitative analysis results (variance, organizational fit, etc.)">
+        <mat-icon>help</mat-icon>
+      </button>
+      <button mat-raised-button color="primary" (click)="openFileContent('statistics')">
+        Load JSON file
+      </button>
+      <button mat-raised-button color="accent" (click)="saveJson('statistics')">
+        Save JSON
+      </button>
+    </div>
 
-  </mat-stepper>
+    <ngx-monaco-editor [options]="jsonEditorOptions" [(ngModel)]="statisticsJson"
+      (ngModelChange)="onJsonChange('statistics', $event)">
+    </ngx-monaco-editor>
+  </mat-expansion-panel>
 
-</mat-card>
+  <!-- ============================== -->
+  <!-- 3. Figures Path -->
+  <!-- ============================== -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Figures Path</mat-panel-title>
+      <mat-panel-description>Directory containing generated analysis figures</mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Figures Path</mat-label>
+        <input matInput [(ngModel)]="analyzing.figures_path" />
+      </mat-form-field>
+      <button mat-icon-button
+        matTooltip="Path to the folder where analysis visualizations (PCA, dendrograms, etc.) are saved">
+        <mat-icon>help</mat-icon>
+      </button>
+      <button mat-raised-button color="primary" (click)="onFileSelected('figures_path')">
+        Choose Folder
+      </button>
+    </div>
+  </mat-expansion-panel>
+
+  <!-- ============================== -->
+  <!-- 4. Post-Training Trajectories -->
+  <!-- ============================== -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Post-Training Trajectories</mat-panel-title>
+      <mat-panel-description>Path to trajectories used for analysis</mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Post-Training Trajectories Path</mat-label>
+        <input matInput [(ngModel)]="analyzing.post_training_trajectories_path" />
+      </mat-form-field>
+      <button mat-icon-button matTooltip="Folder containing trajectories after training (for TEMM/Auto-TEMM analysis)">
+        <mat-icon>help</mat-icon>
+      </button>
+      <button mat-raised-button color="primary" (click)="onFileSelected('post_training_trajectories_path')">
+        Choose Folder
+      </button>
+    </div>
+  </mat-expansion-panel>
+
+  <!-- ============================== -->
+  <!-- 5. Inferred Organizational Specifications -->
+  <!-- ============================== -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Inferred Organizational Specifications</mat-panel-title>
+      <mat-panel-description>Path to inferred roles/goals extracted from trajectories</mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Inferred Organizational Specifications Path</mat-label>
+        <input matInput [(ngModel)]="analyzing.inferred_organizational_specifications" />
+      </mat-form-field>
+      <button mat-icon-button
+        matTooltip="Path to folder containing inferred organizational specifications (from Auto-TEMM)">
+        <mat-icon>help</mat-icon>
+      </button>
+      <button mat-raised-button color="primary" (click)="onFileSelected('inferred_organizational_specifications')">
+        Choose Folder
+      </button>
+    </div>
+  </mat-expansion-panel>
+</div>

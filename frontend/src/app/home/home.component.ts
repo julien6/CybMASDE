@@ -1,6 +1,7 @@
-import { Component, Optional } from '@angular/core';
+import { ChangeDetectorRef, Component, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MenuBarComponent } from '../menu-bar/menu-bar.component';
+import { ConfigEditorService } from '../config-editor.service';
 
 @Component({
   selector: 'app-home',
@@ -9,33 +10,31 @@ import { MenuBarComponent } from '../menu-bar/menu-bar.component';
 })
 export class HomeComponent {
 
-  recentProjects: any = [];
-
-  rootUrl = "http://127.0.0.1:5001/";
-
-  constructor(private http: HttpClient, @Optional() private menuBar: MenuBarComponent) { }
+  constructor(public configEditorService: ConfigEditorService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.loadRecentProjects();
   }
 
-  // Fonction pour charger les projets récents depuis un fichier .txt
-  loadRecentProjects() {
-    this.http.get(this.rootUrl + 'get-recent-projects').subscribe(data => {
-      this.recentProjects = data;
-    }, error => {
-      console.error('Erreur lors du chargement des projets récents', error);
+  openProject() {
+    this.configEditorService.openProjectDialog().then((config) => {
+      // Handle the loaded project configuration
+      console.log('Loaded project configuration:', config);
+      this.cdr.detectChanges();
+    }).catch((error) => {
+      console.error('Error while loading project:', error);
     });
   }
 
-  // Action pour créer un nouveau projet
-  newProject() {
-    this.menuBar.createNewProject();
-  }
+  recentProjects: any = [];
 
-  // Action pour charger un projet
-  loadProject() {
-    this.menuBar.openProject();
+  // Fonction pour charger les projets récents depuis un fichier .txt
+  loadRecentProjects() {
+    this.configEditorService.getRecentProjects().then((data) => {
+      this.recentProjects = data;
+    }).catch((error) => {
+      console.error('Erreur lors du chargement des projets récents', error);
+    });
   }
 
 }

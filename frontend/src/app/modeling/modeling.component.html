@@ -1,392 +1,201 @@
-<!-- <mat-card class="modelingCard" appearance="outlined"> -->
-<mat-stepper class="modelingCard" [linear]="false" #stepper>
+<div class="section">
+  <h3>Modeling Configuration</h3>
 
+  <!-- ============================== -->
+  <!-- 1. Environment Path -->
+  <!-- ============================== -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Environment</mat-panel-title>
+      <mat-panel-description>Custom environment definition</mat-panel-description>
+    </mat-expansion-panel-header>
 
-  <mat-step label="Joint-Observation Prediction Model">
-
-    <mat-accordion class="example-headers-align" multi>
-      <mat-expansion-panel [expanded]="true">
-        <mat-expansion-panel-header>
-          <mat-panel-title> Assisting the building of an observation transition function </mat-panel-title>
-        </mat-expansion-panel-header>
-
-        <ul>
-          <li>If users already have a custom <mat-chip>Joint-Observation Prediction Model (JOPM)</mat-chip>, it can be
-            taken as an input.</li>
-          <li>Else, it generates a environment observation transition function based on traces (compliant with
-            <mat-chip color="accent" matTooltip="A set of compliant environment traces"
-              (click)="openLink('https://www.google.com')" class="clickable-chip">CybMASDE traces format</mat-chip>)
-            of agents interacting with the real/emulated environments.
-            <ul>
-              <li>If users already have a representative set of <mat-chip>Environment Traces</mat-chip>, then it can
-                be taken as an input.</li>
-              <li>Else, deployed agents in the environment will be used to generate traces for a sufficient period of
-                time.
-              </li>
-            </ul>
-          </li>
-        </ul>
-
-      </mat-expansion-panel>
-    </mat-accordion>
-
-    <mat-form-field>
-      <mat-label>Environment input</mat-label>
-      <mat-select [(ngModel)]="selectedEnvironmentInput">
-        <mat-option *ngFor="let option of modelingInput['environmentInput'] | keyvalue" [value]="option.key">
-          {{ $any(option.value)['fullName'] }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <div *ngIf="selectedEnvironmentInput=='environmentApi'">
-      <mat-form-field>
-        <mat-label>Environment control API</mat-label>
-        <!-- <input matInput [(ngModel)]="modelingInput['environmentInput']['environmentApi']['content']" /> -->
-        <input matInput [ngModel]="'http://127.0.0.1:5001'" />
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Environment Path</mat-label>
+        <input matInput [(ngModel)]="model.environment_path" />
       </mat-form-field>
-      <div class="apiForm">
-        <mat-icon matTooltip="A compliant environment API to control explorer agents." aria-hidden="false"
-          aria-label="Help icon" fontIcon="help"></mat-icon>
-        <button mat-raised-button class="proceed-button" color="primary"
-          (click)="uploadFile('environmentInput', 'environmentApi')"
-          [disabled]="modelingInput['environmentInput']['environmentApi']['content']==''">Proceeed
-          to Observation Transition Function Reconstruction</button>
+
+      <button mat-icon-button matTooltip="Python file implementing CustomParallelEnv">
+        <mat-icon>help</mat-icon>
+      </button>
+
+      <button mat-raised-button color="primary" (click)="onFileSelected('environment_path')">
+        Choose a file
+      </button>
+    </div>
+  </mat-expansion-panel>
+
+  <!-- ============================== -->
+  <!-- 2. Generated Environment -->
+  <!-- ============================== -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Generated Environment</mat-panel-title>
+      <mat-panel-description>World model and component functions</mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <!-- ================================= -->
+    <!-- 2.1 World Model -->
+    <!-- ================================= -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>World Model</mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <!-- ================================= -->
+      <!-- 2.1.1 JOPM -->
+      <!-- ================================= -->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>Joint Observation Prediction Model (JOPM)</mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <!-- AUTOENCODER -->
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>Autoencoder</mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div class="field-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Model Path</mat-label>
+              <input matInput [(ngModel)]="model.generated_environment.world_model.jopm.autoencoder.model" />
+            </mat-form-field>
+            <button mat-icon-button matTooltip="Path to the trained autoencoder model directory">
+              <mat-icon>help</mat-icon>
+            </button>
+            <button mat-raised-button color="primary"
+              (click)="onFileSelected('generated_environment.world_model.jopm.autoencoder.model')">
+              Choose a file
+            </button>
+          </div>
+
+          <div class="field-row">
+            <label>Hyperparameters JSON</label>
+            <button mat-icon-button matTooltip="Hyperparameters for the autoencoder training">
+              <mat-icon>help</mat-icon>
+            </button>
+            <button mat-raised-button color="primary"
+              (click)="openFileContent('generated_environment.world_model.jopm.autoencoder.hyperparameters', 'autoencoder')">
+              Load JSON file
+            </button>
+          </div>
+
+          <ngx-monaco-editor [options]="jsonEditorOptions" [ngModel]="this.autoencoderJson" (ngModelChange)="
+              this.autoencoderJson = $event
+            ">
+          </ngx-monaco-editor>
+
+          <div class="field-row">
+            <mat-form-field appearance="outline" class="small-field">
+              <mat-label>Max MSE</mat-label>
+              <input matInput type="number"
+                [(ngModel)]="model.generated_environment.world_model.jopm.autoencoder.max_mean_square_error" />
+            </mat-form-field>
+            <button mat-icon-button matTooltip="Maximum allowed mean square error for training">
+              <mat-icon>help</mat-icon>
+            </button>
+          </div>
+        </mat-expansion-panel>
+
+        <!-- RDLM -->
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>Recurrent Dynamics Latent Model (RDLM)</mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div class="field-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Model Path</mat-label>
+              <input matInput [(ngModel)]="model.generated_environment.world_model.jopm.rdlm.model" />
+            </mat-form-field>
+            <button mat-icon-button matTooltip="Path to the trained RDLM model directory">
+              <mat-icon>help</mat-icon>
+            </button>
+            <button mat-raised-button color="primary"
+              (click)="onFileSelected('generated_environment.world_model.jopm.rdlm.model')">
+              Choose a file
+            </button>
+          </div>
+
+          <div class="field-row">
+            <label>Hyperparameters JSON</label>
+            <button mat-icon-button matTooltip="Hyperparameters for the RDLM training">
+              <mat-icon>help</mat-icon>
+            </button>
+            <button mat-raised-button color="primary"
+              (click)="openFileContent('generated_environment.world_model.jopm.rdlm.hyperparameters', 'rdlm')">
+              Load JSON file
+            </button>
+          </div>
+
+          <ngx-monaco-editor [options]="jsonEditorOptions" [ngModel]="this.rdlmJson" (ngModelChange)="
+              this.rdlmJson = $event
+            ">
+          </ngx-monaco-editor>
+
+          <div class="field-row">
+            <mat-form-field appearance="outline" class="small-field">
+              <mat-label>Max MSE</mat-label>
+              <input matInput type="number"
+                [(ngModel)]="model.generated_environment.world_model.jopm.rdlm.max_mean_square_error" />
+            </mat-form-field>
+            <button mat-icon-button matTooltip="Maximum allowed mean square error for training">
+              <mat-icon>help</mat-icon>
+            </button>
+          </div>
+        </mat-expansion-panel>
+
+        <!-- Initial Observations -->
+        <div class="field-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Initial Joint Observations</mat-label>
+            <input matInput [(ngModel)]="model.generated_environment.world_model.jopm.initial_joint_observations" />
+          </mat-form-field>
+          <button mat-icon-button matTooltip="File containing initial joint observations">
+            <mat-icon>help</mat-icon>
+          </button>
+          <button mat-raised-button color="primary"
+            (click)="onFileSelected('generated_environment.world_model.jopm.initial_joint_observations')">
+            Choose a file
+          </button>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- WORLD MODEL METADATA -->
+      <div class="field-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Used Traces Path</mat-label>
+          <input matInput [(ngModel)]="model.generated_environment.world_model.used_traces_path" />
+        </mat-form-field>
+        <button mat-icon-button matTooltip="Directory containing traces used for training the world model">
+          <mat-icon>help</mat-icon>
+        </button>
       </div>
-    </div>
-
-    <div class="inputFileAndOverview" *ngIf="selectedEnvironmentInput=='environmentTraces'">
-
-      <mat-accordion multi>
-        <mat-expansion-panel [expanded]="true">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              {{modelingInput['environmentInput']['environmentTraces']['fullName']}}
-              <mat-icon matTooltip="A set of compliant environment traces" aria-hidden="false" aria-label="Help icon"
-                fontIcon="help"></mat-icon>
-            </mat-panel-title>
-
-            <div>
-              <input type="file" #fileInput (change)="onFileSelected($event, 'environmentInput', 'environmentTraces')"
-                style="display: none;">
-              <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
-            </div>
-
-          </mat-expansion-panel-header>
-
-          <ngx-monaco-editor [options]="editorOptions"
-            [(ngModel)]="modelingInput['environmentInput']['environmentTraces']['content']"></ngx-monaco-editor>
-
-        </mat-expansion-panel>
-      </mat-accordion>
-
-      <button mat-raised-button class="proceed-button" color="primary"
-        (click)="uploadFile('environmentInput', 'environmentTraces')"
-        [disabled]="modelingInput['environmentInput']['environmentTraces']['content']==''">Proceeed
-        to Observation Transition Function Reconstruction</button>
-    </div>
-
-    <div *ngIf="selectedEnvironmentInput=='environmentModel'">
-
-      <mat-accordion multi>
-        <mat-expansion-panel [expanded]="true">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              {{modelingInput['environmentInput']['environmentModel']['fullName']}}
-              <mat-icon matTooltip="A compliant Observation Transition Function Model" aria-hidden="false"
-                aria-label="Help icon" fontIcon="help"></mat-icon>
-            </mat-panel-title>
-
-            <div>
-              <input type="file" #fileInput (change)="onFileSelected($event, 'environmentInput', 'environmentModel')"
-                style="display: none;">
-              <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
-            </div>
-
-          </mat-expansion-panel-header>
-
-          <ngx-monaco-editor [options]="editorOptions"
-            [(ngModel)]="modelingInput['environmentInput']['environmentModel']['content']"></ngx-monaco-editor>
-
-        </mat-expansion-panel>
-      </mat-accordion>
-
-      <button mat-raised-button class="proceed-button" color="primary"
-        (click)="uploadFile('environmentInput', 'environmentModel')"
-        [disabled]="modelingInput['environmentInput']['environmentModel']['content']==''">Proceeed to
-        Observation Transition Function Reconstruction</button>
-    </div>
-
-  </mat-step>
-
-
-
-  <mat-step label="History-based Reward Function">
-    <mat-accordion class="example-headers-align" multi>
-      <mat-expansion-panel [expanded]="true">
-        <mat-expansion-panel-header>
-          <mat-panel-title> Assisting the building of an observation reward function from several </mat-panel-title>
-        </mat-expansion-panel-header>
-
-        <ul>
-          <li>If users already have a custom <mat-chip>Joint-Observation Prediction Model (JOPM)</mat-chip>, it can be
-            taken as an input.</li>
-          <li>Else, it generates a environment observation transition function based on traces (compliant with
-            <mat-chip color="accent" matTooltip="A set of compliant environment traces"
-              (click)="openLink('https://www.google.com')" class="clickable-chip">CybMASDE traces format</mat-chip>)
-            of agents interacting with the real/emulated environments.
-            <ul>
-              <li>If users already have a representative set of <mat-chip>Environment Traces</mat-chip>, then it can
-                be taken as an input.</li>
-              <li>Else, deployed agents in the environment will be used to generate traces for a sufficient period of
-                time.
-              </li>
-            </ul>
-          </li>
-        </ul>
-
-
-      </mat-expansion-panel>
-    </mat-accordion>
-
-
-
-    <mat-form-field>
-      <mat-label>Goal input</mat-label>
-      <mat-select [(ngModel)]="selectedGoalInput">
-        <mat-option *ngFor="let option of modelingInput['goalInput'] | keyvalue" [value]="option.key">
-          {{ $any(option.value)['fullName'] }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <div *ngIf="selectedGoalInput=='goalText'">
-      <mat-accordion multi>
-        <mat-expansion-panel [expanded]="true">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              {{modelingInput['goalInput']['goalText']['fullName']}}
-              <mat-icon matTooltip="A compliant Goal Text" aria-hidden="false" aria-label="Help icon"
-                fontIcon="help"></mat-icon>
-            </mat-panel-title>
-
-            <div>
-              <input type="file" #fileInput (change)="onFileSelected($event, 'goalInput', 'goalText')"
-                style="display: none;">
-              <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
-            </div>
-
-          </mat-expansion-panel-header>
-
-          <ngx-monaco-editor [options]="editorOptions"
-            [(ngModel)]="modelingInput['goalInput']['goalText']['content']"></ngx-monaco-editor>
-
-        </mat-expansion-panel>
-      </mat-accordion>
-
-      <button mat-raised-button class="proceed-button" color="primary" (click)="uploadFile('goalInput', 'goalText')"
-        [disabled]="modelingInput['goalInput']['goalText']['content']==''">Proceeed to Goal
-        Reconstruction</button>
-    </div>
-
-    <div *ngIf="selectedGoalInput=='goalStates'">
-      <mat-accordion multi>
-        <mat-expansion-panel [expanded]="true">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              {{modelingInput['goalInput']['goalStates']['fullName']}}
-              <mat-icon matTooltip="A compliant set of Sought States" aria-hidden="false" aria-label="Help icon"
-                fontIcon="help"></mat-icon>
-            </mat-panel-title>
-
-            <div>
-              <input type="file" #fileInput (change)="onFileSelected($event, 'goalInput', 'goalStates')"
-                style="display: none;">
-              <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
-            </div>
-
-          </mat-expansion-panel-header>
-
-          <ngx-monaco-editor [options]="editorOptions"
-            [(ngModel)]="modelingInput['goalInput']['goalStates']['content']"></ngx-monaco-editor>
-
-        </mat-expansion-panel>
-      </mat-accordion>
-
-      <button mat-raised-button class="proceed-button" color="primary" (click)="uploadFile('goalInput', 'goalStates')"
-        [disabled]="modelingInput['goalInput']['goalStates']['content']==''">Proceeed to Goal
-        Reconstruction</button>
-    </div>
-
-    <div *ngIf="selectedGoalInput=='goalModel'">
-      <mat-accordion multi>
-        <mat-expansion-panel [expanded]="true">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              {{modelingInput['goalInput']['goalModel']['fullName']}}
-              <mat-icon matTooltip="A compliant Reward Function Model" aria-hidden="false" aria-label="Help icon"
-                fontIcon="help"></mat-icon>
-            </mat-panel-title>
-
-            <div>
-              <input type="file" #fileInput (change)="onFileSelected($event, 'goalInput', 'goalModel')"
-                style="display: none;">
-              <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
-            </div>
-
-          </mat-expansion-panel-header>
-
-          <ngx-monaco-editor [options]="editorOptions"
-            [(ngModel)]="modelingInput['goalInput']['goalModel']['content']"></ngx-monaco-editor>
-
-        </mat-expansion-panel>
-      </mat-accordion>
-
-      <button mat-raised-button class="proceed-button" color="primary" (click)="uploadFile('goalInput', 'goalModel')"
-        [disabled]="modelingInput['goalInput']['goalModel']['content']==''">Proceeed to Goal
-        Reconstruction</button>
-    </div>
-
-  </mat-step>
-
-
-  <mat-step label="History-based Stop Function">
-
-    <mat-accordion class="example-headers-align" multi>
-      <mat-expansion-panel [expanded]="true">
-        <mat-expansion-panel-header>
-          <mat-panel-title> Assisting the building of an Organization Model </mat-panel-title>
-        </mat-expansion-panel-header>
-
-        <ul>
-          <li>If users already have a custom <mat-chip>History-based Stop Function Model</mat-chip>, it can be
-            taken as an input.</li>
-          <li>Else, the episode will end if it goes beyond configured max steps.
-          </li>
-        </ul>
-
-      </mat-expansion-panel>
-    </mat-accordion>
-
-
-    <mat-form-field>
-      <mat-label>Stopping function input</mat-label>
-      <mat-select [(ngModel)]="selectedStoppingInput">
-        <mat-option *ngFor="let option of modelingInput['stoppingInput'] | keyvalue" [value]="option.key">
-          {{ $any(option.value)['fullName'] }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-
-
-    <div *ngIf="selectedStoppingInput=='stopModel'">
-      <mat-accordion multi>
-        <mat-expansion-panel [expanded]="true">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              {{modelingInput['stoppingInput']['stopModel']['fullName']}}
-              <mat-icon matTooltip="A Python description of the constraints (alpha)" aria-hidden="false"
-                aria-label="Help icon" fontIcon="help"></mat-icon>
-            </mat-panel-title>
-
-            <div>
-              <input type="file" #fileInput (change)="onFileSelected($event, 'stoppingInput', 'stopModel')"
-                style="display: none;">
-              <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
-            </div>
-
-          </mat-expansion-panel-header>
-
-          <ngx-monaco-editor [options]="editorOptions"
-            [(ngModel)]="modelingInput['stoppingInput']['stopModel']['content']"></ngx-monaco-editor>
-
-        </mat-expansion-panel>
-      </mat-accordion>
-
-      <button mat-raised-button class="proceed-button" color="primary"
-        (click)="uploadFile('stoppingInput', 'stopModel')"
-        [disabled]="modelingInput['stoppingInput']['stopModel']['content']==''">Proceeed to
-        Constraint Model Reconstruction</button>
-    </div>
-
-  </mat-step>
-
-
-  <mat-step label="History-based Render Function">
-
-    <mat-accordion class="example-headers-align" multi>
-      <mat-expansion-panel [expanded]="true">
-        <mat-expansion-panel-header>
-          <mat-panel-title> Assisting the building of an Organization Model </mat-panel-title>
-        </mat-expansion-panel-header>
-
-        <ul>
-          <li>If users already have a custom <mat-chip>History-based Render Function Model</mat-chip>, it can be
-            taken as an input.</li>
-          <li>Else, observations will not be rendred graphically.
-          </li>
-        </ul>
-
-
-      </mat-expansion-panel>
-    </mat-accordion>
-
-
-    <mat-form-field>
-      <mat-label>History-based Render Function Model</mat-label>
-      <mat-select [(ngModel)]="selectedRenderingInput">
-        <mat-option *ngFor="let option of modelingInput['renderingInput'] | keyvalue" [value]="option.key">
-          {{ $any(option.value)['fullName'] }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <div *ngIf="selectedRenderingInput=='renderModel'">
-      <mat-accordion multi>
-        <mat-expansion-panel [expanded]="true">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              {{modelingInput['renderingInput']['renderModel']['fullName']}}
-              <mat-icon matTooltip="A Python description of the constraints (alpha)" aria-hidden="false"
-                aria-label="Help icon" fontIcon="help"></mat-icon>
-            </mat-panel-title>
-
-            <div>
-              <input type="file" #fileInput (change)="onFileSelected($event, 'renderingInput', 'renderModel')"
-                style="display: none;">
-              <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
-            </div>
-
-          </mat-expansion-panel-header>
-
-          <ngx-monaco-editor [options]="editorOptions"
-            [(ngModel)]="modelingInput['renderingInput']['renderModel']['content']"></ngx-monaco-editor>
-
-        </mat-expansion-panel>
-      </mat-accordion>
-
-      <button mat-raised-button class="proceed-button" color="primary"
-        (click)="uploadFile('renderingInput', 'renderModel')"
-        [disabled]="modelingInput['renderingInput']['renderModel']['content']==''">Proceeed to
-        Constraint Model Reconstruction</button>
-    </div>
-
-  </mat-step>
-
-
-
-  <mat-step label="Assembling">
-    Assembling the observation transition function, the reward function, and the constraints model into a MM-Problem.
-  </mat-step>
-
-  <mat-step label="Problem Model Output">
-    <mat-card appearance="outlined">
-      <mat-card-content>Constraint text overview</mat-card-content>
-    </mat-card>
-    <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="outputEnvironmentModel"></ngx-monaco-editor>
-  </mat-step>
-
-</mat-stepper>
-
-<!-- </mat-card> -->
+    </mat-expansion-panel>
+
+    <!-- ================================= -->
+    <!-- 2.2 Component Functions -->
+    <!-- ================================= -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Component Functions</mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <div class="field-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Component Functions Path</mat-label>
+          <input matInput [(ngModel)]="model.generated_environment.component_functions_path" />
+        </mat-form-field>
+        <button mat-icon-button matTooltip="Python file containing ComponentFunctions class">
+          <mat-icon>help</mat-icon>
+        </button>
+        <button mat-raised-button color="primary"
+          (click)="onFileSelected('generated_environment.component_functions_path')">
+          Choose a file
+        </button>
+      </div>
+    </mat-expansion-panel>
+  </mat-expansion-panel>
+</div>

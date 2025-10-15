@@ -13,6 +13,7 @@ from typing import Dict, Optional
 from world_model.transferring_process import TransferringProcess
 from world_model.environment_api import EnvironmentAPI
 from world_model.project_configuration import Configuration
+import argparse
 
 
 class Project:
@@ -105,13 +106,20 @@ class Project:
 
 if __name__ == '__main__':
 
+    parser = argparse.ArgumentParser(
+        description="Run a project with optional project path.")
+    parser.add_argument("--project_path", type=str,
+                        help="Path to the project directory")
+    args = parser.parse_args()
+
+    if args.project_path:
+        project_path = args.project_path
+    else:
+        project_path = os.path.join(
+            os.path.expanduser("~"), "Documents", "new_test")
+
     project = Project()
-
-    # project.save(os.path.join(
-    #     os.path.expanduser("~"), "Documents"), "new_test")
-
-    project.load(os.path.join(
-        os.path.expanduser("~"), "Documents", "new_test"))
+    project.load(project_path)
 
     try:
         project.run()

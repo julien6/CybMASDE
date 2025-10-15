@@ -1,0 +1,47 @@
+<div class="section">
+  <h3>Refining Configuration</h3>
+
+  <!-- ============================== -->
+  <!-- 1. Max Refinement Cycles -->
+  <!-- ============================== -->
+  <mat-expansion-panel expanded="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title>Maximum Refinement Cycles</mat-panel-title>
+      <mat-panel-description>Limit for iterative refinement loops</mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="small-field">
+        <mat-label>Max Refinement Cycles</mat-label>
+        <input matInput type="number" min="1" [(ngModel)]="refining.max_refinement_cycles"
+          (ngModelChange)="onValueChange('max_refinement_cycles', $event)" />
+      </mat-form-field>
+
+      <button mat-icon-button matTooltip="Maximum number of refinement cycles allowed before stopping">
+        <mat-icon>help</mat-icon>
+      </button>
+    </div>
+  </mat-expansion-panel>
+
+  <!-- ============================== -->
+  <!-- 2. Auto Continue Refinement -->
+  <!-- ============================== -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Automatic Refinement</mat-panel-title>
+      <mat-panel-description>Continue refinement until convergence or max cycles</mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <div class="field-row">
+      <mat-slide-toggle color="primary" [(ngModel)]="refining.auto_continue_refinement"
+        (change)="onValueChange('auto_continue_refinement', $event.checked)">
+        Enable Auto-Continue
+      </mat-slide-toggle>
+
+      <button mat-icon-button
+        matTooltip="If enabled, the refinement will automatically continue until convergence or reaching the maximum number of cycles">
+        <mat-icon>help</mat-icon>
+      </button>
+    </div>
+  </mat-expansion-panel>
+</div>

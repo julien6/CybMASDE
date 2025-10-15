@@ -1,5 +1,13 @@
 import { Injectable } from '@angular/core';
 
+declare global {
+  interface Window {
+    electronAPI?: {
+      openFileDialog: () => Promise<string | null>;
+    }
+  }
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -38,5 +46,13 @@ export class ElectronService {
     });
   }
 
+  async selectFile(): Promise<string | null> {
+    if (this.isElectron()) {
+      return await window.electronAPI!.openFileDialog();
+    } else {
+      console.warn("API Electron non disponible");
+      return null;
+    }
+  }
 
 }

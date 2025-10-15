@@ -1,15 +1,15 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { ConfigEditorService } from '../config-editor.service';
 import { ElectronService } from '../electron.service';
 
 @Component({
-  selector: 'app-analyzing',
-  templateUrl: './analyzing.component.html',
-  styleUrls: ['./analyzing.component.scss']
+  selector: 'app-training',
+  templateUrl: './training.component.html',
+  styleUrls: ['./training.component.scss']
 })
-export class AnalyzingComponent implements OnInit {
-  @Input() analyzing: any;
-  @Output() analyzingChange = new EventEmitter<any>();
+export class TrainingComponent implements OnInit {
+  @Input() training: any;
+  @Output() trainingChange = new EventEmitter<any>();
 
   jsonEditorOptions = {
     theme: 'vs-dark',
@@ -28,14 +28,14 @@ export class AnalyzingComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // Initialize editors with existing data (if already loaded)
+    // Initialize editors with existing training data (if already loaded)
     this.hyperparametersJson = JSON.stringify(
-      this.analyzing?.hyperparameters || {},
+      this.training?.hyperparameters || {},
       null,
       2
     );
     this.statisticsJson = JSON.stringify(
-      this.analyzing?.statistics || {},
+      this.training?.statistics || {},
       null,
       2
     );
@@ -43,15 +43,15 @@ export class AnalyzingComponent implements OnInit {
 
   /**
    * When user edits JSON directly in the editor.
-   * Only updates analyzing if JSON is valid.
+   * We only update the training if valid JSON.
    */
   onJsonChange(field: 'hyperparameters' | 'statistics', value: string) {
     try {
       const parsed = JSON.parse(value);
-      this.analyzing[field] = parsed;
-      this.analyzingChange.emit(this.analyzing);
+      this.training[field] = parsed;
+      this.trainingChange.emit(this.training);
     } catch {
-      // invalid JSON — ignore until valid
+      // invalid JSON, ignore
     }
   }
 
@@ -61,13 +61,14 @@ export class AnalyzingComponent implements OnInit {
   async onFileSelected(field_path: string) {
     const filePath = await this.electronService.selectFile();
     this.editorConfigService
-      .setValueByPath(this.analyzing, field_path, filePath as string)
-      .then((data) => (this.analyzing = data));
-    this.analyzingChange.emit(this.analyzing);
+      .setValueByPath(this.training, field_path, filePath as string)
+      .then((data) => (this.training = data));
+    // emit change so parent two-way binding updates
+    this.trainingChange.emit(this.training);
   }
 
   /**
-   * Opens and reads a JSON file, assigns parsed content into analyzing[field],
+   * Opens and reads a JSON file, assigns its parsed content into training[field],
    * and updates the associated editor.
    */
   openFileContent(field: 'hyperparameters' | 'statistics') {
@@ -80,16 +81,18 @@ export class AnalyzingComponent implements OnInit {
         try {
           const text = await file.text();
           const parsed = JSON.parse(text);
-          this.analyzing[field] = parsed;
+          this.training[field] = parsed;
 
-          this.editorConfigService.setValueByPath(this.analyzing, field, parsed).then((data) => {
-            this.analyzing = data;
-            this.analyzingChange.emit(this.analyzing);
+          this.editorConfigService.setValueByPath(this.training, field, parsed).then((data) => {
+            this.training = data;
+            this.trainingChange.emit(this.training);
           });
 
           if (field === 'hyperparameters')
             this.hyperparametersJson = JSON.stringify(parsed, null, 2);
           else this.statisticsJson = JSON.stringify(parsed, null, 2);
+          // propagate change to parent
+          this.trainingChange.emit(this.training);
         } catch (err) {
           console.error(`❌ Error reading JSON file for ${field}:`, err);
           alert(`Failed to read or parse JSON file: ${file.name}`);
@@ -99,15 +102,5 @@ export class AnalyzingComponent implements OnInit {
     input.click();
   }
 
-  /**
-   * Save current JSON from editor to a local file.
-   */
-  saveJson(field: 'hyperparameters' | 'statistics') {
-    const content = field === 'hyperparameters' ? this.hyperparametersJson : this.statisticsJson;
-    const blob = new Blob([content], { type: 'application/json' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `${field}.json`;
-    link.click();
-  }
+
 }

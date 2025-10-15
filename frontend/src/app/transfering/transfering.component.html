@@ -1,97 +1,81 @@
-<mat-card appearance="outlined">
-  <mat-stepper [linear]="false" #stepper>
+<div class="section">
+  <h3>Transferring Configuration</h3>
 
-    <ul>
-      <li>If users can adapt their emulated/real environment to the <mat-chip color="accent"
-          matTooltip="A proposed API for monitoring the deployment, updating, removal of agents and interacting externally with them"
-          (click)="openLink('https://www.google.com')" class="clickable-chip">CybMASDE Monitoring
-          API</mat-chip>, then the root <mat-chip>Environment API URL</mat-chip> can be taken as an input.
-      </li>
-      <li>Else, compliant <mat-chip color="accent"
-          matTooltip="Agents designed to explore their environment and collect traces when deployed in an environment"
-          (click)="openLink('https://www.google.com')" class="clickable-chip">Exploratory
-          Agents</mat-chip> can be designed and deployed manually to collect traces to be retrieved
-        afterward.</li>
-    </ul>
+  <mat-expansion-panel expanded="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title>Deployment and Data Transfer Settings</mat-panel-title>
+      <mat-panel-description>
+        Configure how CybMASDE interacts with the target environment
+      </mat-panel-description>
+    </mat-expansion-panel-header>
 
-    <mat-step label="Input">
-      <mat-card appearance="outlined">
-        <mat-card-content>Trained Joint-policy model</mat-card-content>
-      </mat-card>
-      <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
-      <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
-      <mat-icon matTooltip="A compliant trained joint-policy (.pth)" aria-hidden="false" aria-label="Help icon"
-        fontIcon="help"></mat-icon>
-      <mat-card appearance="outlined">
-        <mat-card-content>Enriched MOISE+MARL description</mat-card-content>
-      </mat-card>
-      <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
-      <button mat-raised-button color="primary" (click)="fileInput.click()">Choose a file</button>
-      <mat-icon matTooltip="A description of the enriched MOISE+MARL model" aria-hidden="false" aria-label="Help icon"
-        fontIcon="help"></mat-icon>
+    <!-- DEPLOY MODE -->
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="medium-field">
+        <mat-label>Deploy Mode</mat-label>
+        <mat-select [(ngModel)]="transferring.configuration.deploy_mode"
+          (selectionChange)="onValueChange('deploy_mode', $event.value)">
+          <mat-option value="DIRECT">Direct (policy embedded in agents)</mat-option>
+          <mat-option value="REMOTE">Remote (policy executed via CybMASDE)</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-icon-button matTooltip="Select how the learned policy is deployed:
+          - DIRECT: policy runs on agents.
+          - REMOTE: CybMASDE runs the policy and sends actions to agents.">
+        <mat-icon>help</mat-icon>
+      </button>
+    </div>
 
-      <mat-card appearance="outlined">
-        <mat-card-content>Curating approaches to include</mat-card-content>
-      </mat-card>
-      <section class="example-section">
-        <span class="example-list-section">
-          <mat-checkbox class="example-margin" [checked]="manualEnabled">
-            Manual-based curating
-          </mat-checkbox>
-          <mat-checkbox class="example-margin" [checked]="llmEnabled">
-            LLM-based curating (alpha)
-          </mat-checkbox>
-        </span>
-      </section>
+    <!-- ENVIRONMENT API -->
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Environment API</mat-label>
+        <input matInput [(ngModel)]="transferring.configuration.environment_api"
+          (ngModelChange)="onValueChange('environment_api', $event)" />
+      </mat-form-field>
+      <button mat-icon-button
+        matTooltip="Python file exposing the API used by CybMASDE to communicate with the real environment">
+        <mat-icon>help</mat-icon>
+      </button>
+      <button mat-raised-button color="primary" (click)="onFileSelected('environment_api')">
+        Choose File
+      </button>
+    </div>
 
-    </mat-step>
+    <!-- MAX NUMBER OF ITERATIONS -->
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="small-field">
+        <mat-label>Max Iterations</mat-label>
+        <input matInput type="number" min="1" [(ngModel)]="transferring.configuration.max_nb_iteration"
+          (ngModelChange)="onValueChange('max_nb_iteration', $event)" />
+      </mat-form-field>
+      <button mat-icon-button matTooltip="Maximum number of iterations before stopping the transferring process">
+        <mat-icon>help</mat-icon>
+      </button>
+    </div>
 
-    <mat-step label="Curating roles and goals">
-      <mat-card appearance="outlined">
-        <mat-card-content>Running transfering</mat-card-content>
-      </mat-card>
-      <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="runningOutput"></ngx-monaco-editor>
-    </mat-step>
+    <!-- TRAJECTORY BATCH SIZE -->
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="small-field">
+        <mat-label>Trajectory Batch Size</mat-label>
+        <input matInput type="number" min="1" [(ngModel)]="transferring.configuration.trajectory_batch_size"
+          (ngModelChange)="onValueChange('trajectory_batch_size', $event)" />
+      </mat-form-field>
+      <button mat-icon-button matTooltip="Number of trajectories collected from deployed agents in each batch">
+        <mat-icon>help</mat-icon>
+      </button>
+    </div>
 
-    <mat-step label="Assessing in simulation">
-      <mat-card appearance="outlined">
-        <mat-card-content>Running transfering</mat-card-content>
-      </mat-card>
-      <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="runningOutput"></ngx-monaco-editor>
-    </mat-step>
-
-    <mat-step label="Assessing in emulation">
-      <mat-card appearance="outlined">
-        <mat-card-content>Running packaging</mat-card-content>
-      </mat-card>
-      <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="runningOutput"></ngx-monaco-editor>
-      <button mat-raised-button color="primary">Get packages</button>
-      <mat-card appearance="outlined">
-        <mat-card-content>Running deployment</mat-card-content>
-      </mat-card>
-      <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="runningOutput"></ngx-monaco-editor>
-    </mat-step>
-
-    <mat-step label="Assessing in target environment">
-      <mat-card appearance="outlined">
-        <mat-card-content>Running packaging</mat-card-content>
-      </mat-card>
-      <button mat-raised-button color="primary">Get packages</button>
-      <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="runningOutput"></ngx-monaco-editor>
-      <mat-card appearance="outlined">
-        <mat-card-content>Running deployment</mat-card-content>
-      </mat-card>
-      <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="runningOutput"></ngx-monaco-editor>
-    </mat-step>
-
-    <mat-step label="Ouput">
-      <button mat-raised-button color="primary">Logs and statistics</button>
-      <mat-card appearance="outlined">
-        <mat-card-content>Logs and statistics overview</mat-card-content>
-      </mat-card>
-      <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="transferingOutput"></ngx-monaco-editor>
-    </mat-step>
-
-  </mat-stepper>
-
-</mat-card>
+    <!-- TRAJECTORY RETRIEVE FREQUENCY -->
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="small-field">
+        <mat-label>Trajectory Retrieve Frequency</mat-label>
+        <input matInput type="number" min="1" [(ngModel)]="transferring.configuration.trajectory_retrieve_frequency"
+          (ngModelChange)="onValueChange('trajectory_retrieve_frequency', $event)" />
+      </mat-form-field>
+      <button mat-icon-button matTooltip="Frequency (in cycles) of retrieving new trajectories from deployed agents">
+        <mat-icon>help</mat-icon>
+      </button>
+    </div>
+  </mat-expansion-panel>
+</div>

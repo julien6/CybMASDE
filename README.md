@@ -16,7 +16,7 @@ Its purpose is to produce **joint policies that are efficient, stable, and expla
 
 ## 🚀 Key Features
 
-* Structured project creation and validation (`init`,   `validate`)
+* Structured project creation and validation (`init`,    `validate`)
 * Automatic environment modelling via **World Models (VAE, LSTM, JOPM)** or manual modelling via **MCAS**
 * Multi-agent training with **MARLlib + Ray RLlib** (MAPPO, MADDPG, QMIX, etc.)
 * Native integration of **MOISE+MARL organizational constraints** (action masking, reward shaping)

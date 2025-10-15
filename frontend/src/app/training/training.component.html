@@ -1,0 +1,100 @@
+<div class="section">
+  <h3>Training Configuration</h3>
+
+  <!-- ============================== -->
+  <!-- 1. Hyperparameters -->
+  <!-- ============================== -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Hyperparameters</mat-panel-title>
+      <mat-panel-description>Algorithm and training parameters</mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <div class="field-row">
+      <label>Hyperparameters JSON</label>
+      <button mat-icon-button
+        matTooltip="JSON file containing all training hyperparameters (e.g. learning rate, thresholds, window size)">
+        <mat-icon>help</mat-icon>
+      </button>
+      <button mat-raised-button color="primary" (click)="openFileContent('hyperparameters')">
+        Load JSON file
+      </button>
+    </div>
+
+    <ngx-monaco-editor [options]="jsonEditorOptions" [(ngModel)]="hyperparametersJson"
+      (ngModelChange)="onJsonChange('hyperparameters', $event)">
+    </ngx-monaco-editor>
+  </mat-expansion-panel>
+
+  <!-- ============================== -->
+  <!-- 2. Organizational Specifications -->
+  <!-- ============================== -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Organizational Specifications</mat-panel-title>
+      <mat-panel-description>Organizational roles, missions, and constraints</mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Organizational Specifications Path</mat-label>
+        <input matInput [(ngModel)]="training.organizational_specifications" />
+      </mat-form-field>
+      <button mat-icon-button
+        matTooltip="Path to the folder containing the organizational specifications (organizational_specifications.json)">
+        <mat-icon>help</mat-icon>
+      </button>
+      <button mat-raised-button color="primary" (click)="onFileSelected('organizational_specifications')">
+        Choose Folder
+      </button>
+    </div>
+  </mat-expansion-panel>
+
+  <!-- ============================== -->
+  <!-- 3. Joint Policy -->
+  <!-- ============================== -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Joint Policy</mat-panel-title>
+      <mat-panel-description>Path to trained joint policy directory</mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Joint Policy Path</mat-label>
+        <input matInput [(ngModel)]="training.joint_policy" />
+      </mat-form-field>
+      <button mat-icon-button matTooltip="Path to the folder containing the trained joint policy">
+        <mat-icon>help</mat-icon>
+      </button>
+      <button mat-raised-button color="primary" (click)="onFileSelected('joint_policy')">
+        Choose Folder
+      </button>
+    </div>
+  </mat-expansion-panel>
+
+  <!-- ============================== -->
+  <!-- 4. Statistics -->
+  <!-- ============================== -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Statistics</mat-panel-title>
+      <mat-panel-description>Training performance indicators and metrics</mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <div class="field-row">
+      <label>Statistics JSON</label>
+      <button mat-icon-button
+        matTooltip="File containing the training statistics and metrics collected during experiments">
+        <mat-icon>help</mat-icon>
+      </button>
+      <button mat-raised-button color="primary" (click)="openFileContent('statistics')">
+        Load JSON file
+      </button>
+    </div>
+
+    <ngx-monaco-editor [options]="jsonEditorOptions" [(ngModel)]="statisticsJson"
+      (ngModelChange)="onJsonChange('statistics', $event)">
+    </ngx-monaco-editor>
+  </mat-expansion-panel>
+</div>

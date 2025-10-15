@@ -1,0 +1,60 @@
+<div class="section">
+  <h3>Common Project Configuration</h3>
+
+  <mat-expansion-panel expanded="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title>Project Metadata</mat-panel-title>
+      <mat-panel-description>General information and file paths</mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <!-- PROJECT NAME -->
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="medium-field">
+        <mat-label>Project Name</mat-label>
+        <input matInput [(ngModel)]="common.project_name" (ngModelChange)="onValueChange('project_name', $event)" />
+      </mat-form-field>
+      <button mat-icon-button matTooltip="Name of the CybMASDE project">
+        <mat-icon>help</mat-icon>
+      </button>
+    </div>
+
+    <!-- PROJECT DESCRIPTION -->
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Project Description</mat-label>
+        <textarea matInput rows="3" [(ngModel)]="common.project_description"
+          (ngModelChange)="onValueChange('project_description', $event)"></textarea>
+      </mat-form-field>
+      <button mat-icon-button matTooltip="A short description of the project (e.g., goal, environment, agents)">
+        <mat-icon>help</mat-icon>
+      </button>
+    </div>
+
+    <!-- LABEL MANAGER -->
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Label Manager Path</mat-label>
+        <input matInput [(ngModel)]="common.label_manager" (ngModelChange)="onValueChange('label_manager', $event)" />
+      </mat-form-field>
+
+      <button mat-icon-button matTooltip="Python file containing the LabelManager class implementation">
+        <mat-icon>help</mat-icon>
+      </button>
+
+      <button mat-raised-button color="primary" (click)="onFileSelected('label_manager')">
+        Choose File
+      </button>
+    </div>
+
+    <!-- PROJECT PATH (READ-ONLY) -->
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Project Path</mat-label>
+        <input matInput [value]="common.project_path" readonly class="readonly-field" />
+      </mat-form-field>
+      <button mat-icon-button matTooltip="Absolute path to the root directory of this CybMASDE project">
+        <mat-icon>help</mat-icon>
+      </button>
+    </div>
+  </mat-expansion-panel>
+</div>

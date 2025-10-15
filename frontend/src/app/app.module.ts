@@ -12,11 +12,13 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
-import { PhasesComponent } from './phases/phases.component';
+import { ActivitiesComponent } from './activities/activities.component';
 import { ModelingComponent } from './modeling/modeling.component';
-import { SolvingComponent } from './solving/solving.component';
+import { RefiningComponent } from './refining/refining.component';
+import { TrainingComponent } from './training/training.component';
 import { AnalyzingComponent } from './analyzing/analyzing.component';
-import { TransferingComponent } from './transfering/transfering.component';
+import { CommonComponent } from './common/common.component';
+import { TransferringComponent } from './transfering/transfering.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -40,7 +42,7 @@ import { MatTreeModule } from '@angular/material/tree';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
-import {MatChipsModule} from '@angular/material/chips';
+import { MatChipsModule } from '@angular/material/chips';
 import { MenuBarComponent } from './menu-bar/menu-bar.component';
 import { HomeComponent } from './home/home.component';
 import { AboutDialogComponent } from './about-dialog/about-dialog.component';
@@ -49,13 +51,15 @@ import { MatTooltipHtmlDirective } from './directives/mat-tooltip-html.directive
 @NgModule({
   declarations: [
     AppComponent,
-    PhasesComponent,
+    ActivitiesComponent,
     ModelingComponent,
-    SolvingComponent,
+    TrainingComponent,
+    RefiningComponent,
     HomeComponent,
+    CommonComponent,
     AnalyzingComponent,
     AboutDialogComponent,
-    TransferingComponent,
+    TransferringComponent,
     MenuBarComponent,
     MatTooltipHtmlDirective
   ],

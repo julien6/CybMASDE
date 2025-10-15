@@ -1,44 +1,43 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { ConfigEditorService } from '../config-editor.service';
+import { ElectronService } from '../electron.service';
 
 @Component({
-  selector: 'app-transfering',
+  selector: 'app-transferring',
   templateUrl: './transfering.component.html',
-  styleUrls: ['./transfering.component.css']
+  styleUrls: ['./transfering.component.scss']
 })
-export class TransferingComponent implements OnInit {
+export class TransferringComponent {
+  @Input() transferring: any;
+  @Output() transferringChange = new EventEmitter<any>();
 
-  private _formBuilder = inject(FormBuilder);
+  constructor(
+    private editorConfigService: ConfigEditorService,
+    private electronService: ElectronService
+  ) { }
 
-  transferingFormGroup = this._formBuilder.group({
-    transferingCtrl: ['', Validators.required],
-  });
-
-  constructor() { }
-
-  private selectedFileName = '';
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      this.selectedFileName = file.name;
-    }
+  /**
+   * Update a field in the transferring.configuration object and emit changes upward.
+   */
+  onValueChange(field: string, value: any) {
+    this.editorConfigService
+      .setValueByPath(this.transferring.configuration, field, value)
+      .then((updatedConfig) => {
+        this.transferring.configuration = updatedConfig;
+        this.transferringChange.emit(this.transferring);
+      });
   }
 
-  manualEnabled = false;
-  llmEnabled = false;
-
-  transferingOutput = "";
-
-  runningOutput = "";
-
-  editorOptions = { theme: 'vs-dark', language: 'python' };
-
-  ngOnInit() {
+  /**
+   * Open file chooser for selecting a Python API file.
+   */
+  async onFileSelected(field: string) {
+    const filePath = await this.electronService.selectFile();
+    this.editorConfigService
+      .setValueByPath(this.transferring.configuration, field, filePath as string)
+      .then((data) => {
+        this.transferring.configuration = data;
+        this.transferringChange.emit(this.transferring);
+      });
   }
-
-  openLink(url: string) {
-    window.open(url, '_blank');
-  }
-
 }

@@ -1,0 +1,27 @@
+<mat-stepper [linear]="false" orientation="horizontal" #stepper>
+
+  <mat-step label="Common">
+    <app-common [(common)]="this.config.common"></app-common>
+  </mat-step>
+
+  <mat-step label="Modeling">
+    <app-modeling [(model)]="this.config.modelling"></app-modeling>
+  </mat-step>
+
+  <mat-step label="Training">
+    <app-training [(training)]="config.training"></app-training>
+  </mat-step>
+
+  <mat-step label="Analyzing">
+    <app-analyzing [(analyzing)]="config.analyzing"></app-analyzing>
+  </mat-step>
+
+  <mat-step label="Refining">
+    <app-refining [(refining)]="config.refining"></app-refining>
+  </mat-step>
+
+  <mat-step label="Transferring">
+    <app-transferring [(transferring)]="config.transferring"></app-transferring>
+  </mat-step>
+
+</mat-stepper>

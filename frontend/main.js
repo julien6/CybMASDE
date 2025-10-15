@@ -172,6 +172,19 @@ app.whenReady().then(() => {
     event.sender.send('selected-file', result.canceled ? null : result.filePaths[0]);
   });
 
+  // Handler pour ouvrir la fenêtre native
+  ipcMain.handle('open-file-dialog', async () => {
+    const result = await dialog.showOpenDialog(mainWindow, {
+      properties: ['openFile'],
+      filters: [{ name: 'All Files', extensions: ['*'] }]
+    });
+    if (result.canceled) {
+      return null;
+    }
+    // Retourne un chemin absolu
+    return result.filePaths[0];
+  });
+
   ipcMain.on('close-app', () => {
     app.quit();
   });

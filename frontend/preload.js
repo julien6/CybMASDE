@@ -14,3 +14,7 @@ contextBridge.exposeInMainWorld('electron', {
   openFileDialog: () => ipcRenderer.send('open-file-dialog'),
   onFileSelected: (callback) => ipcRenderer.once('selected-file', (event, path) => callback(path)),
 });
+
+contextBridge.exposeInMainWorld('electronAPI', {
+  openFileDialog: () => ipcRenderer.invoke('open-file-dialog')
+});

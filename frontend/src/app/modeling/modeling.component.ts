@@ -1,141 +1,107 @@
-import { Component, ChangeDetectionStrategy, OnInit, inject } from '@angular/core';
-import { FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { environment } from '../../environments/environment';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { ModellingConfig } from '../models/config.model';
+import { ConfigEditorService } from '../config-editor.service';
+import { ElectronService } from '../electron.service';
 
 @Component({
   selector: 'app-modeling',
   templateUrl: './modeling.component.html',
-  styleUrls: ['./modeling.component.css']
+  styleUrls: ['./modeling.component.scss']
 })
-export class ModelingComponent implements OnInit {
+export class ModelingComponent {
+  @Input() model!: ModellingConfig;
+  @Output() modelChange = new EventEmitter<ModellingConfig>();
 
-  constructor(private http: HttpClient) { }
+  constructor(private editorConfigService: ConfigEditorService, private electronService: ElectronService) { }
 
-  private _formBuilder = inject(FormBuilder);
-
-  editorOptions = { theme: 'vs-dark', language: 'python' };
-
-  selectedEnvironmentInput = "environmentTraces"
-  selectedGoalInput = "goalModel"
-  selectedConstraintInput = "constraintModel"
-  selectedStoppingInput = "stopModel"
-  selectedRenderingInput = "renderModel"
-
-  modelingInput: any = {
-    "environmentInput": {
-      'environmentApi': { 'fullName': 'Environment API URL', 'content': '' },
-      'environmentTraces': { 'fullName': 'Environment Traces', 'content': '' },
-      'environmentModel': { 'fullName': 'Observation Transition Function Model', 'content': '' }
-    },
-    "goalInput": {
-      'goalText': { 'fullName': 'Goal Text (alpha)', 'content': '' },
-      'goalModel': { 'fullName': 'Reward Function Model', 'content': '' },
-      'goalStates': { 'fullName': 'Goal States', 'content': '' }
-    },
-    "constraintInput": {
-      'constraintText': { 'fullName': 'Constraint Text (alpha)', 'content': '' },
-      'constraintModel': { 'fullName': 'Constraint Model', 'content': '' },
-    },
-    "stoppingInput": {
-      'stopModel': { 'fullName': 'Stopping Criteria', 'content': '' }
-    },
-    "renderingInput": {
-      'renderModel': { 'fullName': 'Rendering Function Model', 'content': '' }
-    }
-  }
-
-  outputEnvironmentModel = ""
+  jsonEditorOptions = { theme: 'vs-dark', language: 'json', automaticLayout: true };
   selectedFile: File | null = null;
+  selectedFilePath: string | null = null;
 
-  onFileSelected(event: Event, inputCategory: string, inputType: string): void {
-    const input = event.target as HTMLInputElement;
-
-    if (input.files && input.files.length > 0) {
-      this.selectedFile = input.files[0];
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.modelingInput[inputCategory][inputType]['content'] = reader.result as string;
-      };
-      reader.readAsText(this.selectedFile);
-    }
-  }
-
-  // Fonction pour envoyer le fichier au serveur
-  uploadFile(inputCategory: string, inputType: string): void {
-    if (this.selectedFile) {
-      const reader = new FileReader();
-
-      // Lire le contenu du fichier comme texte
-      reader.onload = () => {
-        const fileContent = reader.result as string;
-
-        try {
-          // Convertir le texte en JSON
-          const traces = JSON.parse(fileContent);
-
-          // Envoyer les traces au backend
-          this.http.post('http://localhost:5001/modeling-transition-traces', traces, {
-            headers: new HttpHeaders({
-              'Content-Type': 'application/json'
-            })
-          }).subscribe(
-            response => {
-              console.log('Réponse du serveur:', response);
-            },
-            error => {
-              console.error('Erreur lors de l\'envoi des traces:', error);
-            }
-          );
-        } catch (error) {
-          console.error('Le fichier sélectionné n\'est pas un fichier JSON valide.', error);
-        }
-      };
-
-      // Lire le fichier
-      reader.readAsText(this.selectedFile);
-    }
-  }
-
-  openLink(url: string) {
-    window.open(url, '_blank');
-  }
+  // Local buffers for Monaco editors
+  autoencoderJson = '';
+  rdlmJson = '';
 
   ngOnInit() {
-    const d = `
-class ComponentFunctions:
-    def __init__(self, label_manager=None):
-        self.label_manager = label_manager
-        self.iteration = 0
-
-    def reward_fn(self, current_obs, action, next_obs):
-        # Example implementation of reward function
-        rewards = {}
-        for agent_id in current_obs:
-            # Here you would implement your logic to compute the reward
-            rewards[agent_id] = 0.5 + random.random(
-            ) * self.iteration  # Placeholder value
-        return rewards
-
-    def done_fn(self, current_obs, action, next_obs):
-        # Example implementation of done function
-        dones = {}
-        for agent_id in current_obs:
-            # Placeholder value
-            dones[agent_id] = False if self.iteration < 21 else True
-        self.iteration = 0 if self.iteration >= 21 else self.iteration + 1
-        return dones
-
-    def render_fn(self, current_obs, action, next_obs):
-        # Example implementation of render function
-        return None  # Placeholder for rendering logic
-
-    `;
-
-    this.modelingInput["goalInput"]["goalModel"]['content'] = d;
-    this.modelingInput["stoppingInput"]["stopModel"]['content'] = d;
-    this.modelingInput["renderingInput"]["renderModel"]['content'] = d;
+    // Initialize editor contents from model
+    if (this.model?.generated_environment?.world_model?.jopm) {
+      this.autoencoderJson = JSON.stringify(
+        this.model.generated_environment.world_model.jopm.autoencoder.hyperparameters || {},
+        null,
+        2
+      );
+      this.rdlmJson = JSON.stringify(
+        this.model.generated_environment.world_model.jopm.rdlm.hyperparameters || {},
+        null,
+        2
+      );
+    }
   }
 
+  /** Called when user edits the JSON directly in the editor */
+  onJsonChange(field: 'autoencoder' | 'rdlm', value: string) {
+    try {
+      const parsed = JSON.parse(value);
+      if (field === 'autoencoder') {
+        this.model.generated_environment.world_model.jopm.autoencoder.hyperparameters = parsed;
+      } else {
+        this.model.generated_environment.world_model.jopm.rdlm.hyperparameters = parsed;
+      }
+      this.modelChange.emit(this.model);
+    } catch {
+      // Invalid JSON, do not overwrite model yet
+    }
+  }
+
+  async onFileSelected(field_path: string) {
+    const filePath = await this.electronService.selectFile();
+    this.editorConfigService.setValueByPath(this.model, field_path, filePath as string).then((data) => {
+      this.model = data;
+      this.modelChange.emit(this.model);
+    });
+  }
+
+  /**
+   * Safe JSON parse helper for use from template expressions.
+   * Returns parsed object or an empty object on error.
+   */
+  parseJson(value: string): any {
+    try {
+      return value && value.trim() ? JSON.parse(value) : {};
+    } catch (e) {
+      // swallow parse errors and return an empty object to keep template stable
+      return {};
+    }
+  }
+
+  /**
+   * File chooser for JSON hyperparameter files.
+   * Reads, parses, and assigns content directly into the bound object.
+   */
+  openFileContent(path: string, field: 'autoencoder' | 'rdlm'): void {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json,application/json';
+    input.onchange = async (event: any) => {
+      const file = event.target.files[0];
+      if (file) {
+        try {
+          const text = await file.text();
+          const parsed = JSON.parse(text);
+          this.editorConfigService.setValueByPath(this.model, path, parsed).then((data) => {
+            this.model = data;
+            this.modelChange.emit(this.model);
+          });
+          // Update editor text
+          if (field === 'autoencoder') this.autoencoderJson = JSON.stringify(parsed, null, 2);
+          if (field === 'rdlm') this.rdlmJson = JSON.stringify(parsed, null, 2);
+        } catch (error) {
+          console.error(`❌ Error reading JSON file for ${path}:`, error);
+          alert(`Failed to read or parse JSON file: ${file.name}`);
+        }
+      }
+    };
+    input.click();
+  }
 
 }
