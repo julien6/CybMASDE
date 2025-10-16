@@ -2,6 +2,7 @@ import importlib
 import os
 import json
 import pty
+import shutil
 import signal
 import sys
 import time
@@ -35,9 +36,8 @@ class TransferringProcess(Process):
         self.mta_thread = None
         self.mta_lock = threading.Lock()
 
-
     def _signal_handler(self, signum, frame):
-        
+
         if signum == signal.SIGUSR1:
             try:
                 if sys.stdin.isatty():
@@ -46,8 +46,9 @@ class TransferringProcess(Process):
                 else:
 
                     continue_refinement = "n"
-                    pty.spawn(["python3", "ask.py"])
-                    while(True):
+                    pty.spawn(["python3", os.path.join(
+                        os.path.dirname(__file__), "ask.py")])
+                    while (True):
                         if os.path.exists("result.txt"):
                             with open("result.txt", "r") as f:
                                 continue_refinement = f.read().strip()
@@ -64,7 +65,7 @@ class TransferringProcess(Process):
                 os.kill(self.mta_process.pid, signal.SIGUSR1)
             else:
                 os.kill(self.mta_process.pid, signal.SIGUSR2)
-            
+
         else:
             print(
                 f"[TRN] Received signal {signum}, stopping TransferringProcess...")
@@ -80,6 +81,13 @@ class TransferringProcess(Process):
             try:
                 if hasattr(self, "mta_process") and self.mta_process is not None:
                     try:
+                        shutil.rmtree(os.path.join(os.path.dirname(os.path.join(
+                            __file__)), "../../api_server/exp_results"), ignore_errors=True)
+                        shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
+                            __file__)), "analysis_results"), ignore_errors=True)
+                        shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
+                            __file__)), "exp_results"), ignore_errors=True)
+
                         os.kill(self.mta_process.pid, signal.SIGTERM)
                     except Exception:
                         # fallback to terminate if kill fails

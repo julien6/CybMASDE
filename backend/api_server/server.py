@@ -18,6 +18,20 @@ except Exception as e:
     print(f"An error occurred: {e}")
 
 
+def add_a_recent_project(project_configuration):
+    recent_projects_file = f"{cybmasde_conf}/recent_projects.json"
+    recent_projects = []
+
+    if (os.path.exists(recent_projects_file)):
+        recent_projects = json.load(open(recent_projects_file, "r"))
+        recent_projects.remove({"project_name": project_configuration["common"]["project_name"],
+                               "project_path": project_configuration["common"]["project_path"]}) if {"project_name": project_configuration["common"]["project_name"], "project_path": project_configuration["common"]["project_path"]} in recent_projects else None
+        recent_projects = [{"project_name": project_configuration["common"]
+                            ["project_name"], "project_path": project_configuration["common"]["project_path"]}] + recent_projects
+
+    json.dump(recent_projects, open(recent_projects_file, "w+"))
+
+
 def replace_json_paths(obj, project_path):
     if isinstance(obj, dict):
         for k, v in obj.items():
@@ -164,6 +178,8 @@ def load_project():
                 json.dump(project_configuration.copy(), open(
                     "original_project_configuration.json", "w"))
 
+                add_a_recent_project(project_configuration)
+
                 replace_json_paths(project_configuration, project_path)
 
                 return jsonify(project_configuration)
@@ -199,6 +215,8 @@ def save_project_as():
         original_project_configuration = json.load(
             open("original_project_configuration.json", "r"))
 
+        add_a_recent_project(configuration)
+
         # # Delete the "original_project_configuration.json" file if it exists
         # try:
         #     os.remove("original_project_configuration.json")
@@ -209,8 +227,6 @@ def save_project_as():
 
         restore_json_paths(configuration, original_project_configuration,
                            configuration['common']['project_path'])
-
-        print("Restored Configuration: ", configuration)
 
         project_path = configuration["common"]["project_path"]
         json.dump(configuration, open(
@@ -239,6 +255,8 @@ def save_project():
         original_project_configuration = json.load(
             open("original_project_configuration.json", "r"))
 
+        add_a_recent_project(configuration)
+
         # # Delete the "original_project_configuration.json" file if it exists
         # try:
         #     os.remove("original_project_configuration.json")
@@ -249,8 +267,6 @@ def save_project():
 
         restore_json_paths(configuration, original_project_configuration,
                            configuration['common']['project_path'])
-
-        print("Restored Configuration: ", configuration)
 
         project_path = configuration["common"]["project_path"]
         json.dump(configuration, open(
@@ -280,6 +296,8 @@ def save_and_run():
         original_project_configuration = json.load(
             open("original_project_configuration.json", "r"))
 
+        add_a_recent_project(configuration)
+
         # # Delete the "original_project_configuration.json" file if it exists
         # try:
         #     os.remove("original_project_configuration.json")
@@ -290,8 +308,6 @@ def save_and_run():
 
         restore_json_paths(configuration, original_project_configuration,
                            configuration['common']['project_path'])
-
-        print("Restored Configuration: ", configuration)
 
         project_path = configuration["common"]["project_path"]
         json.dump(configuration, open(

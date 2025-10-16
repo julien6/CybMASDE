@@ -87,6 +87,7 @@ class MTAProcess(Process):
         self.componentFunctions = componentFunctions
         self.transferring_pid = transferring_pid
         self.continue_refinement = None
+        self.temporary_training_dir = None
 
     def _signal_handler(self, signum, frame):
         print(f"[MTA] Received signal {signum}, stopping MTAProcess...")
@@ -97,11 +98,24 @@ class MTAProcess(Process):
         except Exception as e:
             logger.warning(
                 f"[MTA] Failed to shutdown Ray in signal handler: {e}")
+
+        # Nettoyer le répertoire temporaire d’entraînement
+        try:
+            if self.temporary_training_dir and os.path.exists(self.temporary_training_dir):
+                shutil.rmtree(self.temporary_training_dir)
+                shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
+                    __file__)), "analysis_results"))
+                shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
+                    __file__)), "exp_results"))
+
+        except Exception as e:
+            logger.warning(f"Could not remove temporary directory: {e}")
+
         # exit the process
         sys.exit(0)
 
     def _signal_handler(self, signum, frame):
-        
+
         if signum == signal.SIGUSR1:
             self.continue_refinement = True
 
@@ -194,7 +208,8 @@ class MTAProcess(Process):
                     try:
                         os.kill(self.transferring_pid, signal.SIGUSR1)
                     except Exception as e:
-                        print(f"[MTA] Failed to send SIGUSR1 to {self.transferring_pid}: {e}")
+                        print(
+                            f"[MTA] Failed to send SIGUSR1 to {self.transferring_pid}: {e}")
 
                     while self.continue_refinement is None:
                         time.sleep(1)
@@ -209,6 +224,13 @@ class MTAProcess(Process):
         print("[MTA] MTA finished, loading the newly trained joint policy...")
         print("[MTA]", "="*30)
         print("")
+
+        shutil.rmtree(os.path.join(os.path.dirname(
+            self.temporary_training_dir), ignore_errors=True))
+        shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
+            __file__)), "analysis_results"), ignore_errors=True)
+        shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
+            __file__)), "exp_results"), ignore_errors=True)
 
         try:
             ray.shutdown()
@@ -661,10 +683,10 @@ class MTAProcess(Process):
         self.copy_folder(checkpoint_path_src, checkpoint_path_dest)
         print("[MTA] Joint policy saved in ", checkpoint_path_dest)
 
-        # Nettoyer le répertoire temporaire seulement après la copie réussie
         try:
-            shutil.rmtree(os.path.dirname(
-                os.path.dirname(checkpoint_parent_dir)))
+            self.temporary_training_dir = os.path.dirname(
+                os.path.dirname(checkpoint_path_src))
+            shutil.rmtree(self.temporary_training_dir)
         except Exception as e:
             logger.warning(f"Could not remove temporary directory: {e}")
 
