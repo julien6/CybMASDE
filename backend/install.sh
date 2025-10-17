@@ -63,7 +63,7 @@ pip install -e .
 
 cd ..
 
-cd world_models
+cd world_model
 
 pip install -e .
 
