@@ -79,6 +79,28 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
+def copy_folder(self, src, dest):
+    os.makedirs(dest, exist_ok=True)
+
+    # Vérifier que le répertoire source existe avant de copier
+    if os.path.exists(src):
+        for item in os.listdir(src):
+            src_item = os.path.join(src, item)
+            dest_item = os.path.join(dest, item)
+
+            if os.path.isdir(src_item):
+                # Copier récursivement les dossiers
+                shutil.copytree(src_item, dest_item, dirs_exist_ok=True)
+            else:
+                # Copier les fichiers
+                shutil.copy2(src_item, dest_item)
+    else:
+        logger.error(
+            f"Source checkpoint directory does not exist: {src}")
+        raise FileNotFoundError(
+            f"Source checkpoint directory not found: {src}")
+
+
 class MTAProcess(Process):
 
     def __init__(self, configuration: Configuration, componentFunctions: ComponentFunctions, transferring_pid: int = None):
@@ -275,7 +297,7 @@ class MTAProcess(Process):
         print("[MTA]", "-"*30)
         print("")
 
-        if not self.load_handcrafted_environment():
+        if not self.configuration.modelling.mode == "handcrafted" and self.load_handcrafted_environment():
             print(
                 "[MTA] No ready-to-use simulated environment path provided, generating a new one with World Models...")
 
@@ -695,27 +717,6 @@ class MTAProcess(Process):
         print("[MTA] TRAINING activity ended.")
         print("[MTA]", "-"*30)
         print("")
-
-    def copy_folder(self, src, dest):
-        os.makedirs(dest, exist_ok=True)
-
-        # Vérifier que le répertoire source existe avant de copier
-        if os.path.exists(src):
-            for item in os.listdir(src):
-                src_item = os.path.join(src, item)
-                dest_item = os.path.join(dest, item)
-
-                if os.path.isdir(src_item):
-                    # Copier récursivement les dossiers
-                    shutil.copytree(src_item, dest_item, dirs_exist_ok=True)
-                else:
-                    # Copier les fichiers
-                    shutil.copy2(src_item, dest_item)
-        else:
-            logger.error(
-                f"Source checkpoint directory does not exist: {src}")
-            raise FileNotFoundError(
-                f"Source checkpoint directory not found: {src}")
 
     def load_algorithm_default_hp(self, name: str) -> dict:
         """Load the algorithm with the best hyperparameters."""

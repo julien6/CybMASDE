@@ -6,6 +6,7 @@ from pathlib import Path
 import sys
 import time
 import shutil
+import argparse
 
 from dataclasses import dataclass
 from enum import Enum
@@ -13,7 +14,7 @@ from typing import Dict, Optional
 from world_model.transferring_process import TransferringProcess
 from world_model.environment_api import EnvironmentAPI
 from world_model.project_configuration import Configuration
-import argparse
+from world_model.mta_process import copy_folder
 
 
 class Project:
@@ -54,6 +55,29 @@ class Project:
         self.configuration.to_json(os.path.join(
             dst, "project_configuration.json"))
 
+    def create_project(self, name: str, description: str, output: Optional[str] = None, template: str = "handcrafted"):
+        """Create a new project with the given parameters."""
+        if output is not None:
+            project_path = os.path.join(output, name)
+        else:
+            project_path = os.path.join(os.path.expanduser("~"), name)
+
+        self.configuration.common.project_name = name
+        self.configuration.common.project_description = description
+        self.configuration.common.project_path = project_path
+        self.configuration.modelling.mode = template
+
+        src = Path(os.path.join(os.path.dirname(
+            os.path.abspath(__file__)), "project_example"))
+        dst = Path(project_path)
+        if os.path.exists(dst):
+            shutil.rmtree(dst)
+
+        copy_folder(src, dst)
+        print(f"Project '{name}' created at {dst} using template '{template}'")
+        self.configuration.to_json(os.path.join(
+            dst, "project_configuration.json"))
+
     def load(self, filePath: str):
         """Load the project from a file."""
         filePath = os.path.join(filePath, "project_configuration.json")
@@ -62,6 +86,19 @@ class Project:
                 f"Project configuration file not found: {filePath}")
         self.configuration = Configuration.from_json(filePath)
         print(f"Project loaded from {Path(filePath).parent}")
+
+    def validate(self, config: Configuration, args):
+        """Validate the project configuration."""
+        print("Validating project configuration...")
+        errors = config.validate(strict=getattr(args, "strict", False))
+        if errors:
+            print("Validation errors found:")
+            for error in errors:
+                print(f"- {error}")
+            if not getattr(args, "quiet", False):
+                print("Please fix the above errors.")
+        else:
+            print("Project configuration is valid.")
 
     @classmethod
     def from_dict(cls, data: Dict):

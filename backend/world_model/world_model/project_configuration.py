@@ -55,6 +55,7 @@ class GeneratedEnvironment:
 @dataclass
 class Modelling:
     """Phase 1: modeling."""
+    mode: str = "handcrafted"  # "handcrafted" or "generated", handcrafted by default
     environment_path: Optional[str] = None
     generated_environment: Optional[GeneratedEnvironment] = None
 

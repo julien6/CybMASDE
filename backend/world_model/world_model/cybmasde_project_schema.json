@@ -1,0 +1,296 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://cybmasde.org/schemas/project_configuration.json",
+    "title": "CybMASDE Project Configuration Schema",
+    "description": "Validation schema for CybMASDE project_configuration.json files.",
+    "type": "object",
+    "required": [
+        "common",
+        "modelling",
+        "training",
+        "analyzing",
+        "transferring",
+        "refining"
+    ],
+    "properties": {
+        "common": {
+            "type": "object",
+            "required": [
+                "project_name",
+                "project_description",
+                "label_manager",
+                "project_path"
+            ],
+            "properties": {
+                "project_name": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "project_description": {
+                    "type": "string"
+                },
+                "label_manager": {
+                    "type": "string"
+                },
+                "project_path": {
+                    "type": "string"
+                }
+            }
+        },
+        "modelling": {
+            "type": "object",
+            "required": [
+                "mode",
+                "environment_path",
+                "generated_environment"
+            ],
+            "properties": {
+                "mode": {
+                    "type": "string",
+                    "enum": [
+                        "handcrafted",
+                        "generated"
+                    ]
+                },
+                "environment_path": {
+                    "type": "string"
+                },
+                "generated_environment": {
+                    "type": "object",
+                    "required": [
+                        "world_model",
+                        "component_functions_path"
+                    ],
+                    "properties": {
+                        "component_functions_path": {
+                            "type": "string"
+                        },
+                        "world_model": {
+                            "type": "object",
+                            "required": [
+                                "jopm",
+                                "statistics",
+                                "used_traces_path"
+                            ],
+                            "properties": {
+                                "statistics": {
+                                    "type": "string"
+                                },
+                                "used_traces_path": {
+                                    "type": "string"
+                                },
+                                "jopm": {
+                                    "type": "object",
+                                    "required": [
+                                        "autoencoder",
+                                        "rdlm",
+                                        "initial_joint_observations"
+                                    ],
+                                    "properties": {
+                                        "initial_joint_observations": {
+                                            "type": "string"
+                                        },
+                                        "autoencoder": {
+                                            "type": "object",
+                                            "required": [
+                                                "statistics",
+                                                "model",
+                                                "hyperparameters",
+                                                "max_mean_square_error"
+                                            ],
+                                            "properties": {
+                                                "statistics": {
+                                                    "type": "string"
+                                                },
+                                                "model": {
+                                                    "type": "string"
+                                                },
+                                                "hyperparameters": {
+                                                    "type": [
+                                                        "string",
+                                                        "object"
+                                                    ]
+                                                },
+                                                "max_mean_square_error": {
+                                                    "type": [
+                                                        "number",
+                                                        "string"
+                                                    ],
+                                                    "pattern": "^(inf|[0-9.]+)$"
+                                                }
+                                            }
+                                        },
+                                        "rdlm": {
+                                            "type": "object",
+                                            "required": [
+                                                "statistics",
+                                                "model",
+                                                "hyperparameters",
+                                                "max_mean_square_error"
+                                            ],
+                                            "properties": {
+                                                "statistics": {
+                                                    "type": "string"
+                                                },
+                                                "model": {
+                                                    "type": "string"
+                                                },
+                                                "hyperparameters": {
+                                                    "type": [
+                                                        "string",
+                                                        "object"
+                                                    ]
+                                                },
+                                                "max_mean_square_error": {
+                                                    "type": [
+                                                        "number",
+                                                        "string"
+                                                    ],
+                                                    "pattern": "^(inf|[0-9.]+)$"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "training": {
+            "type": "object",
+            "required": [
+                "hyperparameters",
+                "organizational_specifications",
+                "joint_policy",
+                "statistics"
+            ],
+            "properties": {
+                "hyperparameters": {
+                    "type": [
+                        "string",
+                        "object"
+                    ]
+                },
+                "organizational_specifications": {
+                    "type": "string"
+                },
+                "joint_policy": {
+                    "type": "string"
+                },
+                "statistics": {
+                    "type": [
+                        "string",
+                        "object"
+                    ]
+                }
+            }
+        },
+        "analyzing": {
+            "type": "object",
+            "required": [
+                "hyperparameters",
+                "statistics",
+                "figures_path",
+                "post_training_trajectories_path",
+                "inferred_organizational_specifications"
+            ],
+            "properties": {
+                "hyperparameters": {
+                    "type": [
+                        "string",
+                        "object"
+                    ]
+                },
+                "statistics": {
+                    "type": [
+                        "string",
+                        "object"
+                    ]
+                },
+                "figures_path": {
+                    "type": "string"
+                },
+                "post_training_trajectories_path": {
+                    "type": "string"
+                },
+                "inferred_organizational_specifications": {
+                    "type": "string"
+                }
+            }
+        },
+        "transferring": {
+            "type": "object",
+            "required": [
+                "configuration"
+            ],
+            "properties": {
+                "configuration": {
+                    "type": [
+                        "string",
+                        "object"
+                    ],
+                    "description": "Transfer configuration or path to JSON file.",
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "object",
+                            "required": [
+                                "deploy_mode",
+                                "environment_api",
+                                "max_nb_iteration",
+                                "trajectory_batch_size",
+                                "trajectory_retrieve_frequency"
+                            ],
+                            "properties": {
+                                "deploy_mode": {
+                                    "type": "string",
+                                    "enum": [
+                                        "direct",
+                                        "remote",
+                                        "DIRECT",
+                                        "REMOTE"
+                                    ]
+                                },
+                                "environment_api": {
+                                    "type": "string"
+                                },
+                                "max_nb_iteration": {
+                                    "type": "integer",
+                                    "minimum": 1
+                                },
+                                "trajectory_batch_size": {
+                                    "type": "integer",
+                                    "minimum": 1
+                                },
+                                "trajectory_retrieve_frequency": {
+                                    "type": "integer",
+                                    "minimum": 1
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "refining": {
+            "type": "object",
+            "required": [
+                "max_refinement_cycles",
+                "auto_continue_refinement"
+            ],
+            "properties": {
+                "max_refinement_cycles": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "auto_continue_refinement": {
+                    "type": "boolean"
+                }
+            }
+        }
+    }
+}

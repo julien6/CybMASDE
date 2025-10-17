@@ -154,6 +154,10 @@ def main():
         if args.command == "init":
             project.create_project(args)
         elif args.command == "validate":
+
+            # p_val.add_argument("-q", "--quiet", action="store_true")
+            # p_val.add_argument("--strict", action="store_true")
+
             project.validate(config, args)
         elif args.command == "run":
             project.run(config, args)
