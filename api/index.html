@@ -8,19 +8,25 @@
       
       
       
+        <link rel="canonical" href="https://cybmasde.example.com/api/">
       
       
+        <link rel="prev" href="../architecture/">
       
-      <link rel="icon" href="/assets/favicon.png">
+      
+        <link rel="next" href="../contributing/">
+      
+      
+      <link rel="icon" href="../assets/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
     
     
       
-        <title>CybMASDE Wiki</title>
+        <title>API - CybMASDE Wiki</title>
       
     
     
-      <link rel="stylesheet" href="/assets/stylesheets/main.84d31ad4.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.84d31ad4.min.css">
       
       
 
@@ -39,7 +45,7 @@
       
     
     
-    <script>__md_scope=new URL("/",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -57,6 +63,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#api-documentation" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -69,9 +80,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="/." title="CybMASDE Wiki" class="md-header__button md-logo" aria-label="CybMASDE Wiki" data-md-component="logo">
+    <a href=".." title="CybMASDE Wiki" class="md-header__button md-logo" aria-label="CybMASDE Wiki" data-md-component="logo">
       
-  <img src="/assets/favicon.png" alt="logo">
+  <img src="../assets/favicon.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -88,7 +99,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              
+              API
             
           </span>
         </div>
@@ -166,9 +177,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="/." title="CybMASDE Wiki" class="md-nav__button md-logo" aria-label="CybMASDE Wiki" data-md-component="logo">
+    <a href=".." title="CybMASDE Wiki" class="md-nav__button md-logo" aria-label="CybMASDE Wiki" data-md-component="logo">
       
-  <img src="/assets/favicon.png" alt="logo">
+  <img src="../assets/favicon.png" alt="logo">
 
     </a>
     CybMASDE Wiki
@@ -183,7 +194,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   
@@ -205,7 +216,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/introduction/" class="md-nav__link">
+      <a href="../introduction/" class="md-nav__link">
         
   
   
@@ -227,7 +238,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/installation/" class="md-nav__link">
+      <a href="../installation/" class="md-nav__link">
         
   
   
@@ -249,7 +260,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/getting-started/" class="md-nav__link">
+      <a href="../getting-started/" class="md-nav__link">
         
   
   
@@ -271,7 +282,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/usage/" class="md-nav__link">
+      <a href="../usage/" class="md-nav__link">
         
   
   
@@ -293,7 +304,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/architecture/" class="md-nav__link">
+      <a href="../architecture/" class="md-nav__link">
         
   
   
@@ -312,10 +323,32 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="/api/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    API
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -326,6 +359,113 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#base-url" class="md-nav__link">
+    <span class="md-ellipsis">
+      Base URL
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      Endpoints
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Endpoints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-get-resource" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Get Resource
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-create-resource" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Create Resource
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-update-resource" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Update Resource
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-delete-resource" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Delete Resource
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error Handling
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conclusion
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -337,7 +477,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/contributing/" class="md-nav__link">
+      <a href="../contributing/" class="md-nav__link">
         
   
   
@@ -359,7 +499,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/changelog/" class="md-nav__link">
+      <a href="../changelog/" class="md-nav__link">
         
   
   
@@ -381,7 +521,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/faq/" class="md-nav__link">
+      <a href="../faq/" class="md-nav__link">
         
   
   
@@ -403,7 +543,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/glossary/" class="md-nav__link">
+      <a href="../glossary/" class="md-nav__link">
         
   
   
@@ -425,7 +565,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/commands/" class="md-nav__link">
+      <a href="../commands/" class="md-nav__link">
         
   
   
@@ -457,6 +597,103 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#base-url" class="md-nav__link">
+    <span class="md-ellipsis">
+      Base URL
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      Endpoints
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Endpoints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-get-resource" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Get Resource
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-create-resource" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Create Resource
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-update-resource" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Update Resource
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-delete-resource" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Delete Resource
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error Handling
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conclusion
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -468,8 +705,121 @@
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset">
                 
-  <h1>404 - Not found</h1>
+                  
 
+
+
+<h1 id="api-documentation">API Documentation<a class="headerlink" href="#api-documentation" title="Permanent link">&para;</a></h1>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>This document provides detailed information about the API endpoints available in the CybMASDE project. Each endpoint is described with its purpose, parameters, and expected responses.</p>
+<h2 id="base-url">Base URL<a class="headerlink" href="#base-url" title="Permanent link">&para;</a></h2>
+<p>The base URL for all API requests is:</p>
+<div class="codehilite"><pre><span></span><code>https://api.cybmasde.example.com/v1
+</code></pre></div>
+
+<h2 id="endpoints">Endpoints<a class="headerlink" href="#endpoints" title="Permanent link">&para;</a></h2>
+<h3 id="1-get-resource">1. Get Resource<a class="headerlink" href="#1-get-resource" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Endpoint:</strong> <code>/resource</code></li>
+<li><strong>Method:</strong> <code>GET</code></li>
+<li><strong>Description:</strong> Retrieves a list of resources.</li>
+<li><strong>Parameters:</strong></li>
+<li><code>limit</code> (optional): Number of resources to return.</li>
+<li><code>offset</code> (optional): Offset for pagination.</li>
+<li><strong>Response:</strong></li>
+<li><strong>200 OK</strong>
+    <code>json
+    {
+      "data": [
+        {
+          "id": "1",
+          "name": "Resource 1"
+        },
+        {
+          "id": "2",
+          "name": "Resource 2"
+        }
+      ],
+      "meta": {
+        "total": 2
+      }
+    }</code></li>
+</ul>
+<h3 id="2-create-resource">2. Create Resource<a class="headerlink" href="#2-create-resource" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Endpoint:</strong> <code>/resource</code></li>
+<li><strong>Method:</strong> <code>POST</code></li>
+<li><strong>Description:</strong> Creates a new resource.</li>
+<li><strong>Parameters:</strong></li>
+<li><code>name</code> (required): The name of the resource.</li>
+<li><strong>Request Body:</strong>
+  <code>json
+  {
+    "name": "New Resource"
+  }</code></li>
+<li><strong>Response:</strong></li>
+<li><strong>201 Created</strong>
+    <code>json
+    {
+      "id": "3",
+      "name": "New Resource"
+    }</code></li>
+</ul>
+<h3 id="3-update-resource">3. Update Resource<a class="headerlink" href="#3-update-resource" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Endpoint:</strong> <code>/resource/{id}</code></li>
+<li><strong>Method:</strong> <code>PUT</code></li>
+<li><strong>Description:</strong> Updates an existing resource.</li>
+<li><strong>Parameters:</strong></li>
+<li><code>id</code> (required): The ID of the resource to update.</li>
+<li><strong>Request Body:</strong>
+  <code>json
+  {
+    "name": "Updated Resource"
+  }</code></li>
+<li><strong>Response:</strong></li>
+<li><strong>200 OK</strong>
+    <code>json
+    {
+      "id": "3",
+      "name": "Updated Resource"
+    }</code></li>
+</ul>
+<h3 id="4-delete-resource">4. Delete Resource<a class="headerlink" href="#4-delete-resource" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Endpoint:</strong> <code>/resource/{id}</code></li>
+<li><strong>Method:</strong> <code>DELETE</code></li>
+<li><strong>Description:</strong> Deletes a resource.</li>
+<li><strong>Parameters:</strong></li>
+<li><code>id</code> (required): The ID of the resource to delete.</li>
+<li><strong>Response:</strong></li>
+<li><strong>204 No Content</strong></li>
+</ul>
+<h2 id="error-handling">Error Handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h2>
+<p>All API responses include a standard error format:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;error&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;RESOURCE_NOT_FOUND&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The requested resource was not found.&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>This API documentation provides a comprehensive overview of the available endpoints in the CybMASDE project. For further assistance, please refer to the <a href="../contributing/">Contributing</a> section or contact the development team.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
               </article>
             </div>
           
@@ -532,10 +882,10 @@
     
     
       
-      <script id="__config" type="application/json">{"base": "/", "features": [], "search": "/assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="/assets/javascripts/bundle.f55a23d4.min.js"></script>
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
       
     
   </body>
