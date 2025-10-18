@@ -81,14 +81,14 @@ class TransferringProcess(Process):
             try:
                 if hasattr(self, "mta_process") and self.mta_process is not None:
                     try:
-                        shutil.rmtree(os.path.join(os.path.dirname(os.path.join(
-                            __file__)), "../../api_server/exp_results"), ignore_errors=True)
-                        shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
-                            __file__)), "analysis_results"), ignore_errors=True)
-                        shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
-                            __file__)), "exp_results"), ignore_errors=True)
-
                         os.kill(self.mta_process.pid, signal.SIGTERM)
+                        shutil.rmtree(os.path.join(os.path.dirname(os.path.join(
+                            __file__)), "../../api_server/exp_results"))
+                        shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
+                            __file__)), "analysis_results"))
+                        shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
+                            __file__)), "exp_results"))
+
                     except Exception:
                         # fallback to terminate if kill fails
                         try:

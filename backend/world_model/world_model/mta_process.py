@@ -79,7 +79,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-def copy_folder(self, src, dest):
+def copy_folder(src, dest):
     os.makedirs(dest, exist_ok=True)
 
     # Vérifier que le répertoire source existe avant de copier
@@ -247,12 +247,16 @@ class MTAProcess(Process):
         print("[MTA]", "="*30)
         print("")
 
-        shutil.rmtree(os.path.join(os.path.dirname(
-            self.temporary_training_dir), ignore_errors=True))
-        shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
-            __file__)), "analysis_results"), ignore_errors=True)
-        shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
-            __file__)), "exp_results"), ignore_errors=True)
+        try:
+            shutil.rmtree(os.path.join(os.path.dirname(
+                self.temporary_training_dir)))
+            shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
+                __file__)), "analysis_results"))
+            shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
+                __file__)), "exp_results"))
+        except Exception as e:
+            # ignore errors during cleanup but log a warning for visibility
+            logger.warning(f"[MTA] Error during final cleanup: {e}")
 
         try:
             ray.shutdown()
@@ -297,7 +301,7 @@ class MTAProcess(Process):
         print("[MTA]", "-"*30)
         print("")
 
-        if not self.configuration.modelling.mode == "handcrafted" and self.load_handcrafted_environment():
+        if self.configuration.modelling.mode != "handcrafted" and not self.load_handcrafted_environment():
             print(
                 "[MTA] No ready-to-use simulated environment path provided, generating a new one with World Models...")
 
@@ -702,7 +706,7 @@ class MTAProcess(Process):
         except Exception as e:
             logger.warning(f"Could not remove {checkpoint_path_dest}: {e}")
 
-        self.copy_folder(checkpoint_path_src, checkpoint_path_dest)
+        copy_folder(checkpoint_path_src, checkpoint_path_dest)
         print("[MTA] Joint policy saved in ", checkpoint_path_dest)
 
         try:
@@ -791,26 +795,29 @@ class MTAProcess(Process):
                     num_gpus=0,
                     stop_iters=1,
                     checkpoint_end=False)
-
-        # Remove old analysis results if any
-        shutil.rmtree(os.path.join(self.configuration.common.
-                                   project_path, self.configuration.analyzing.post_training_trajectories_path), ignore_errors=True)
-        shutil.rmtree(os.path.join(self.configuration.common.
-                                   project_path, self.configuration.analyzing.figures_path), ignore_errors=True)
-        shutil.rmtree(os.path.join(self.configuration.common.
-                                   project_path, self.configuration.analyzing.post_training_trajectories_path), ignore_errors=True)
+        try:
+            # Remove old analysis results if any
+            shutil.rmtree(os.path.join(self.configuration.common.
+                                       project_path, self.configuration.analyzing.post_training_trajectories_path))
+            shutil.rmtree(os.path.join(self.configuration.common.
+                                       project_path, self.configuration.analyzing.figures_path))
+            shutil.rmtree(os.path.join(self.configuration.common.
+                                       project_path, self.configuration.analyzing.post_training_trajectories_path))
+        except Exception as e:
+            # ignore errors during cleanup but log a warning for visibility
+            logger.warning(f"[MTA] Error during final cleanup: {e}")
 
         # Copy the figures to the project folder
-        self.copy_folder(os.path.join(os.path.dirname(os.path.abspath(__file__)), "analysis_results", "figures"), os.path.join(
+        copy_folder(os.path.join(os.path.dirname(os.path.abspath(__file__)), "analysis_results", "figures"), os.path.join(
             self.configuration.common.project_path, self.configuration.analyzing.figures_path))
 
         # Copy the trajectories to the project folder
-        self.copy_folder(os.path.join(os.path.dirname(os.path.abspath(__file__)), "analysis_results", "trajectories"), os.path.join(self.configuration.common.
-                                                                                                                                    project_path, self.configuration.analyzing.post_training_trajectories_path))
+        copy_folder(os.path.join(os.path.dirname(os.path.abspath(__file__)), "analysis_results", "trajectories"), os.path.join(self.configuration.common.
+                                                                                                                               project_path, self.configuration.analyzing.post_training_trajectories_path))
 
         # Copy the inferred organizational specifications to the project folder
-        self.copy_folder(os.path.join(os.path.dirname(os.path.abspath(__file__)), "analysis_results", "inferred_organizational_specifications"),
-                         os.path.join(self.configuration.common.project_path, self.configuration.analyzing.inferred_organizational_specifications))
+        copy_folder(os.path.join(os.path.dirname(os.path.abspath(__file__)), "analysis_results", "inferred_organizational_specifications"),
+                    os.path.join(self.configuration.common.project_path, self.configuration.analyzing.inferred_organizational_specifications))
 
         # inferred_roles_summary = json.load(open(
         #     "/home/julien/Documents/CybMASDE/backend/world_model/world_model/inferred_organizational_specifications/inferred_roles_summary.json", "r"))
@@ -822,10 +829,14 @@ class MTAProcess(Process):
                                            self.configuration.analyzing.inferred_organizational_specifications, "inferred_goals_summary.json"), "r"))
 
         # Delete the temporary analysis_results folder
-        shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
-            __file__)), "analysis_results"), ignore_errors=True)
-        shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
-            __file__)), "exp_results"), ignore_errors=True)
+        try:
+            shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
+                __file__)), "analysis_results"))
+            shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
+                __file__)), "exp_results"))
+        except Exception as e:
+            # ignore errors during cleanup but log a warning for visibility
+            logger.warning(f"[MTA] Error during final cleanup: {e}")
 
         self.generate_organizational_model(
             inferred_roles_summary, inferred_goals_summary)

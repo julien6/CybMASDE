@@ -1,0 +1,8 @@
+# requirements.txt
+
+mkdocs
+mkdocs-material
+pymdown-extensions
+markdown-include
+watchdog
+mkdocs-mermaid2-plugin

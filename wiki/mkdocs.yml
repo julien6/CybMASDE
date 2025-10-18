@@ -1,1 +1,45 @@
-site_name: My Docs
+site_name: CybMASDE Wiki
+site_url: https://cybmasde.example.com
+theme:
+  name: material
+  logo: assets/favicon.png
+  favicon: assets/favicon.png
+
+nav:
+  - Home: index.md
+  - Introduction: introduction.md
+  - Installation: installation.md
+  - Getting Started: getting-started.md
+  - CLI API: cli_reference.md
+  - GUI Reference: gui_reference.md
+  - Library API: lib_reference.md
+  - Architecture: architecture.md
+  - Contributing: contributing.md
+  - Changelog: changelog.md
+  - FAQ: faq.md
+  - Glossary: glossary.md
+
+markdown_extensions:
+  - admonition
+  - codehilite
+  - toc:
+      permalink: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/yourusername/cybmasde
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/yourusername
+
+plugins:
+  - search
+  - mermaid2
+
+markdown_extensions:
+  - pymdownx.superfences:
+        # make exceptions to highlighting of code:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:mermaid2.fence_mermaid_custom
