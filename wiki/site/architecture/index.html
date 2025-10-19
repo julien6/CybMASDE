@@ -396,11 +396,13 @@
 <article class="md-content__inner md-typeset">
 <h1 id="architecture">Architecture</h1>
 <p>CybMASDE is designed as a <strong>modular, extensible, and hybrid architecture</strong> that unifies simulation, learning, analysis, and deployment in a coherent multi-agent development environment.</p>
-<p>This section introduces:
-* The <strong>MAMAD conceptual framework</strong>
-* The <strong>software modules</strong> (Modeling, Training, Analyzing, Transferring, Refining)
-* The <strong>internal architecture</strong> (backend, frontend, and CLI)
-* The <strong>process flow</strong> between modules</p>
+<p>This section introduces:</p>
+<ul>
+<li>The <strong>MAMAD conceptual framework</strong></li>
+<li>The <strong>software modules</strong> (Modeling, Training, Analyzing, Transferring, Refining)</li>
+<li>The <strong>internal architecture</strong> (backend, frontend, and CLI)</li>
+<li>The <strong>process flow</strong> between modules</li>
+</ul>
 <hr/>
 <h2 id="1-conceptual-overview-the-mamad-framework">🧠 1. Conceptual Overview: The MAMAD Framework</h2>
 <p>At the highest level, CybMASDE implements the <strong>MAMAD methodology</strong>:<br/>
@@ -470,22 +472,26 @@ a structured process for developing intelligent multi-agent systems:</p>
 <h3 id="backend-python">🧮 Backend (Python)</h3>
 <p>The backend is the <strong>core engine</strong> of CybMASDE.<br/>
 It contains all algorithmic, data management, and orchestration logic.</p>
-<p>Main responsibilities:
-* Execute each activity of the MAMAD pipeline<br/>
-<em> Manage project state and configurations (<code>project_configuration.json</code>)<br/>
-</em> Provide the CLI and Python APIs<br/>
-* Handle data persistence, logging, and checkpointing  </p>
+<p>Main responsibilities:</p>
+<ul>
+<li>Execute each activity of the MAMAD pipeline  </li>
+<li>Manage project state and configurations (<code>project_configuration.json</code>)  </li>
+<li>Provide the CLI and Python APIs  </li>
+<li>Handle data persistence, logging, and checkpointing  </li>
+</ul>
 <p>Each submodule (e.g., <code>cybmasde.training</code> ) can be used <strong>standalone</strong> or through the main pipeline orchestrator.</p>
 <hr/>
 <h3 id="frontend-angular">🌐 Frontend (Angular)</h3>
 <p>The frontend provides a <strong>graphical interface</strong> for visualizing and editing project configurations.<br/>
 It communicates with the backend through IPC (if running as an Electron app) or REST endpoints (if hosted separately).</p>
-<p>Key features:
-* Step-by-step configuration of each MAMAD activity<br/>
-<em> JSON and code editor (Monaco) for advanced users<br/>
-</em> Interactive dashboards for training and analysis metrics (<em>upcoming feature</em>)
-* Integrated file project management and validation tools
-* Running the full pipeline from GUI interface</p>
+<p>Key features:</p>
+<ul>
+<li>Step-by-step configuration of each MAMAD activity  </li>
+<li>JSON and code editor (Monaco) for advanced users  </li>
+<li>Interactive dashboards for training and analysis metrics (<em>upcoming feature</em>)</li>
+<li>Integrated file project management and validation tools</li>
+<li>Running the full pipeline from GUI interface</li>
+</ul>
 <hr/>
 <h3 id="cli-interface">💻 CLI Interface</h3>
 <p>The Command Line Interface ( <code>cybmasde</code> ) is built using Python’s <strong>Typer</strong> library.<br/>

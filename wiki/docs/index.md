@@ -1,6 +1,6 @@
 # Welcome to the CybMASDE Documentation
 
-**CybMASDE** (Cyber Multi-Agent System Design and Experimentation) is a modular platform designed to **model, train, analyze, and deploy intelligent multi-agent systems (MAS)** based on the **MAMAD methodology** (MOISE+MARL Assisted MAS Design).  
+**CybMASDE** (Cyber Multi-Agent System Development Environment) is a modular platform designed to **model, train, analyze, and deploy intelligent multi-agent systems (MAS)** based on the **MAMAD methodology** (MOISE+MARL Assisted MAS Design).  
 It combines **performance** from multi-agent reinforcement learning (MARL) and **organizational modeling (MOISE+)** for controlling and explaining emerging agents' behaviour with **practical tools** for experimentation, transfer, and explainability in complex cyber-physical environments.
 
 CybMASDE can be used:
