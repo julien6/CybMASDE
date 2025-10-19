@@ -4,11 +4,15 @@
 It combines **performance** from multi-agent reinforcement learning (MARL) and **organizational modeling (MOISE+)** for controlling and explaining emerging agents' behaviour with **practical tools** for experimentation, transfer, and explainability in complex cyber-physical environments.
 
 CybMASDE can be used:
+
 * 🧠 **As a research framework**, to study agent autonomy, coordination, adaptation, and explainability.  
 * ⚙️ **As an engineering tool**, to design and deploy agent-based behaviors in real or simulated infrastructures.  
 * 💻 **Through three interfaces**:
+
   + a **CLI (Command Line Interface)** for automation and batch workflows, 
+
   + a **Python library** for direct integration into experiments, 
+
   + and a **Graphical User Interface (GUI)** built with Angular for visual project editing and monitoring.
 
 ---
@@ -32,6 +36,7 @@ CybMASDE can be used:
 ## Overview
 
 CybMASDE was designed to **bridge the gap between research prototypes and operational systems** by providing:
+
 * A **structured workflow** for the lifecycle of multi-agent systems (from simulation to deployment).  
 * An **organizationally-aware reinforcement learning engine** (MOISE+MARL).  
 * Integrated support for **world models**, **multi-agent policy training**, and **automatic explainability (Auto-TEMM)**.  

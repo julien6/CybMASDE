@@ -10,6 +10,7 @@ If you don’t find your answer here, feel free to open an [issue on GitHub](htt
 ### **Q1. What operating systems are supported?**
 
 CybMASDE is primarily developed and tested on **Linux (Ubuntu 22.04+)**, but it can also run on:
+
 * **macOS** (with Python 3.8)
 * **Windows 10/11** (through WSL2 or native installation)
 

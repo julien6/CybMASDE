@@ -15,6 +15,7 @@ It integrates multiple AI paradigms under a unified structure called **MAMAD**:
 > **MAMAD** (*MOISE+MARL Assisted MAS Design*)
 
 This framework allows:
+
 * The modeling of environments, world models, and organizations, 
 * The training of agent policies using organizationally constrained MARL, 
 * The analysis of learned behaviors and emergent dynamics (e.g., via explainability tools like **TEMM**), 
@@ -40,10 +41,12 @@ By coupling **MOISE+** and **MARL**, CybMASDE enables a new research direction c
 ## 🧠 Why CybMASDE?
 
 Traditional multi-agent frameworks focus either on:
+
 * **Engineering tools** (simulation engines, orchestration layers), or  
 * **AI libraries** (learning algorithms, policy optimization).
 
 CybMASDE combines both worlds, allowing users to:
+
 * **Model** complex, multi-level environments (agents, organizations, infrastructures), 
 * **Train** adaptive agents under explicit organizational constraints, 
 * **Analyze** their behaviors through automated and explainable methods, 
@@ -104,6 +107,7 @@ CybMASDE provides a *testbed* for studying key research questions in distributed
 * How can agent coordination be maintained under uncertainty or partial observability?  
 
 The platform has been validated in multiple experimental scenarios:
+
 * **Company Infrastructure (Cyber-Defense)**
 * **Drone Swarm**
 * **Microservices on Kubernetes**

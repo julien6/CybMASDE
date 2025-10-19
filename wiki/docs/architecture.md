@@ -3,6 +3,7 @@
 CybMASDE is designed as a **modular, extensible, and hybrid architecture** that unifies simulation, learning, analysis, and deployment in a coherent multi-agent development environment.
 
 This section introduces:
+
 * The **MAMAD conceptual framework**
 * The **software modules** (Modeling, Training, Analyzing, Transferring, Refining)
 * The **internal architecture** (backend, frontend, and CLI)
@@ -63,6 +64,7 @@ The backend is the **core engine** of CybMASDE.
 It contains all algorithmic, data management, and orchestration logic.
 
 Main responsibilities:
+
 * Execute each activity of the MAMAD pipeline  
 * Manage project state and configurations (`project_configuration.json`)  
 * Provide the CLI and Python APIs  
@@ -78,6 +80,7 @@ The frontend provides a **graphical interface** for visualizing and editing proj
 It communicates with the backend through IPC (if running as an Electron app) or REST endpoints (if hosted separately).
 
 Key features:
+
 * Step-by-step configuration of each MAMAD activity  
 * JSON and code editor (Monaco) for advanced users  
 * Interactive dashboards for training and analysis metrics (_upcoming feature_)

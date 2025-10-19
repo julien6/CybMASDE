@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://cybmasde.example.com/lib_reference/">
+        <link rel="canonical" href="https://julien6.github.io/CybMASDE/lib_reference/">
       
       
         <link rel="prev" href="../gui_reference/">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Library_API - CybMASDE Wiki</title>
+        <title>Library API - CybMASDE Wiki</title>
       
     
     
@@ -63,6 +63,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#cybmasde-python-library-reference" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -94,7 +99,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Library_API
+              Library API
             
           </span>
         </div>
@@ -282,7 +287,7 @@
   
   
   <span class="md-ellipsis">
-    CLI_API
+    CLI API
     
   </span>
   
@@ -304,7 +309,7 @@
   
   
   <span class="md-ellipsis">
-    GUI_Reference
+    GUI Reference
     
   </span>
   
@@ -327,18 +332,535 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Library API
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
   <span class="md-ellipsis">
-    Library_API
+    Library API
     
   </span>
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      📘 Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧩 Table of Contents
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-core-orchestrator" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧠 Project - Core Orchestrator
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧠 Project - Core Orchestrator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#import" class="md-nav__link">
+    <span class="md-ellipsis">
+      Import
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    <span class="md-ellipsis">
+      Description
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#constructor" class="md-nav__link">
+    <span class="md-ellipsis">
+      Constructor
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#save" class="md-nav__link">
+    <span class="md-ellipsis">
+      save
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create_project" class="md-nav__link">
+    <span class="md-ellipsis">
+      create_project
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#load" class="md-nav__link">
+    <span class="md-ellipsis">
+      load
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      validate
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#from_dict" class="md-nav__link">
+    <span class="md-ellipsis">
+      from_dict
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run-run2" class="md-nav__link">
+    <span class="md-ellipsis">
+      run / run2
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run_modeling" class="md-nav__link">
+    <span class="md-ellipsis">
+      run_modeling
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run_training" class="md-nav__link">
+    <span class="md-ellipsis">
+      run_training
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run_analyzing" class="md-nav__link">
+    <span class="md-ellipsis">
+      run_analyzing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run_refining" class="md-nav__link">
+    <span class="md-ellipsis">
+      run_refining
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#display" class="md-nav__link">
+    <span class="md-ellipsis">
+      display
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cleanup" class="md-nav__link">
+    <span class="md-ellipsis">
+      cleanup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#export" class="md-nav__link">
+    <span class="md-ellipsis">
+      export
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run_transferring" class="md-nav__link">
+    <span class="md-ellipsis">
+      run_transferring
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stop" class="md-nav__link">
+    <span class="md-ellipsis">
+      stop
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#typical-programmatic-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧩 Typical Programmatic Workflow
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mtaprocess-modeltrainanalyze" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚙️ MTAProcess - Model/Train/Analyze
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚙️ MTAProcess - Model/Train/Analyze">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#main-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Main Classes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Methods
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#transferringprocess-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚀 TransferringProcess - Deployment
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚀 TransferringProcess - Deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-methods_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Methods
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#environmentapi-remote-environment-wrapper" class="md-nav__link">
+    <span class="md-ellipsis">
+      🌍 EnvironmentAPI - Remote Environment Wrapper
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🌍 EnvironmentAPI - Remote Environment Wrapper">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Methods
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#world-models-jopm-vae-rdlm" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧮 World Models - JOPM, VAE, RDLM
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧮 World Models - JOPM, VAE, RDLM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#worldmodelenv" class="md-nav__link">
+    <span class="md-ellipsis">
+      WorldModelEnv
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jopm" class="md-nav__link">
+    <span class="md-ellipsis">
+      JOPM
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vae-and-rdlm" class="md-nav__link">
+    <span class="md-ellipsis">
+      VAE and RDLM
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#joint-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧭 Joint Policy
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧭 Joint Policy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#implementations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Implementations
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#componentfunctions" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧩 ComponentFunctions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧩 ComponentFunctions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-configuration-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧰 Project Configuration Schema
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧰 Project Configuration Schema">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#main-classes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Main Classes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#organizational-specification-helper-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧠 Organizational Specification Helper Scripts
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#server-frontend-helpers" class="md-nav__link">
+    <span class="md-ellipsis">
+      🖥️ Server / Frontend Helpers
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🖥️ Server / Frontend Helpers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Functions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-usage-recipes" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧩 Quick Usage Recipes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧩 Quick Usage Recipes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-programmatic-training-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      1️⃣ Programmatic Training Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-world-model-simulation-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      2️⃣ World Model Simulation Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -454,28 +976,6 @@
   
 
     
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../commands/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Commands
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
   </ul>
 </nav>
                   </div>
@@ -493,6 +993,499 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      📘 Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧩 Table of Contents
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-core-orchestrator" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧠 Project - Core Orchestrator
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧠 Project - Core Orchestrator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#import" class="md-nav__link">
+    <span class="md-ellipsis">
+      Import
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    <span class="md-ellipsis">
+      Description
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#constructor" class="md-nav__link">
+    <span class="md-ellipsis">
+      Constructor
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#save" class="md-nav__link">
+    <span class="md-ellipsis">
+      save
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create_project" class="md-nav__link">
+    <span class="md-ellipsis">
+      create_project
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#load" class="md-nav__link">
+    <span class="md-ellipsis">
+      load
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      validate
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#from_dict" class="md-nav__link">
+    <span class="md-ellipsis">
+      from_dict
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run-run2" class="md-nav__link">
+    <span class="md-ellipsis">
+      run / run2
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run_modeling" class="md-nav__link">
+    <span class="md-ellipsis">
+      run_modeling
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run_training" class="md-nav__link">
+    <span class="md-ellipsis">
+      run_training
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run_analyzing" class="md-nav__link">
+    <span class="md-ellipsis">
+      run_analyzing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run_refining" class="md-nav__link">
+    <span class="md-ellipsis">
+      run_refining
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#display" class="md-nav__link">
+    <span class="md-ellipsis">
+      display
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cleanup" class="md-nav__link">
+    <span class="md-ellipsis">
+      cleanup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#export" class="md-nav__link">
+    <span class="md-ellipsis">
+      export
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run_transferring" class="md-nav__link">
+    <span class="md-ellipsis">
+      run_transferring
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stop" class="md-nav__link">
+    <span class="md-ellipsis">
+      stop
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#typical-programmatic-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧩 Typical Programmatic Workflow
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mtaprocess-modeltrainanalyze" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚙️ MTAProcess - Model/Train/Analyze
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚙️ MTAProcess - Model/Train/Analyze">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#main-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Main Classes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Methods
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#transferringprocess-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚀 TransferringProcess - Deployment
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚀 TransferringProcess - Deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-methods_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Methods
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#environmentapi-remote-environment-wrapper" class="md-nav__link">
+    <span class="md-ellipsis">
+      🌍 EnvironmentAPI - Remote Environment Wrapper
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🌍 EnvironmentAPI - Remote Environment Wrapper">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Methods
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#world-models-jopm-vae-rdlm" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧮 World Models - JOPM, VAE, RDLM
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧮 World Models - JOPM, VAE, RDLM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#worldmodelenv" class="md-nav__link">
+    <span class="md-ellipsis">
+      WorldModelEnv
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jopm" class="md-nav__link">
+    <span class="md-ellipsis">
+      JOPM
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vae-and-rdlm" class="md-nav__link">
+    <span class="md-ellipsis">
+      VAE and RDLM
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#joint-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧭 Joint Policy
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧭 Joint Policy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#implementations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Implementations
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#componentfunctions" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧩 ComponentFunctions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧩 ComponentFunctions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-configuration-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧰 Project Configuration Schema
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧰 Project Configuration Schema">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#main-classes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Main Classes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#organizational-specification-helper-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧠 Organizational Specification Helper Scripts
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#server-frontend-helpers" class="md-nav__link">
+    <span class="md-ellipsis">
+      🖥️ Server / Frontend Helpers
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🖥️ Server / Frontend Helpers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Functions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-usage-recipes" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧩 Quick Usage Recipes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧩 Quick Usage Recipes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-programmatic-training-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      1️⃣ Programmatic Training Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-world-model-simulation-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      2️⃣ World Model Simulation Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -508,9 +1501,558 @@
 
 
 
-  <h1>Library_API</h1>
+<h1 id="cybmasde-python-library-reference">CybMASDE - Python Library Reference</h1>
+<p>This page provides a <strong>detailed API reference</strong> for CybMASDE’s Python library.<br />
+It summarizes the main programmatic entry points available under the backend modules, along with examples and best practices for integrating CybMASDE into scripts or research workflows.</p>
+<hr />
+<h2 id="overview">📘 Overview</h2>
+<p>CybMASDE’s backend is organized under the following main namespaces:</p>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>world_model.project</code></td>
+<td>Core orchestrator and entrypoint (Project class)</td>
+</tr>
+<tr>
+<td><code>world_model.mta_process</code></td>
+<td>Modeling–Training–Analyzing process</td>
+</tr>
+<tr>
+<td><code>world_model.transferring_process</code></td>
+<td>Deployment and transfer management</td>
+</tr>
+<tr>
+<td><code>world_model.environment_api</code></td>
+<td>Interface for remote or local environments</td>
+</tr>
+<tr>
+<td><code>world_model.jopm</code> , <code>vae_utils</code> , <code>rdlm_utils</code></td>
+<td>Models composing the Joint Observation Prediction Model (JOPM)</td>
+</tr>
+<tr>
+<td><code>world_model.component_functions</code></td>
+<td>Reward, done, and rendering logic</td>
+</tr>
+<tr>
+<td><code>world_model.project_configuration</code></td>
+<td>Data schema for configuration files</td>
+</tr>
+<tr>
+<td><code>api_server.server</code></td>
+<td>Web backend utilities for the Angular GUI</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<blockquote>
+<p><strong>Note</strong></p>
+<ul>
+<li>Many methods accept an <code>argparse.Namespace</code> -like object (attributes matching CLI flags).<br />
+You can use <code>types.SimpleNamespace</code> for programmatic calls.</li>
+<li>This reference was compiled from code inspection and docstrings; for full implementation details, consult the source files under:</li>
+<li>
+<p><code>backend/world_model/world_model/</code></p>
+</li>
+<li>
+<p><code>backend/api_server/</code></p>
+</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="table-of-contents">🧩 Table of Contents</h2>
+<ol>
+<li><a href="#project---core-orchestrator">Project (Core Orchestrator)</a>  </li>
+<li><a href="#mtaprocess---modeltrainanalyze">MTAProcess (Model–Train–Analyze)</a>  </li>
+<li><a href="#transferringprocess---deployment">TransferringProcess (Deployment)</a>  </li>
+<li><a href="#environmentapi---remote-environment-wrapper">EnvironmentAPI (Remote Environment Wrapper)</a>  </li>
+<li><a href="#world-models-jopm--vae--rdlm">World Models: JOPM / VAE / RDLM</a>  </li>
+<li><a href="#joint-policy">Joint Policy Implementations</a>  </li>
+<li><a href="#componentfunctions">Component Functions</a>  </li>
+<li><a href="#project-configuration-schema">Project Configuration Schema</a>  </li>
+<li><a href="#organizational-specification-helper-scripts">Organizational Specification Helpers</a>  </li>
+<li><a href="#server--frontend-helpers">Server Utilities (Frontend/Backend Glue)</a>  </li>
+<li><a href="#quick-usage-recipes">Usage Recipes</a></li>
+</ol>
+<hr />
+<p><a id="project---core-orchestrator"></a></p>
+<h2 id="project-core-orchestrator">🧠 Project - Core Orchestrator</h2>
+<p>📁 <code>backend/world_model/world_model/project.py</code></p>
+<h3 id="import">Import</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">world_model.project</span><span class="w"> </span><span class="kn">import</span> <span class="n">Project</span>
+</code></pre></div>
+<h3 id="description">Description</h3>
+<p>The <code>Project</code> class orchestrates all phases of a CybMASDE pipeline:
+<strong>Modeling → Training → Analyzing → Transferring → Refining</strong></p>
+<p>It can be used programmatically to automate workflows or reproduce CLI commands.</p>
+<hr />
+<h3 id="constructor"><strong>Constructor</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="n">Project</span><span class="p">(</span><span class="n">configuration</span><span class="p">)</span>
+</code></pre></div>
+<ul>
+<li><strong>configuration</strong>: a parsed <code>Configuration</code> object, or <code>None</code> to load later.</li>
+</ul>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="n">proj</span> <span class="o">=</span> <span class="n">Project</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="save"><strong>save</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</code></pre></div>
+<p>Save the project configuration and artifacts.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="n">proj</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;/tmp/my_project/project_configuration.json&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_project&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="create_project"><strong>create_project</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="n">create_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">template</span><span class="p">)</span>
+</code></pre></div>
+<p>Create a new project folder from a template (mirrors <code>cybmasde init</code> ).</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="n">proj</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span><span class="s2">&quot;demo&quot;</span><span class="p">,</span> <span class="s2">&quot;Demo project&quot;</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s2">&quot;/tmp/demo&quot;</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="s2">&quot;handcrafted&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="load"><strong>load</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span>
+</code></pre></div>
+<p>Load project configuration from a JSON file.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="n">proj</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;/path/to/project/project_configuration.json&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="validate"><strong>validate</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+</code></pre></div>
+<p>Validate configuration consistency.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleNamespace</span>
+<span class="n">proj</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</code></pre></div>
+<hr />
+<h3 id="from_dict"><strong>from_dict</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="n">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+</code></pre></div>
+<p>Construct a <code>Project</code> from a configuration dictionary.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="n">proj</span> <span class="o">=</span> <span class="n">Project</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">my_config_dict</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="run-run2"><strong>run / run2</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+<span class="n">run2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+</code></pre></div>
+<p>Execute the entire pipeline ( <code>cybmasde run</code> ).
+Handles CLI arguments for automated or interactive runs.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="n">args</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">full_auto</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_refine</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">proj</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="run_modeling"><strong>run_modeling</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="n">run_modeling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+</code></pre></div>
+<p>Launch the modeling activity (auto or manual mode).</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="n">proj</span><span class="o">.</span><span class="n">run_modeling</span><span class="p">(</span><span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">auto</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">vae_dim</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">lstm_hidden</span><span class="o">=</span><span class="mi">64</span><span class="p">))</span>
+</code></pre></div>
+<hr />
+<h3 id="run_training"><strong>run_training</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="n">run_training</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+</code></pre></div>
+<p>Train agent policies under organizational constraints.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="n">proj</span><span class="o">.</span><span class="n">run_training</span><span class="p">(</span><span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">algo</span><span class="o">=</span><span class="s2">&quot;MAPPO&quot;</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">100</span><span class="p">))</span>
+</code></pre></div>
+<hr />
+<h3 id="run_analyzing"><strong>run_analyzing</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="n">run_analyzing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+</code></pre></div>
+<p>Run Auto-TEMM analysis and generate figures/statistics.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="n">proj</span><span class="o">.</span><span class="n">run_analyzing</span><span class="p">(</span><span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">auto_temm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">,</span><span class="s2">&quot;org_fit&quot;</span><span class="p">]))</span>
+</code></pre></div>
+<hr />
+<h3 id="run_refining"><strong>run_refining</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="n">run_refining</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+</code></pre></div>
+<p>Execute iterative refinement cycles.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="n">proj</span><span class="o">.</span><span class="n">run_refining</span><span class="p">(</span><span class="n">SimpleNamespace</span><span class="p">(</span><span class="nb">max</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">interactive</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</code></pre></div>
+<hr />
+<h3 id="display"><strong>display</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+</code></pre></div>
+<p>Display concise project status (for <code>cybmasde status</code> ).</p>
+<hr />
+<h3 id="cleanup"><strong>cleanup</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="n">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+</code></pre></div>
+<p>Clean temporary files and checkpoints.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="n">proj</span><span class="o">.</span><span class="n">cleanup</span><span class="p">(</span><span class="n">SimpleNamespace</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</code></pre></div>
+<hr />
+<h3 id="export"><strong>export</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="n">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+</code></pre></div>
+<p>Export results and metrics to a chosen format.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="n">proj</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">SimpleNamespace</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s2">&quot;./exports&quot;</span><span class="p">))</span>
+</code></pre></div>
+<hr />
+<h3 id="run_transferring"><strong>run_transferring</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="n">run_transferring</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+</code></pre></div>
+<p>Deploy policies and manage trajectory collection.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="n">proj</span><span class="o">.</span><span class="n">run_transferring</span><span class="p">(</span><span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">remote</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">api</span><span class="o">=</span><span class="s2">&quot;http://localhost:8080/api&quot;</span><span class="p">))</span>
+</code></pre></div>
+<hr />
+<h3 id="stop"><strong>stop</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="n">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</code></pre></div>
+<p>Stop all running background processes cleanly.</p>
+<hr />
+<h3 id="typical-programmatic-workflow">🧩 Typical Programmatic Workflow</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleNamespace</span>
+<span class="n">proj</span> <span class="o">=</span> <span class="n">Project</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">proj</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span><span class="s2">&quot;demo&quot;</span><span class="p">,</span> <span class="s2">&quot;desc&quot;</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s2">&quot;/tmp/demo&quot;</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="s2">&quot;handcrafted&quot;</span><span class="p">)</span>
+<span class="n">proj</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;/tmp/demo/project_configuration.json&quot;</span><span class="p">)</span>
+<span class="n">proj</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+<span class="n">proj</span><span class="o">.</span><span class="n">run_training</span><span class="p">(</span><span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">algo</span><span class="o">=</span><span class="s2">&quot;MAPPO&quot;</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
+</code></pre></div>
+<hr />
+<p><a id="mtaprocess---modeltrainanalyze"></a></p>
+<h2 id="mtaprocess-modeltrainanalyze">⚙️ MTAProcess - Model/Train/Analyze</h2>
+<p>📁 <code>backend/world_model/world_model/mta_process.py</code></p>
+<h3 id="main-classes">Main Classes</h3>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MTAProcess</code></td>
+<td>Main process handling modeling, training, and analyzing</td>
+</tr>
+<tr>
+<td><code>MeanStdStopper</code></td>
+<td>Stop condition helper for iterative refinement</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="example">Example</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">world_model.mta_process</span><span class="w"> </span><span class="kn">import</span> <span class="n">MTAProcess</span>
+<span class="n">mta</span> <span class="o">=</span> <span class="n">MTAProcess</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span> <span class="n">componentFunctions</span><span class="p">,</span> <span class="n">transferring_pid</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">mta</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="key-methods">Key Methods</h3>
+<ul>
+<li><code>run()</code>:  Launch the MTA loop</li>
+<li><code>run_modelling_activity()</code>:  Execute environment/world model generation</li>
+<li><code>run_training_activity()</code>:  Execute agent training</li>
+<li><code>run_analyzing_activity()</code>:  Execute Auto-TEMM analysis</li>
+<li><code>run_autoencoder_with_hpo()</code> / <code>run_rdlm_with_hpo()</code>:  Hyperparameter optimization</li>
+<li><code>load_traces(path)</code>:  Load trajectories</li>
+<li><code>get_joint_observations(histories)</code>:  Extract joint observations</li>
+<li><code>generate_organizational_model(...)</code>:  Build inferred org specs</li>
+</ul>
+<hr />
+<p><a id="transferringprocess---deployment"></a></p>
+<h2 id="transferringprocess-deployment">🚀 TransferringProcess - Deployment</h2>
+<p>📁 <code>backend/world_model/world_model/transferring_process.py</code></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">world_model.transferring_process</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransferringProcess</span>
+<span class="n">tp</span> <span class="o">=</span> <span class="n">TransferringProcess</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span> <span class="n">environment_api</span><span class="p">,</span> <span class="n">joint_policy</span><span class="p">)</span>
+<span class="n">tp</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="key-methods_1">Key Methods</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>run()</code></td>
+<td>Execute deployment loop</td>
+</tr>
+<tr>
+<td><code>load_component_functions()</code></td>
+<td>Load reward/rendering logic</td>
+</tr>
+<tr>
+<td><code>create_random_joint_policy()</code></td>
+<td>Fallback random policy</td>
+</tr>
+<tr>
+<td><code>load_latest_joint_policy()</code></td>
+<td>Restore last checkpoint</td>
+</tr>
+<tr>
+<td><code>save_joint_histories()</code></td>
+<td>Store replayed trajectories</td>
+</tr>
+<tr>
+<td><code>create_mta_process()</code></td>
+<td>Trigger MTA when new data arrives</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><a id="environmentapi---remote-environment-wrapper"></a></p>
+<h2 id="environmentapi-remote-environment-wrapper">🌍 EnvironmentAPI - Remote Environment Wrapper</h2>
+<p>📁 <code>backend/world_model/world_model/environment_api.py</code></p>
+<h3 id="example_1">Example</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">world_model.environment_api</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnvironmentAPI</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">EnvironmentAPI</span><span class="p">(</span><span class="s2">&quot;http://localhost:8080/api&quot;</span><span class="p">)</span>
+<span class="n">obs</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">retrieve_joint_observation</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="methods">Methods</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>agents()</code></td>
+<td>Return agent list and specs</td>
+</tr>
+<tr>
+<td><code>retrieve_joint_observation()</code></td>
+<td>Get current joint observation</td>
+</tr>
+<tr>
+<td><code>retrieve_joint_histories()</code></td>
+<td>Retrieve trajectories</td>
+</tr>
+<tr>
+<td><code>apply_joint_action(action)</code></td>
+<td>Apply joint action</td>
+</tr>
+<tr>
+<td><code>deploy_joint_policy(policy)</code></td>
+<td>Deploy a policy remotely</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><a id="world-models-jopm--vae--rdlm"></a></p>
+<h2 id="world-models-jopm-vae-rdlm">🧮 World Models - JOPM, VAE, RDLM</h2>
+<h3 id="worldmodelenv"><code>WorldModelEnv</code></h3>
+<p>Run simulated episodes combining the JOPM, component functions, and label manager.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">world_model.world_model_env</span><span class="w"> </span><span class="kn">import</span> <span class="n">WorldModelEnv</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">WorldModelEnv</span><span class="p">(</span><span class="s2">&quot;/path/to/jopm.pkl&quot;</span><span class="p">,</span> <span class="s2">&quot;/path/to/component_functions.py&quot;</span><span class="p">,</span> <span class="s2">&quot;/path/to/label_manager.py&quot;</span><span class="p">)</span>
+<span class="n">obs</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">next_obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">({</span><span class="s2">&quot;agent_0&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span>
+</code></pre></div>
+<hr />
+<h3 id="jopm"><code>JOPM</code></h3>
+<p>Handles joint observation prediction.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>save(file_path)</code></td>
+<td>Serialize JOPM</td>
+</tr>
+<tr>
+<td><code>load(cls, file_path)</code></td>
+<td>Load JOPM</td>
+</tr>
+<tr>
+<td><code>predict_next_joint_observation()</code></td>
+<td>Forecast next observation</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="vae-and-rdlm"><code>VAE</code> and <code>RDLM</code></h3>
+<p>Neural models used in the JOPM world model.</p>
+<ul>
+<li><code>VAE</code> – Encodes observation data to a latent space</li>
+<li><code>RDLM</code> – Models temporal dynamics in latent space</li>
+</ul>
+<p>Utilities include:</p>
+<ul>
+<li><code>train_vae()</code> and <code>vae_loss()</code></li>
+<li><code>rdlm_objective()</code> for optimization</li>
+</ul>
+<hr />
+<p><a id="joint-policy"></a></p>
+<h2 id="joint-policy">🧭 Joint Policy</h2>
+<p>📁 <code>backend/world_model/world_model/joint_policy.py</code></p>
+<h3 id="implementations">Implementations</h3>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>joint_policy</code></td>
+<td>Base policy wrapper</td>
+</tr>
+<tr>
+<td><code>random_joint_policy</code></td>
+<td>Produces random joint actions</td>
+</tr>
+<tr>
+<td><code>marllib_joint_policy</code></td>
+<td>Loads MARLlib-compatible models</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">world_model.joint_policy</span><span class="w"> </span><span class="kn">import</span> <span class="n">random_joint_policy</span>
+<span class="n">policy</span> <span class="o">=</span> <span class="n">random_joint_policy</span><span class="p">(</span><span class="n">action_space</span><span class="p">,</span> <span class="n">agents</span><span class="p">)</span>
+<span class="n">action</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">next_action</span><span class="p">(</span><span class="n">joint_observation</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<p><a id="componentfunctions"></a></p>
+<h2 id="componentfunctions">🧩 ComponentFunctions</h2>
+<p>📁 <code>backend/world_model/world_model/component_functions.py</code></p>
+<h3 id="example_2">Example</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ComponentFunctions</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reward_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">next_obs</span><span class="p">):</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">done_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">next_obs</span><span class="p">):</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">next_obs</span><span class="p">):</span> <span class="o">...</span>
+</code></pre></div>
+<p>This module defines <strong>domain-specific logic</strong> for:</p>
+<ul>
+<li>Reward computation</li>
+<li>Termination conditions</li>
+<li>Visualization</li>
+</ul>
+<hr />
+<p><a id="project-configuration-schema"></a></p>
+<h2 id="project-configuration-schema">🧰 Project Configuration Schema</h2>
+<p>📁 <code>backend/world_model/world_model/project_configuration.py</code></p>
+<h3 id="main-classes_1">Main Classes</h3>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Configuration</code></td>
+<td>Root project schema</td>
+</tr>
+<tr>
+<td><code>Modelling</code> , <code>Training</code> , <code>Analyzing</code> , <code>Transferring</code> , <code>Refining</code></td>
+<td>Submodules</td>
+</tr>
+<tr>
+<td><code>JOPM_conf</code> , <code>Autoencoder_conf</code> , <code>RDLM_conf</code></td>
+<td>Model definitions</td>
+</tr>
+</tbody>
+</table>
+<p>Key methods:</p>
+<ul>
+<li><code>from_json(path)</code></li>
+<li><code>serialize_configuration()</code></li>
+<li><code>to_dict()</code> / <code>to_json()</code></li>
+</ul>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">world_model.project_configuration</span><span class="w"> </span><span class="kn">import</span> <span class="n">Configuration</span>
+<span class="n">cfg</span> <span class="o">=</span> <span class="n">Configuration</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="s2">&quot;project_configuration.json&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<p><a id="organizational-specification-helper-scripts"></a></p>
+<h2 id="organizational-specification-helper-scripts">🧠 Organizational Specification Helper Scripts</h2>
+<p>Located under:</p>
+<ul>
+<li><code>backend/world_model/world_model/organizational_specification_function.py</code></li>
+<li><code>project_example/training/organizational_specifications/</code></li>
+</ul>
+<p>These define heuristics to infer <strong>roles</strong>, <strong>goals</strong>, and <strong>mission assignments</strong> based on trajectories.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">function_for_role_0</span><span class="p">(</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">observation</span><span class="p">,</span> <span class="n">agent_name</span><span class="p">,</span> <span class="n">label_manager</span><span class="p">):</span>
+    <span class="o">...</span>
+</code></pre></div>
+<hr />
+<p><a id="server--frontend-helpers"></a></p>
+<h2 id="server-frontend-helpers">🖥️ Server / Frontend Helpers</h2>
+<p>📁 <code>backend/api_server/server.py</code></p>
+<p>These utilities connect the backend with the Angular GUI for project creation, saving, and launching.</p>
+<h3 id="key-functions">Key Functions</h3>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>add_a_recent_project(project_configuration)</code></td>
+<td>Register project in GUI</td>
+</tr>
+<tr>
+<td><code>replace_json_paths(obj, project_path)</code></td>
+<td>Replace inlined JSONs with file paths</td>
+</tr>
+<tr>
+<td><code>restore_json_paths(obj, initial_config, project_path)</code></td>
+<td>Inverse of above</td>
+</tr>
+<tr>
+<td><code>load_project()</code> / <code>save_project()</code></td>
+<td>Load or persist GUI projects</td>
+</tr>
+<tr>
+<td><code>save_and_run()</code></td>
+<td>Save project then trigger execution</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><a id="quick-usage-recipes"></a></p>
+<h2 id="quick-usage-recipes">🧩 Quick Usage Recipes</h2>
+<h3 id="1-programmatic-training-example">1️⃣ Programmatic Training Example</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleNamespace</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">world_model.project</span><span class="w"> </span><span class="kn">import</span> <span class="n">Project</span>
 
+<span class="n">proj</span> <span class="o">=</span> <span class="n">Project</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">proj</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span><span class="s2">&quot;demo&quot;</span><span class="p">,</span> <span class="s2">&quot;desc&quot;</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s2">&quot;/tmp/demo&quot;</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="s2">&quot;handcrafted&quot;</span><span class="p">)</span>
+<span class="n">proj</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;/tmp/demo/project_configuration.json&quot;</span><span class="p">)</span>
+<span class="n">proj</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+<span class="n">proj</span><span class="o">.</span><span class="n">run_training</span><span class="p">(</span><span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">algo</span><span class="o">=</span><span class="s2">&quot;MAPPO&quot;</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+</code></pre></div>
+<hr />
+<h3 id="2-world-model-simulation-example">2️⃣ World Model Simulation Example</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">world_model.world_model_env</span><span class="w"> </span><span class="kn">import</span> <span class="n">WorldModelEnv</span>
 
+<span class="n">env</span> <span class="o">=</span> <span class="n">WorldModelEnv</span><span class="p">(</span><span class="s2">&quot;/path/to/jopm.pkl&quot;</span><span class="p">,</span> <span class="s2">&quot;/path/to/component_functions.py&quot;</span><span class="p">,</span> <span class="s2">&quot;/path/to/label_manager.py&quot;</span><span class="p">)</span>
+<span class="n">obs</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">action</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;agent_0&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;agent_1&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+<span class="n">next_obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+</code></pre></div>
 
 
 
@@ -540,11 +2082,6 @@
       <div class="md-copyright">
   
   
-    Made with
-    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
-      Material for MkDocs
-    </a>
-  
 </div>
       
         
@@ -554,22 +2091,8 @@
     
     
     
-      
-      
-    
-    <a href="https://github.com/yourusername/cybmasde" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+    <a href="https://github.com/julien6/CybMASDE" target="_blank" rel="noopener" title="GitHub" class="md-social__link">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
-    </a>
-  
-    
-    
-    
-    
-      
-      
-    
-    <a href="https://twitter.com/yourusername" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M459.4 151.7c.3 4.5.3 9.1.3 13.6 0 138.7-105.6 298.6-298.6 298.6-59.5 0-114.7-17.2-161.1-47.1 8.4 1 16.6 1.3 25.3 1.3 49.1 0 94.2-16.6 130.3-44.8-46.1-1-84.8-31.2-98.1-72.8 6.5 1 13 1.6 19.8 1.6 9.4 0 18.8-1.3 27.6-3.6-48.1-9.7-84.1-52-84.1-103v-1.3c14 7.8 30.2 12.7 47.4 13.3-28.3-18.8-46.8-51-46.8-87.4 0-19.5 5.2-37.4 14.3-53C87.4 130.8 165 172.4 252.1 176.9c-1.6-7.8-2.6-15.9-2.6-24C249.5 95.1 296.3 48 354.4 48c30.2 0 57.5 12.7 76.7 33.1 23.7-4.5 46.5-13.3 66.6-25.3-7.8 24.4-24.4 44.8-46.1 57.8 21.1-2.3 41.6-8.1 60.4-16.2-14.3 20.8-32.2 39.3-52.6 54.3"/></svg>
     </a>
   
 </div>

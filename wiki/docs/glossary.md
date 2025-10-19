@@ -22,7 +22,7 @@ A sequence of automated (CI/CD) or operational steps. Example automation in GitH
 
 ### MkDocs
 
-Static site generator used for the documentation (configuration: [mkdocs](../mkdocs.yml)).
+Static site generator used for the documentation (configuration: [mkdocs](/home/julien/Documents/CybMASDE/wiki/mkdocs.yml)).
 
 ### GitHub Actions
 
@@ -79,6 +79,7 @@ Programmatic usage via the Python library (example: [ `CybMASDEProject` ](gettin
 ### REST API / IPC
 
 Communication modes between backend ↔ frontend or backend ↔ external environments:
+
 * REST API for network exchanges (remote deployment).
 * IPC for local integration (Electron). Architecture details: [architecture](architecture.md).
 

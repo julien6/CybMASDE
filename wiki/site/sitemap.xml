@@ -1,55 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://cybmasde.example.com/</loc>
-         <lastmod>2025-10-18</lastmod>
+         <loc>https://julien6.github.io/CybMASDE/</loc>
+         <lastmod>2025-10-19</lastmod>
     </url>
     <url>
-         <loc>https://cybmasde.example.com/architecture/</loc>
-         <lastmod>2025-10-18</lastmod>
+         <loc>https://julien6.github.io/CybMASDE/architecture/</loc>
+         <lastmod>2025-10-19</lastmod>
     </url>
     <url>
-         <loc>https://cybmasde.example.com/changelog/</loc>
-         <lastmod>2025-10-18</lastmod>
+         <loc>https://julien6.github.io/CybMASDE/changelog/</loc>
+         <lastmod>2025-10-19</lastmod>
     </url>
     <url>
-         <loc>https://cybmasde.example.com/cli_reference/</loc>
-         <lastmod>2025-10-18</lastmod>
+         <loc>https://julien6.github.io/CybMASDE/cli_reference/</loc>
+         <lastmod>2025-10-19</lastmod>
     </url>
     <url>
-         <loc>https://cybmasde.example.com/commands/</loc>
-         <lastmod>2025-10-18</lastmod>
+         <loc>https://julien6.github.io/CybMASDE/contributing/</loc>
+         <lastmod>2025-10-19</lastmod>
     </url>
     <url>
-         <loc>https://cybmasde.example.com/contributing/</loc>
-         <lastmod>2025-10-18</lastmod>
+         <loc>https://julien6.github.io/CybMASDE/faq/</loc>
+         <lastmod>2025-10-19</lastmod>
     </url>
     <url>
-         <loc>https://cybmasde.example.com/faq/</loc>
-         <lastmod>2025-10-18</lastmod>
+         <loc>https://julien6.github.io/CybMASDE/getting-started/</loc>
+         <lastmod>2025-10-19</lastmod>
     </url>
     <url>
-         <loc>https://cybmasde.example.com/getting-started/</loc>
-         <lastmod>2025-10-18</lastmod>
+         <loc>https://julien6.github.io/CybMASDE/glossary/</loc>
+         <lastmod>2025-10-19</lastmod>
     </url>
     <url>
-         <loc>https://cybmasde.example.com/glossary/</loc>
-         <lastmod>2025-10-18</lastmod>
+         <loc>https://julien6.github.io/CybMASDE/gui_reference/</loc>
+         <lastmod>2025-10-19</lastmod>
     </url>
     <url>
-         <loc>https://cybmasde.example.com/gui_reference/</loc>
-         <lastmod>2025-10-18</lastmod>
+         <loc>https://julien6.github.io/CybMASDE/installation/</loc>
+         <lastmod>2025-10-19</lastmod>
     </url>
     <url>
-         <loc>https://cybmasde.example.com/installation/</loc>
-         <lastmod>2025-10-18</lastmod>
+         <loc>https://julien6.github.io/CybMASDE/introduction/</loc>
+         <lastmod>2025-10-19</lastmod>
     </url>
     <url>
-         <loc>https://cybmasde.example.com/introduction/</loc>
-         <lastmod>2025-10-18</lastmod>
-    </url>
-    <url>
-         <loc>https://cybmasde.example.com/lib_reference/</loc>
-         <lastmod>2025-10-18</lastmod>
+         <loc>https://julien6.github.io/CybMASDE/lib_reference/</loc>
+         <lastmod>2025-10-19</lastmod>
     </url>
 </urlset>

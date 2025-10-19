@@ -64,6 +64,7 @@ from world_model.project import Project
 ### Description
 
 The `Project` class orchestrates all phases of a CybMASDE pipeline:
+
 **Modeling → Training → Analyzing → Transferring → Refining**
 
 It can be used programmatically to automate workflows or reproduce CLI commands.
