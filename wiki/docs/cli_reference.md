@@ -148,7 +148,7 @@ cybmasde run --full-auto --max-refine 3 --reward-threshold 1.5
 
 ### Description
 
-Run only the **Modeling** activity — generating or loading an environment.
+Run only the **Modeling** activity, generating or loading an environment.
 
 ### Syntax
 

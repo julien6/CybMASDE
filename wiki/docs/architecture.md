@@ -12,10 +12,10 @@ This section introduces:
 
 ## 🧠 1. Conceptual Overview: The MAMAD Framework
 
-At the highest level, CybMASDE implements the **MAMAD methodology** —  
+At the highest level, CybMASDE implements the **MAMAD methodology**:  
 a structured process for developing intelligent multi-agent systems:
 
-> **MAMAD** — *Modeling, Analyzing, Monitoring, Adapting, Deploying*
+> **MAMAD**: *Modeling, Analyzing, Monitoring, Adapting, Deploying*
 
 Each stage corresponds to a core subsystem in CybMASDE:
 

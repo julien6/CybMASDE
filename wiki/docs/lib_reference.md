@@ -1,4 +1,4 @@
-# CybMASDE — Python Library Reference
+# CybMASDE - Python Library Reference
 
 This page provides a **detailed API reference** for CybMASDE’s Python library.  
 It summarizes the main programmatic entry points available under the backend modules, along with examples and best practices for integrating CybMASDE into scripts or research workflows.
@@ -51,7 +51,7 @@ CybMASDE’s backend is organized under the following main namespaces:
 
 <a id="project---core-orchestrator"></a>
 
-## 🧠 Project — Core Orchestrator
+## 🧠 Project - Core Orchestrator
 
 📁 `backend/world_model/world_model/project.py`
 
@@ -333,7 +333,7 @@ proj.run_training(SimpleNamespace(algo="MAPPO", epochs=5))
 
 <a id="mtaprocess---modeltrainanalyze"></a>
 
-## ⚙️ MTAProcess — Model/Train/Analyze
+## ⚙️ MTAProcess - Model/Train/Analyze
 
 📁 `backend/world_model/world_model/mta_process.py`
 
@@ -356,20 +356,20 @@ mta.run()
 
 ### Key Methods
 
-* `run()` — Launch the MTA loop
-* `run_modelling_activity()` — Execute environment/world model generation
-* `run_training_activity()` — Execute agent training
-* `run_analyzing_activity()` — Execute Auto-TEMM analysis
-* `run_autoencoder_with_hpo()` / `run_rdlm_with_hpo()` — Hyperparameter optimization
-* `load_traces(path)` — Load trajectories
-* `get_joint_observations(histories)` — Extract joint observations
-* `generate_organizational_model(...)` — Build inferred org specs
+* `run()`:  Launch the MTA loop
+* `run_modelling_activity()`:  Execute environment/world model generation
+* `run_training_activity()`:  Execute agent training
+* `run_analyzing_activity()`:  Execute Auto-TEMM analysis
+* `run_autoencoder_with_hpo()` / `run_rdlm_with_hpo()`:  Hyperparameter optimization
+* `load_traces(path)`:  Load trajectories
+* `get_joint_observations(histories)`:  Extract joint observations
+* `generate_organizational_model(...)`:  Build inferred org specs
 
 ---
 
 <a id="transferringprocess---deployment"></a>
 
-## 🚀 TransferringProcess — Deployment
+## 🚀 TransferringProcess - Deployment
 
 📁 `backend/world_model/world_model/transferring_process.py`
 
@@ -394,7 +394,7 @@ tp.run()
 
 <a id="environmentapi---remote-environment-wrapper"></a>
 
-## 🌍 EnvironmentAPI — Remote Environment Wrapper
+## 🌍 EnvironmentAPI - Remote Environment Wrapper
 
 📁 `backend/world_model/world_model/environment_api.py`
 
@@ -420,7 +420,7 @@ obs = env.retrieve_joint_observation()
 
 <a id="world-models-jopm--vae--rdlm"></a>
 
-## 🧮 World Models — JOPM, VAE, RDLM
+## 🧮 World Models - JOPM, VAE, RDLM
 
 ### `WorldModelEnv`
 

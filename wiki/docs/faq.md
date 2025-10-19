@@ -132,7 +132,7 @@ Each can be selected via the CLI or configuration file.
 ### **Q9. What is the MOISE+MARL approach?**
 
 It combines **organizational modeling (MOISE+)** and **multi-agent reinforcement learning (MARL)**.
-Agents learn while being constrained by organizational rules — roles, missions, and norms — allowing structured cooperation instead of pure self-optimization.
+Agents learn while being constrained by organizational rules (roles, missions) allowing structured cooperation instead of pure self-optimization.
 
 This is one of CybMASDE’s key theoretical innovations.
 Learn more in the [Introduction](introduction.md).

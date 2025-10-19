@@ -221,7 +221,7 @@ my_first_project/
 
 ## 🧩 8. Next Steps
 
-Congratulations — you’ve successfully created and executed your first CybMASDE project! 🎉
+Congratulations, you’ve successfully created and executed your first CybMASDE project! 🎉
 
 You can now explore:
 

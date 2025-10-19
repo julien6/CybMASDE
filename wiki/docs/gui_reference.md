@@ -1,6 +1,6 @@
-# CybMASDE — Graphical User Interface (GUI) Reference
+# CybMASDE - Graphical User Interface (GUI) Reference
 
-The **CybMASDE Graphical Interface** provides a visual, user-friendly way to configure and run the entire MAMAD workflow — from *Modeling* to *Training*, *Analyzing*, *Refining*, and *Transferring*.  
+The **CybMASDE Graphical Interface** provides a visual, user-friendly way to configure and run the entire MAMAD workflow (from *Modeling* to *Training*, *Analyzing*, *Refining*, and *Transferring*).  
 It is designed for researchers and engineers who prefer graphical interactions over CLI scripting.
 
 ---
@@ -239,6 +239,6 @@ You may accept ( `Y` ) to automatically proceed to the next loop or stop to manu
 
 ## 🎥 Video Tutorial
 
-For a complete visual walkthrough of the GUI workflow — including project creation, configuration, training, and refinement — watch the following video:
+For a complete visual walkthrough of the GUI workflow (including project creation, configuration, training, and refinement) watch the following video:
 
-📺 **[CybMASDE GUI — Full Project Demo (Overcooked-AI Example)](https://www.youtube.com/watch?v=WJ3Bf6irpx0)**
+📺 **[CybMASDE GUI - Full Project Demo (Overcooked-AI Example)](https://www.youtube.com/watch?v=WJ3Bf6irpx0)**

@@ -1,5 +1,5 @@
 site_name: CybMASDE Wiki
-site_url: https://cybmasde.example.com
+site_url: https://julien6.github.io/CybMASDE/
 theme:
   name: material
   logo: assets/favicon.png
@@ -28,9 +28,9 @@ markdown_extensions:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/yourusername/cybmasde
-    - icon: fontawesome/brands/twitter
-      link: https://twitter.com/yourusername
+      link: https://github.com/julien6/CybMASDE
+      name: GitHub
+  generator: false
 
 plugins:
   - search
