@@ -22,7 +22,7 @@ A sequence of automated (CI/CD) or operational steps. Example automation in GitH
 
 ### MkDocs
 
-_MkDocs_ is a static site generator used for the documentation (https://www.mkdocs.org/).
+A static site generator used for the documentation: [mkdocs](https://www.mkdocs.org/).
 
 ### GitHub Actions
 
