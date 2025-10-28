@@ -69,4 +69,10 @@ pip install -e .
 
 cd ..
 
+cd cli
+
+pip install -e .
+
+cd ..
+
 pip install -r requirements.txt

@@ -18,7 +18,7 @@ For complete documentation (including installation steps, tutorials, CLI/API ref
 
 ## 🚀 Key Features
 
-* Structured project creation and validation (`init`,      `validate`)
+* Structured project creation and validation (`init`,         `validate`)
 * Automatic environment modelling via **World Models (VAE, LSTM, JOPM)** or manual modelling via **MCAS**
 * Multi-agent training with **MARLlib + Ray RLlib** (MAPPO, MADDPG, QMIX, etc.)
 * Native integration of **MOISE+MARL organizational constraints** (action masking, reward shaping)
@@ -54,15 +54,26 @@ CybMASDE is organized around a **Python backend** orchestrated by a **REST API**
 ```bash
 git clone https://github.com/julien6/CybMASDE.git
 cd CybMASDE
-pip install -r requirements.txt
 ```
 
-Optional: for the GUI
+To install everything at once
+
+```bash
+./install.sh
+```
+
+To install the backend (including server API and CLI)
 
 ```bash
 cd frontend
-npm install
-npm start
+./install.sh
+```
+
+Optional: to install the GUI frontend
+
+```bash
+cd frontend
+./install.sh
 ```
 
 ---
@@ -128,7 +139,7 @@ cybmasde export --format json --output ./results
 * Method **MAMAD**: MOISE+MARL Assisted MAS Design
 * Organizational framework **MOISE+MARL API (MMA)**: [github.com/julien6/MOISE-MARL](https://github.com/julien6/MOISE-MARL)
 * Libraries: [MARLlib](https://github.com/Replicable-MARL/MARLlib), [Ray RLlib](https://docs.ray.io), [Optuna](https://optuna.org)
-* Associated PhD thesis: see `/docs`
+* Associated PhD thesis: see `blop/docs`
 
 ---
 
