@@ -66,8 +66,10 @@ class MeanStdStopper(Stopper):
         return False
 
 
-if not os.path.exists(os.path.join(os.path.expanduser("~"), ".cybmasde", "configuration.json")):
+if not os.path.exists(os.path.join(os.path.expanduser("~"), ".cybmasde")):
     os.mkdir(os.path.join(os.path.expanduser("~"), ".cybmasde"))
+
+if not os.path.exists(os.path.join(os.path.expanduser("~"), ".cybmasde", "configuration.json")):
     json.dump({}, open(os.path.join(os.path.expanduser(
         "~"), ".cybmasde", "configuration.json"), "w+"), indent=4)
 
@@ -124,6 +126,7 @@ class MTAProcess(Process):
         # Nettoyer le répertoire temporaire d’entraînement
         try:
             if self.temporary_training_dir and os.path.exists(self.temporary_training_dir):
+                print(self.temporary_training_dir)
                 shutil.rmtree(self.temporary_training_dir)
                 shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
                     __file__)), "analysis_results"))
@@ -248,8 +251,7 @@ class MTAProcess(Process):
         print("")
 
         try:
-            shutil.rmtree(os.path.join(os.path.dirname(
-                self.temporary_training_dir)))
+            shutil.rmtree(self.temporary_training_dir)
             shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
                 __file__)), "analysis_results"))
             shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(
