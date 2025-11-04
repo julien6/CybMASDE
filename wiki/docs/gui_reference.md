@@ -241,4 +241,16 @@ You may accept ( `Y` ) to automatically proceed to the next loop or stop to manu
 
 For a complete visual walkthrough of the GUI workflow (including project creation, configuration, training, and refinement) watch the following video:
 
-📺 **[CybMASDE GUI - Full Project Demo (Overcooked-AI Example)](https://www.youtube.com/watch?v=WJ3Bf6irpx0)**
+<!-- 📺 **[CybMASDE GUI - Full Project Demo (Overcooked-AI Example)](https://www.youtube.com/watch?v=WJ3Bf6irpx0)** -->
+
+<div style="text-align: center; ">
+  <iframe width="656" height="369" 
+
+          src="https://www.youtube.com/embed/WJ3Bf6irpx0" 
+          title="YouTube video player" 
+          frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen>
+
+  </iframe>
+</div>
